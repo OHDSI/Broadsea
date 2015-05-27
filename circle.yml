@@ -1,0 +1,14 @@
+# Adapted from: https://github.com/rocker-org/hadleyverse/circle.yml
+
+machine:
+  services:
+    - docker
+    
+dependencies:
+  override:
+    - docker pull ohdsi/basic 
+    
+test:
+  override:
+    - docker run -ti ohdsi/basic R --version 
+
