@@ -9,11 +9,11 @@ boot2docker start
 boot2docker shellinit
 eval "$(boot2docker shellinit)"
 
-# Command-line version
-docker run --rm -it rocker/hadleyverse /usr/bin/R 
+# Terminal R version
+docker run --rm -it ohdsi/basic /usr/bin/R 
 
 # Or run Rstudio on http://192.168.50.103:8787
-docker run -d -p 8787:8787 -e USER=ohdsi -e PASSWORD=ohdsi rocker/hadleyverse 
+docker run -d -p 8787:8787 -e USER=ohdsi -e PASSWORD=ohdsi ohdsi/basic
 
 boot2docker stop
 ```
