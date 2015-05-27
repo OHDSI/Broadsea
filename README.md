@@ -17,3 +17,6 @@ docker run -d -p 8787:8787 -e USER=ohdsi -e PASSWORD=ohdsi ohdsi/basic
 
 boot2docker stop
 ```
+
+### Background information
+* Built upon the `hadleyverse` container; see [FILL-IN]
