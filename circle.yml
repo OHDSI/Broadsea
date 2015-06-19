@@ -7,7 +7,7 @@ machine:
 dependencies:
   override:
     - docker info
-    - docker build -t ohdsi/basic
+    - docker build -t ohdsi/basic .
 
 test:
   override:
