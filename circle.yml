@@ -3,12 +3,20 @@
 machine:
   services:
     - docker
-    
+
 dependencies:
   override:
-    - docker pull ohdsi/basic 
-    
+    - docker info
+    - docker build -t ohdsi/basic
+
 test:
   override:
-    - docker run -ti ohdsi/basic R --version 
+    - docker run -d -p 8787:8787 -p 6311:6311 -e USER=ohdsi -e PASSWORD=ohdsi ohdsi/basic; sleep 10
+    - curl --retry 10 --retry-delay 5 -v http://localhost:8787
 
+deployment:
+    hub:
+        branch: master
+        commands:
+            - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+            - docker push ohdsi/basic
