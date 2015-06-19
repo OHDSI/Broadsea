@@ -10,7 +10,7 @@ boot2docker shellinit
 eval "$(boot2docker shellinit)"
 
 # Terminal R version
-docker run --rm -it ohdsi/basic /usr/bin/R 
+docker run --rm -it ohdsi/basic /usr/bin/R
 
 # Or run Rstudio on http://192.168.59.103:8787 and RServe on 192.168.59.103:6311
 docker run -d -p 8787:8787 -p 6311:6311 -e USER=ohdsi -e PASSWORD=ohdsi ohdsi/basic
