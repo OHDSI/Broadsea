@@ -6,6 +6,8 @@ RUN installGithub.r \
 	OHDSI/SqlRender \
 	OHDSI/DatabaseConnector \
 	OHDSI/Cyclops \
+	OHDSI/OhdsiRTools \
+	OHDSI/PatientLevelPrediction \
 	OHDSI/CohortMethod \
 	OHDSI/PublicOracle \
 && rm -rf /tmp/downloaded_packages/ /tmp/*.rds
