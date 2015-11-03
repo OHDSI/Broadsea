@@ -1,6 +1,5 @@
-# OhdsiDocker [In development]
-Docker container for OHDSI tools
-
+# BroadSea [In development]
+Repository to store Docker container that will include the all of the OHDSI tools
 
 ### Some simple Mac OS X commands:
 ```
