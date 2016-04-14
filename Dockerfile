@@ -7,6 +7,7 @@ RUN installGithub.r \
 	OHDSI/DatabaseConnector \
 	OHDSI/Cyclops \
 	OHDSI/OhdsiRTools \
+	OHDSI/FeatureExtraction \
 	OHDSI/PatientLevelPrediction \
 	OHDSI/CohortMethod \
 	OHDSI/PublicOracle \
