@@ -1,5 +1,5 @@
 # How to build
 
 ```
-docker build -t ohdsi/basic .
+docker build -t ohdsi/development .
 ```
