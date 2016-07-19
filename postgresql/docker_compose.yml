@@ -1,0 +1,34 @@
+version: '2'
+
+services:
+
+  broadsea-methods-library:
+    image: ohdsi/broadsea-methods-library
+    ports:
+      - "8787:8787"
+      - "6311:6311"
+    volumes:
+      - ./home/rstudio:/home/rstudio
+
+  broadsea-webtools:
+    image: ohdsi/broadsea-webtools
+    ports:
+      - "8080:8080"
+    volumes:
+     - .:/tmp/drivers/:ro
+     - .:/tmp/achilles-data-reports/:ro
+    environment:
+     - WEBAPI_URL=http://192.168.99.100:8080
+     - env=webapi-postgresql
+     - datasource_driverClassName=org.postgresql.Driver
+     - datasource_url=jdbc:postgresql://192.168.99.100:5432/secret-database-name
+     - datasource_username=secret-user-name
+     - datasource_password=secret-user-password
+     - spring_jpa_properties_hibernate_default_schema=ohdsi
+     - flyway_datasource_driverClassName=org.postgresql.Driver
+     - flyway_datasource_url=jdbc:postgresql://192.168.99.100:5432/secret-database-name
+     - flyway_schemas=ohdsi
+     - flyway_placeholders_ohdsiSchema=ohdsi
+     - flyway_datasource_username=secret-user-name
+     - flyway_datasource_password=secret-user-password
+     - flyway_locations=classpath:db/migration/postgresql

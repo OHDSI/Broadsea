@@ -1,30 +1,172 @@
-# BroadSea [In development]
-Repository to store Docker container that will include the all of the OHDSI tools
+# OHDSI BroadSea [In development]
 
-### Some simple Mac OS X commands:
+## Introduction
+
+Broadsea deploys the full OHDSI technology stack (R packages & web applications), using cross-platform Docker container technology.
+
+[Information on Observational Health Data Sciences and Informatics (OHDSI)](http://www.ohdsi.org/ "OHSDI Web Site")
+
+This repository contains the example Docker Compose files to launch the Broadsea Docker containers:  
+
+* OHDSI R Methods Library (in RStudio)
+ * [Methods Library GitHub repository](https://github.com/OHDSI/Broadsea-MethodsLibrary "OHDSI Broadsea Methods Library GitHub Repository")
+ * [Methods Library Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-methodslibrary/ "OHDSI Broadsea Methods Library Docker Image Repository" )  
+ 
+* OHDSI Web Applications (in Apache Tomcat).  e.g. Atlas.
+  * [Web Applications GitHub repository](https://github.com/OHDSI/Broadsea-WebTools "OHDSI Broadsea Web Tools GitHub Repository")
+  * [Web Applications Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-methodslibrary/ "OHDSI Broadsea Web Tools Docker Image Repository")
+
+Broadsea can deploy the OHDSI stack on any of the following infrastructure alternatives:
+
+* laptop / desktop
+* internally hosted server
+* cloud provider hosted server
+* cluster of servers (internally or cloud provider hosted)
+
+It supports any database management system that the OHDSI stack supports. The examples provided in this repository are for connecting to PostgreSQL, Oracle or Microsoft SQL Server databases.
+
+Broadsea can deploy to any OS where Docker containers can run, including Windows, Mac OS X and various flavors of Linux (including Ubuntu, CentOS & CoreOS)
+
+### Usage Scenarios:
+
+Broadsea deploys the OHDSI technology stack at your local site so you can use it with your own data in an OMOP CDM Version 5 database.
+
+it can be used for the following research scenarios:
+
+* Try-out / demo the OHDSI R packages & web applications
+* Run observational studies on your data (including OHDSI Network studies)
+* Run the OHDSI Achilles R package for database profiling, database characterization, data quality assessment on your data & view the reports as tables/charts in the Atlas web application
+* Query OMOP vocabularies using the Atlas web application
+* Create patient cohorts
+
+### Broadsea Dependencies
+
+* Docker Engine
+* Docker Compose
+
+Docker Engine & Docker Compose are installed together as part of "Docker Toolbox" or "Docker for Windows" or "Docker for Mac". "Docker for Windows" or "Docker for Mac" are preferred over "Docker Toolbox" for improved performance but "Docker Toolbox" is also supported.
+
+## Broadsea Deployment Overview
+
+* Download and install Docker. See the installation instructions at the [Docker Web Site](https://docs.docker.com/engine/installation/ "Install Docker")
+* Copy the example "docker-compose.yml" file for your database (PostgreSQL, Oracle, SQL Server) from this GitHub repository to a directory on your machine. (e.g. The postgres version of the file is in the postgresql sub-directory of this repository).
+* Copy the example "source_source_daimon.sql" file from this GitHub repository to a directory on your machine. (e.g. The postgres version of the file is in the postgresql sub-directory of this repository).
+* Edit the example "source_source_daimon.sql" file to specify the database connection strings and database schema prefixes for your database(s).
+* Edit the docker-compose.yml file to specify the following:
+ * set the WEBAPI\_URL environment variable to your Docker host machine IP address. If using "Docker Toolbox" use the following command to find your Docker host machine IP address otherwise just use "localhost":
 ```
-boot2docker init # Only required once
-boot2docker start
-boot2docker shellinit
-eval "$(boot2docker shellinit)"
-
-# Terminal R version
-docker run --rm -it ohdsi/development /usr/bin/R
-
-# Or run Rstudio on http://192.168.59.103:8787 and RServe on 192.168.59.103:6311
-docker run -d -p 8787:8787 -p 6311:6311 -e USER=ohdsi -e PASSWORD=ohdsi ohdsi/development
-
-boot2docker stop
+docker-machine ip
+```
+ * specify the database connection info for your database  
+ 
+* Start the Broadsea Docker Containers:
+```
+docker-compose up -d
+```
+* __Only as part of initial configuration:__
+ * stop the containers (**docker-compose down**)
+ * run your edited "source_source_daimon.sql" file in your database using a SQL client
+ * start the containers again (**docker-compose up -d**)  
+ 
+* View the status of the containers:
+```
+docker-compose ps
+```
+* **Wait up to a minute for the Broadsea containers to start**.
+* Open the OHDSI RStudio web interface in a web browser at http:your-docker-host-IP-address>:8787
+* Open the Atlas OHDSI web application at http://your-docker-host-ip-address:8080/atlas
+* Open the Calypso OHDSI web application at http://your-docker-host-ip-address:8080/calypso
+* Use the below command to stop the running containers & remove them (new container instances can be started again later):
+```
+docker-compose down
 ```
 
-### Testing RServe from R on `localhost`
-```{r}
-library(RSclient)
-c <- RS.connect("192.168.59.103")
-RS.eval(c, library(Cyclops))
-RS.close(c)
+## Detailed Instructions
+
+### Install Docker
+
+### Mac OS X
+
+Follow the instructions here - [Install Docker for Mac](https://www.docker.com/products/docker#/mac)  
+*Docker for Mac* includes both Docker Engine & Docker Compose
+
+### Mac OS X Requirements
+
+Mac must be a 2010 or newer model, with Intel’s hardware support for memory management unit (MMU) virtualization; i.e., Extended Page Tables (EPT)
+OS X 10.10.3 Yosemite or newer
+At least 4GB of RAM
+VirtualBox prior to version 4.3.30 must NOT be installed (it is incompatible with Docker for Mac). Docker for Mac will error out on install in this case. Uninstall the older version of VirtualBox and re-try the install.
+
+### Windows
+
+Follow the instructions here - [Install Docker for Windows](https://www.docker.com/products/docker#/windows)  
+*Docker for Windows* includes both Docker Engine & Docker Compose
+
+### Docker for Windows Requirements
+
+64bit Windows 10 Pro, Enterprise and Education (1511 November update, Build 10586 or later). In the future Docker will support more versions of Windows 10.
+The Hyper-V package must be enabled. The Docker for Windows installer will enable it for you, if needed. (This requires a reboot).
+
+Note. *Docker for Windows* is the preferred Docker environment for Broadsea, but *Docker-Toolbox* may be used instead if your machine doesn't meet the above requirements. (See info below.)
+
+### Docker Toolbox Windows Requirements
+
+Follow the instructions here - [Install Docker Toolbox on Windows](https://docs.docker.com/toolbox/toolbox_install_windows/)  
+
+64bit Windows 7 or higher.  The Hyper-V package must be enabled. The Docker for Windows installer will enable it for you, if needed. (This requires a reboot).
+
+###Linux
+
+Follow the instructions here:  
+[Install Docker for Linux](https://www.docker.com/products/docker#/linux)  
+[Install Docker Compose for Linux](https://docs.docker.com/compose/install/)
+
+### Linux Requirements
+
+Docker requires a 64-bit installation. Additionally, your kernel must be 3.10 at minimum. The latest 3.10 minor version or a newer maintained version are also acceptable.
+
+Kernels older than 3.10 lack some of the features required to run Docker containers.
+
+## Broadsea Deployment Customization Options
+
+### Deploy Proprietary Database Drivers
+
+The PostgreSQL jdbc database driver is open source and may be freely distributed. A PostgreSQL jdbc database driver is already included within the OHDSI Broadsea webapi-web-apps container.
+
+If you are using a proprietary database server (e.g. Oracle or Microsoft SQL Server) download your own copy of the database jdbc driver jar file and copy it to the same host directory where the docker-compose.yml file is located.
+
+When the OHDSI Web Tools container runs it will automatically load the jdbc database driver, if it exists in the host directory.
+
+### Deploy Achilles Data Source Reports Generated From You Own Data
+
+The OHDSI webapi-web-apps container already contains the Achilles generated data source reports for an example 1000 person SynPUF simulated patient dataset.
+
+You can override the above default data source reports as follows:
+
+* Use the Achilles R package to generate the Achilles reports for your data source.
+* Use the Zip compression utility program to combine all the report files into a single zip file.
+* Copy the datasources.json file (see example below) and the Achilles reports zip file to the host directory where the docker-compose.yml file is located.
+* Edit the datasources.json file data source name to specify your dataset and edit the folder name to specify the folder within the zipped Achilles report file produced from your dataset.
+
+### Example datasources.json file with a single data source
+
+```bash
+{ "datasources":[ {"name":"Demo_data_1K_synthetic_patients", "folder":"SYNPUF1000", "cdmVersion": 5 } ] }
 ```
 
 
-### Background information
-* Built upon the `hadleyverse` container; see [FILL-IN]
+##Other Information
+
+### Licensing
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use the Broadsea software except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
