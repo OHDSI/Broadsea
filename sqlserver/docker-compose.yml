@@ -18,15 +18,15 @@ services:
     environment:
      - WEBAPI_URL=http://192.168.99.100:8080
      - env=webapi-mssql
-     - datasource_driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
-     - datasource_url=jdbc:sqlserver://192.168.99.100;databasename=secret-database-name
-     - datasource_username=secret-user-name
-     - datasource_password=secret-user-password
-     - spring_jpa_properties_hibernate_default_schema=ohdsi
-     - flyway_datasource_driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
-     - flyway_datasource_url=jdbc:sqlserver://192.168.99.100;databasename=secret-database-name
-     - flyway_schemas=ohdsi
-     - flyway_placeholders_ohdsiSchema=ohdsi
-     - flyway_datasource_username=secret-user-name
-     - flyway_datasource_password=secret-user-password
-     - flyway_locations=classpath:db/migration/sqlserver
+     - datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
+     - datasource.url=jdbc:sqlserver://192.168.99.100;databasename=secret-database-name
+     - datasource.username=secret-user-name
+     - datasource.password=secret-user-password
+     - spring.jpa.properties.hibernate.default.schema=ohdsi
+     - flyway.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
+     - flyway.datasource.url=jdbc:sqlserver://192.168.99.100;databasename=secret-database-name
+     - flyway.schemas=ohdsi
+     - flyway.placeholders.ohdsiSchema=ohdsi
+     - flyway.datasource.username=secret-user-name
+     - flyway.datasource.password=secret-user-password
+     - flyway.locations=classpath:db/migration/sqlserver

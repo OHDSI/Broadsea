@@ -18,15 +18,15 @@ services:
     environment:
      - WEBAPI_URL=http://192.168.99.100:8080
      - env=webapi-oracle
-     - datasource_driverClassName=oracle.jdbc.driver.OracleDriver
-     - datasource_url=jdbc:oracle:thin:@192.168.99.100:1521:secret-database-name
-     - datasource_username=secret-user-name
-     - datasource_password=secret-user-password
-     - spring_jpa_properties_hibernate_default_schema=OHDSI
-     - flyway_datasource_driverClassName=oracle.jdbc.driver.OracleDriver
-     - flyway_datasource_url=jdbc:oracle:thin:@jdbc:oracle:thin:@192.168.99.100:1521:secret-database-name
-     - flyway_schemas=OHDSI
-     - flyway_placeholders_ohdsiSchema=OHDSI
-     - flyway_datasource_username=secret-user-name
-     - flyway_datasource_password=secret-user-password
-     - flyway_locations=classpath:db/migration/oracle
+     - datasource.driverClassName=oracle.jdbc.driver.OracleDriver
+     - datasource.url=jdbc:oracle:thin:@192.168.99.100:1521:secret-database-name
+     - datasource.username=secret-user-name
+     - datasource.password=secret-user-password
+     - spring.jpa.properties.hibernate.default.schema=OHDSI
+     - flyway.datasource.driverClassName=oracle.jdbc.driver.OracleDriver
+     - flyway.datasource.url=jdbc:oracle:thin:@jdbc:oracle:thin:@192.168.99.100:1521:secret-database-name
+     - flyway.schemas=OHDSI
+     - flyway.placeholders.ohdsiSchema=OHDSI
+     - flyway.datasource.username=secret-user-name
+     - flyway.datasource.password=secret-user-password
+     - flyway.locations=classpath:db/migration/oracle
