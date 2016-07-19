@@ -3,12 +3,10 @@ version: '2'
 services:
 
   broadsea-methods-library:
-    image: ohdsi/broadsea-methods-library
+    image: ohdsi/broadsea-methodslibrary
     ports:
       - "8787:8787"
       - "6311:6311"
-    volumes:
-      - ./home/rstudio:/home/rstudio
 
   broadsea-webtools:
     image: ohdsi/broadsea-webtools
