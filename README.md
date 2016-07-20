@@ -1,18 +1,18 @@
-# OHDSI BroadSea [In development]
+# OHDSI Broadsea [In development]
 
 ## Introduction
 
-Broadsea deploys the full OHDSI technology stack (R packages & web applications), using cross-platform Docker container technology.
+Broadsea deploys the full OHDSI technology stack (R methods library & web tools), using cross-platform Docker container technology.
 
 [Information on Observational Health Data Sciences and Informatics (OHDSI)](http://www.ohdsi.org/ "OHSDI Web Site")
 
-This repository contains the example Docker Compose files to launch the Broadsea Docker containers:  
+This repository contains the example Docker Compose files used to launch the Broadsea Docker containers:  
 
-* OHDSI R Methods Library (in RStudio)
+* OHDSI R Methods Library (in RStudio) - maintained by Marc Suchard
  * [Methods Library GitHub repository](https://github.com/OHDSI/Broadsea-MethodsLibrary "OHDSI Broadsea Methods Library GitHub Repository")
  * [Methods Library Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-methodslibrary/ "OHDSI Broadsea Methods Library Docker Image Repository" )  
- 
-* OHDSI Web Applications (in Apache Tomcat).  e.g. Atlas.
+
+* OHDSI Web Applications e.g. Atlas & Calypso (in Apache Tomcat) - maintained by Lee Evans [LTS Computing LLC](http://www.ltscomputingllc.com)
   * [Web Applications GitHub repository](https://github.com/OHDSI/Broadsea-WebTools "OHDSI Broadsea Web Tools GitHub Repository")
   * [Web Applications Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-methodslibrary/ "OHDSI Broadsea Web Tools Docker Image Repository")
 
@@ -25,40 +25,45 @@ Broadsea can deploy the OHDSI stack on any of the following infrastructure alter
 
 It supports any database management system that the OHDSI stack supports. The examples provided in this repository are for connecting to PostgreSQL, Oracle or Microsoft SQL Server databases.
 
-Broadsea can deploy to any OS where Docker containers can run, including Windows, Mac OS X and various flavors of Linux (including Ubuntu, CentOS & CoreOS)
+It supports any OS where Docker containers can run, including Windows, Mac OS X and Linux (including Ubuntu, CentOS & CoreOS)
 
 ### Usage Scenarios:
 
 Broadsea deploys the OHDSI technology stack at your local site so you can use it with your own data in an OMOP CDM Version 5 database.
 
-it can be used for the following research scenarios:
+it can be used for the following scenarios:
 
 * Try-out / demo the OHDSI R packages & web applications
 * Run observational studies on your data (including OHDSI Network studies)
 * Run the OHDSI Achilles R package for database profiling, database characterization, data quality assessment on your data & view the reports as tables/charts in the Atlas web application
 * Query OMOP vocabularies using the Atlas web application
 * Create patient cohorts
+* Determine study feasibility based on defined criteria
 
 ### Broadsea Dependencies
 
-* Docker Engine
-* Docker Compose
+* Docker (Version 1.11 or higher) 
+ * Docker Engine
+ * Docker Compose
 * OMOP Common Data Model Version 5 database populated with OMOP vocabulary & observational data
 
 Docker Engine & Docker Compose are installed together as part of "Docker Toolbox" or "Docker for Windows" or "Docker for Mac". "Docker for Windows" or "Docker for Mac" are preferred over "Docker Toolbox" for improved performance but "Docker Toolbox" is also supported.
 
-## Broadsea Deployment Overview
+## Quick Start Broadsea Deployment
 
 * Download and install Docker. See the installation instructions at the [Docker Web Site](https://docs.docker.com/engine/installation/ "Install Docker")
-* Copy the example "docker-compose.yml" file for your database (PostgreSQL, Oracle, SQL Server) from this GitHub repository to a directory on your machine. (e.g. The postgres version of the file is in the postgresql sub-directory of this repository).
-* Copy the example "source_source_daimon.sql" file from this GitHub repository to a directory on your machine. (e.g. The postgres version of the file is in the postgresql sub-directory of this repository).
+* Copy the example "docker-compose.yml" file for your database (PostgreSQL, Oracle, SQL Server) from this GitHub repository to a directory on your machine. (e.g. The postgresql version of the file is in the postgresql sub-directory of this repository).
+* Copy the example "source_source_daimon.sql" file from this GitHub repository to a directory on your machine. (e.g. The postgresql version of the file is in the postgresql sub-directory of this repository).
 * Edit the example "source_source_daimon.sql" file to specify the database connection strings and database schema prefixes for your database(s).
 * Edit the docker-compose.yml file to specify the following:
- * set the WEBAPI\_URL environment variable to your Docker host machine IP address. If using "Docker Toolbox" use the following command to find your Docker host machine IP address otherwise just use "localhost":
+ * set the WEBAPI\_URL environment variable to your Docker host machine IP address. If using "Docker Toolbox" use the following command to find your Docker host machine IP address otherwise you can use "localhost":
 ```
 docker-machine ip
 ```
  * specify the database connection info for your database  
+   * database name
+   * database user name
+   * database user password
  
 * Start the Broadsea Docker Containers:
 ```
@@ -84,7 +89,7 @@ docker-compose down
 
 The Broadsea Methods Library container includes RStudio Server.  By default it runs with a single user, userid="rstudio", password="rstudio".  **The "rstudio" user home directory only exists within the Docker container and any files saved to that directory will be lost if the container is removed!**  
 
-**It is necessary to volume map the "rstudio" user home directory to the Docker host machine if you need to retain the files in that directory on the Docker host machine (see later section: "Sharing/saving files between RStudio & Docker host machine")**
+**To retain the files in the "rstudio" user home directory on the Docker host machine see section: "Sharing/Saving files between RStudio & Docker host machine") later in this guide.**
 
 ## Install Docker
 
@@ -140,7 +145,7 @@ If you are using a proprietary database server (e.g. Oracle or Microsoft SQL Ser
 
 When the OHDSI Web Tools container runs it will automatically load the jdbc database driver, if it exists in the host directory.
 
-### Deploy Achilles Data Source Reports Generated From You Own Data
+### Deploy Achilles Data Source Reports Generated From Your Own Data
 
 The OHDSI Web Tools container already contains the Achilles generated data source reports for an example 1000 person SynPUF simulated patient dataset.
 
@@ -158,7 +163,7 @@ You can override the above default data source reports as follows:
 ```
 ## Broadsea Methods Library Configuration Options
 
-### Sharing/saving files between RStudio and Docker host machine
+### Sharing/Saving files between RStudio and Docker host machine
 
 To permanently retain the "rstudio" user files in the "rstudio" user home directory, and make local R packages available to RStudio in the Broadsea Methods container the following steps are required:
 
