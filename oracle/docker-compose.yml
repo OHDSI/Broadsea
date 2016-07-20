@@ -1,0 +1,32 @@
+version: '2'
+
+services:
+
+  broadsea-methods-library:
+    image: ohdsi/broadsea-methodslibrary
+    ports:
+      - "8787:8787"
+      - "6311:6311"
+
+  broadsea-webtools:
+    image: ohdsi/broadsea-webtools
+    ports:
+      - "8080:8080"
+    volumes:
+     - .:/tmp/drivers/:ro
+     - .:/tmp/achilles-data-reports/:ro
+    environment:
+     - WEBAPI_URL=http://192.168.99.100:8080
+     - env=webapi-oracle
+     - datasource.driverClassName=oracle.jdbc.driver.OracleDriver
+     - datasource.url=jdbc:oracle:thin:@192.168.99.100:1521:secret-database-name
+     - datasource.username=secret-user-name
+     - datasource.password=secret-user-password
+     - spring.jpa.properties.hibernate.default.schema=OHDSI
+     - flyway.datasource.driverClassName=oracle.jdbc.driver.OracleDriver
+     - flyway.datasource.url=jdbc:oracle:thin:@jdbc:oracle:thin:@192.168.99.100:1521:secret-database-name
+     - flyway.schemas=OHDSI
+     - flyway.placeholders.ohdsiSchema=OHDSI
+     - flyway.datasource.username=secret-user-name
+     - flyway.datasource.password=secret-user-password
+     - flyway.locations=classpath:db/migration/oracle
