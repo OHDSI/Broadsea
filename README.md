@@ -43,6 +43,7 @@ it can be used for the following research scenarios:
 
 * Docker Engine
 * Docker Compose
+* OMOP Common Data Model Version 5 database populated with OMOP vocabulary & observational data
 
 Docker Engine & Docker Compose are installed together as part of "Docker Toolbox" or "Docker for Windows" or "Docker for Mac". "Docker for Windows" or "Docker for Mac" are preferred over "Docker Toolbox" for improved performance but "Docker Toolbox" is also supported.
 
@@ -73,17 +74,19 @@ docker-compose up -d
 docker-compose ps
 ```
 * **Wait up to a minute for the Broadsea containers to start**.
-* Open the OHDSI RStudio web interface in a web browser at http:your-docker-host-IP-address>:8787
-* Open the Atlas OHDSI web application at http://your-docker-host-ip-address:8080/atlas
-* Open the Calypso OHDSI web application at http://your-docker-host-ip-address:8080/calypso
+* Open the OHDSI RStudio web interface in a web browser at **http://your-docker-host-IP-address>:8787**
+* Open the Atlas OHDSI web application at **http://your-docker-host-ip-address:8080/atlas**
+* Open the Calypso OHDSI web application at **http://your-docker-host-ip-address:8080/calypso**
 * Use the below command to stop the running containers & remove them (new container instances can be started again later):
 ```
 docker-compose down
 ```
 
-## Detailed Instructions
+The Broadsea Methods Library container includes RStudio Server.  By default it runs with a single user, userid="rstudio", password="rstudio".  **The "rstudio" user home directory only exists within the Docker container and any files saved to that directory will be lost if the container is removed!**  
 
-### Install Docker
+**It is necessary to volume map the "rstudio" user home directory to the Docker host machine if you need to retain the files in that directory on the Docker host machine (see later section: "Sharing/saving files between RStudio & Docker host machine")**
+
+## Install Docker
 
 ### Mac OS X
 
@@ -127,7 +130,7 @@ Docker requires a 64-bit installation. Additionally, your kernel must be 3.10 at
 
 Kernels older than 3.10 lack some of the features required to run Docker containers.
 
-## Broadsea Deployment Customization Options
+## Broadsea Web Tools Customization Options
 
 ### Deploy Proprietary Database Drivers
 
@@ -139,7 +142,7 @@ When the OHDSI Web Tools container runs it will automatically load the jdbc data
 
 ### Deploy Achilles Data Source Reports Generated From You Own Data
 
-The OHDSI webapi-web-apps container already contains the Achilles generated data source reports for an example 1000 person SynPUF simulated patient dataset.
+The OHDSI Web Tools container already contains the Achilles generated data source reports for an example 1000 person SynPUF simulated patient dataset.
 
 You can override the above default data source reports as follows:
 
@@ -153,7 +156,24 @@ You can override the above default data source reports as follows:
 ```bash
 { "datasources":[ {"name":"Demo_data_1K_synthetic_patients", "folder":"SYNPUF1000", "cdmVersion": 5 } ] }
 ```
+## Broadsea Methods Library Configuration Options
 
+### Sharing/saving files between RStudio and Docker host machine
+
+To permanently retain the "rstudio" user files in the "rstudio" user home directory, and make local R packages available to RStudio in the Broadsea Methods container the following steps are required:
+
+* In the same directory where the docker-compose.yml is stored create a sub-directory tree called "home/rstudio" and a sub-directory called "site-library"
+* **Set the file permissions for the "home/rstudio" sub-directory tree and the "site-library" sub-directory to public read, write and execute.**
+* Add the below volume mapping statements to the end of the broadsea-methods-library section of the docker-compose.yml file.
+```
+volumes:
+      - ./home/rstudio:/home/rstudio
+      - ./site-library:/usr/lib/R/site-library
+```
+
+Any files added to the home/rstudio or site-library sub-directories on the Docker host can be accessed by RStudio in the container.  
+
+The Broadsea Methods container RStudio /usr/lib/R/site-library originally contains the "littler" and "rgl" R packages. Volume mapping masks the original files in the directory so you will need to add those 2 packages to your Docker host site-library sub-directory if you need them.
 
 ##Other Information
 
