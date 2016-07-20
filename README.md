@@ -91,7 +91,7 @@ The Broadsea Methods Library container includes RStudio Server.  By default it r
 
 **To retain the files in the "rstudio" user home directory on the Docker host machine see section: "Sharing/Saving files between RStudio & Docker host machine") later in this guide.**
 
-## Install Docker
+## Hardware/OS Requirements for Installing Docker
 
 ### Mac OS X
 
