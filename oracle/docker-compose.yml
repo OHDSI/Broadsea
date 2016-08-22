@@ -22,7 +22,7 @@ services:
      - datasource.url=jdbc:oracle:thin:@192.168.99.100:1521:secret-database-name
      - datasource.username=secret-user-name
      - datasource.password=secret-user-password
-     - spring.jpa.properties.hibernate.default.schema=OHDSI
+     - spring.jpa.properties.hibernate.default_schema=OHDSI
      - flyway.datasource.driverClassName=oracle.jdbc.driver.OracleDriver
      - flyway.datasource.url=jdbc:oracle:thin:@jdbc:oracle:thin:@192.168.99.100:1521:secret-database-name
      - flyway.schemas=OHDSI
