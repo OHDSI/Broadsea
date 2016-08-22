@@ -22,7 +22,7 @@ services:
      - datasource.url=jdbc:sqlserver://192.168.99.100;databasename=secret-database-name
      - datasource.username=secret-user-name
      - datasource.password=secret-user-password
-     - spring.jpa.properties.hibernate.default.schema=ohdsi
+     - spring.jpa.properties.hibernate.default_schema=ohdsi
      - flyway.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
      - flyway.datasource.url=jdbc:sqlserver://192.168.99.100;databasename=secret-database-name
      - flyway.schemas=ohdsi
