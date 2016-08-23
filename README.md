@@ -14,7 +14,7 @@ This repository contains the example Docker Compose files used to launch the Bro
 
 * OHDSI Web Applications e.g. Atlas & Calypso (in Apache Tomcat) - maintained by Lee Evans [LTS Computing LLC](http://www.ltscomputingllc.com)
   * [Web Applications GitHub repository](https://github.com/OHDSI/Broadsea-WebTools "OHDSI Broadsea Web Tools GitHub Repository")
-  * [Web Applications Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-methodslibrary/ "OHDSI Broadsea Web Tools Docker Image Repository")
+  * [Web Applications Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-webtools/ "OHDSI Broadsea Web Tools Docker Image Repository")
 
 Broadsea can deploy the OHDSI stack on any of the following infrastructure alternatives:
 
