@@ -20,9 +20,11 @@ services:
      - env=webapi-oracle
      - datasource.driverClassName=oracle.jdbc.driver.OracleDriver
      - datasource.url=jdbc:oracle:thin:@192.168.99.100:1521:secret-database-name
+     - datasource.ohdsi.schema=OHDSI
      - datasource.username=secret-user-name
      - datasource.password=secret-user-password
      - spring.jpa.properties.hibernate.default_schema=OHDSI
+     - spring.batch.repository.tableprefix=OHDSI.BATCH_
      - flyway.datasource.driverClassName=oracle.jdbc.driver.OracleDriver
      - flyway.datasource.url=jdbc:oracle:thin:@jdbc:oracle:thin:@192.168.99.100:1521:secret-database-name
      - flyway.schemas=OHDSI
