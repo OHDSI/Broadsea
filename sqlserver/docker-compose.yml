@@ -20,6 +20,7 @@ services:
      - env=webapi-mssql
      - datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
      - datasource.url=jdbc:sqlserver://192.168.99.100;databasename=secret-database-name
+     - datasource.cdm.schema=cdm
      - datasource.ohdsi.schema=ohdsi
      - datasource.username=secret-user-name
      - datasource.password=secret-user-password
