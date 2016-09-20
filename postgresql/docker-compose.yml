@@ -20,6 +20,7 @@ services:
      - env=webapi-postgresql
      - datasource.driverClassName=org.postgresql.Driver
      - datasource.url=jdbc:postgresql://192.168.99.100:5432/secret-database-name
+     - datasource.cdm.schema=cdm
      - datasource.ohdsi.schema=ohdsi
      - datasource.username=secret-user-name
      - datasource.password=secret-user-password
