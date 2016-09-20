@@ -20,6 +20,7 @@ services:
      - env=webapi-oracle
      - datasource.driverClassName=oracle.jdbc.driver.OracleDriver
      - datasource.url=jdbc:oracle:thin:@192.168.99.100:1521:secret-database-name
+     - datasource.cdm.schema=CDM
      - datasource.ohdsi.schema=OHDSI
      - datasource.username=secret-user-name
      - datasource.password=secret-user-password
