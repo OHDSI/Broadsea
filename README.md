@@ -92,23 +92,26 @@ The Broadsea Methods Library container includes RStudio Server.  By default it r
 **To retain the files in the "rstudio" user home directory on the Docker host machine see section: "Sharing/Saving files between RStudio & Docker host machine") later in this guide.**
 
 
-## Viewing The Broadsea Web Tools Log Files
+## Troubleshooting
+
+### Viewing The Broadsea Web Tools Log Files
 
 * Find the name of the running Broadsea Web Tools Docker container (the value in the "Names" column):
-  
+```  
   docker-compose ps
-  
+```
 * Connect to the Broadsea Web Tools container in a bash shell:
-  
+```
   docker exec -it <broadsea-web-tools-container-name> bash
- 
+```
 * Change directory to the log directory in the running container and view the stderr and stdout log files:
   
   The "*" char is the bash shell file name wild card character.
-
+```
   cd /var/log/supervisor
   tail -1000 *stderr*
   tail -1000 *stdout*
+```
 
 
 ## Hardware/OS Requirements for Installing Docker
