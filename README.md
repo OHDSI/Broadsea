@@ -94,13 +94,16 @@ The Broadsea Methods Library container includes RStudio Server.  By default it r
 
 ## Viewing The Broadsea Web Tools Log Files
 
-* find the name of the running Broadsea Web Tools Docker container (the value in the "Names" column):
+* Find the name of the running Broadsea Web Tools Docker container (the value in the "Names" column):
+  
   docker-compose ps
   
-* connect to the Broadsea Web Tools container in a bash shell:
+* Connect to the Broadsea Web Tools container in a bash shell:
+  
   docker exec -it <broadsea-web-tools-container-name> bash
  
-* change directory to the log directory in the running container and view the stderr and stdout log files:
+* Change directory to the log directory in the running container and view the stderr and stdout log files:
+  
   The "*" char is the bash shell file name wild card character.
 
   cd /var/log/supervisor
