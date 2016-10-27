@@ -54,7 +54,7 @@ Docker Engine & Docker Compose are installed together as part of "Docker Toolbox
 * Download and install Docker. See the installation instructions at the [Docker Web Site](https://docs.docker.com/engine/installation/ "Install Docker")
 * Copy the example "docker-compose.yml" file for your database (PostgreSQL, Oracle, SQL Server) from this GitHub repository to a directory on your machine. (e.g. The postgresql version of the file is in the postgresql sub-directory of this repository).
 * Copy the example "source_source_daimon.sql" file from this GitHub repository to a directory on your machine. (e.g. The postgresql version of the file is in the postgresql sub-directory of this repository).
-* Edit the example "source_source_daimon.sql" file to specify the database connection strings and database schema prefixes for your database(s).
+* Edit the example "source_source_daimon.sql" file to specify the database connection strings and database schema prefixes for your database(s). Note. You will run this SQL file manually in a SQL client in a later step.
 * Edit the docker-compose.yml file to specify the following:
  * set the WEBAPI\_URL environment variable to your Docker host machine IP address. If using "Docker Toolbox" use the following command to find your Docker host machine IP address otherwise you can use "localhost":
 ```
