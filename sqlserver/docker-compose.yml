@@ -25,6 +25,7 @@ services:
      - datasource.username=secret-user-name
      - datasource.password=secret-user-password
      - spring.jpa.properties.hibernate.default_schema=ohdsi
+     - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.SQLServer2008Dialect
      - spring.batch.repository.tableprefix=secret-database-name.ohdsi.BATCH_
      - flyway.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
      - flyway.datasource.url=jdbc:sqlserver://192.168.99.100;databasename=secret-database-name
