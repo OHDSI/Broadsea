@@ -1,0 +1,36 @@
+version: '2'
+
+services:
+
+  broadsea-methods-library:
+    image: ohdsi/broadsea-methodslibrary
+    ports:
+      - "8787:8787"
+      - "6311:6311"
+
+  broadsea-webtools:
+    image: ohdsi/broadsea-webtools
+    ports:
+      - "8080:8080"
+    volumes:
+     - .:/tmp/drivers/:ro
+     - .:/tmp/achilles-data-reports/:ro
+    environment:
+     - WEBAPI_URL=http://192.168.99.100:8080
+     - env=webapi-postgresql
+     - datasource.driverClassName=org.postgresql.Driver
+     - datasource.url=jdbc:postgresql://192.168.99.100:5432/ohdsi
+     - datasource.cdm.schema=cdm
+     - datasource.ohdsi.schema=ohdsi
+     - datasource.username=ohdsi
+     - datasource.password=
+     - spring.jpa.properties.hibernate.default_schema=ohdsi
+     - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+     - spring.batch.repository.tableprefix=ohdsi.BATCH_
+     - flyway.datasource.driverClassName=org.postgresql.Driver
+     - flyway.datasource.url=jdbc:postgresql://192.168.99.100:5432/ohdsi
+     - flyway.schemas=ohdsi
+     - flyway.placeholders.ohdsiSchema=ohdsi
+     - flyway.datasource.username=ohdsi
+     - flyway.datasource.password=
+     - flyway.locations=classpath:db/migration/postgresql
