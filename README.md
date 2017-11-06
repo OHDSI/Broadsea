@@ -55,6 +55,7 @@ Docker Engine & Docker Compose are installed together as part of "Docker Toolbox
 * Copy the example "docker-compose.yml" file for your database (PostgreSQL, Oracle, SQL Server) from this GitHub repository to a directory on your machine. (e.g. The postgresql version of the file is in the postgresql sub-directory of this repository).
 * Copy the example "source_source_daimon.sql" file from this GitHub repository to a directory on your machine. (e.g. The postgresql version of the file is in the postgresql sub-directory of this repository).
 * Edit the example "source_source_daimon.sql" file to specify the database connection strings and database schema prefixes for your database(s). Note. You will run this SQL file manually in a SQL client in a later step.
+* Edit the example Atlas "config-local.js" file to specify the WebAPI URL, otherwise the default is localhost & port 8080.
 * Edit the docker-compose.yml file to specify the following:
  * set the WEBAPI\_URL environment variable to your Docker host machine IP address. If using "Docker Toolbox" use the following command to find your Docker host machine IP address otherwise you can use "localhost":
 ```
@@ -168,22 +169,6 @@ If you are using a proprietary database server (e.g. Oracle or Microsoft SQL Ser
 
 When the OHDSI Web Tools container runs it will automatically load the jdbc database driver, if it exists in the host directory.
 
-### Deploy Achilles Data Source Reports Generated From Your Own Data
-
-The OHDSI Web Tools container already contains the Achilles generated data source reports for an example 1000 person SynPUF simulated patient dataset.
-
-You can override the above default data source reports as follows:
-
-* Use the Achilles R package to generate the Achilles reports for your data source.
-* Use the Zip compression utility program to combine all the report files into a single zip file.
-* Copy the datasources.json file (see example below) and the Achilles reports zip file to the host directory where the docker-compose.yml file is located.
-* Edit the datasources.json file data source name to specify your dataset and edit the folder name to specify the folder within the zipped Achilles report file produced from your dataset.
-
-### Example datasources.json file with a single data source
-
-```bash
-{ "datasources":[ {"name":"Demo_data_1K_synthetic_patients", "folder":"SYNPUF1000", "cdmVersion": 5 } ] }
-```
 ## Broadsea Methods Library Configuration Options
 
 ### Sharing/Saving files between RStudio and Docker host machine
