@@ -16,16 +16,16 @@ services:
      - .:/tmp/drivers/:ro
      - ./config-local.js:/usr/local/tomcat/webapps/atlas/js/config-local.js:ro
     environment:
-      - WEBAPI_URL=http://192.168.1.8:8080
+      - WEBAPI_URL=http://192.168.99.100:8080
       - datasource_driverClassName=org.postgresql.Driver
-      - datasource_url=jdbc:postgresql://192.168.1.8:5432/secret-database-name
+      - datasource_url=jdbc:postgresql://192.168.99.100:5432/secret-database-name
       - datasource_username=secret-user-name
       - datasource_password=secret-user-password
       - spring.jpa.properties.hibernate.default_schema=ohdsi
       - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
       - spring.batch.repository.tableprefix=ohdsi.BATCH_
       - flyway_datasource_driverClassName=org.postgresql.Driver
-      - flyway_datasource_url=jdbc:postgresql://192.168.1.8:5432/secret-database-name
+      - flyway_datasource_url=jdbc:postgresql://192.168.99.100:5432/secret-database-name
       - flyway_schemas=ohdsi
       - flyway.placeholders.ohdsiSchema=ohdsi
       - flyway_datasource_username=secret-user-name
