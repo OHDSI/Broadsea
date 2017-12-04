@@ -52,7 +52,7 @@ Docker Engine & Docker Compose are installed together as part of "Docker Toolbox
 ## Quick Start Broadsea Deployment
 
 * Download and install Docker. See the installation instructions at the [Docker Web Site](https://docs.docker.com/engine/installation/ "Install Docker")
-* Copy the example "docker-compose.yml" file for your database (PostgreSQL, Oracle, SQL Server) from this GitHub repository to a directory on your machine. (e.g. The postgresql version of the file is in the postgresql sub-directory of this repository).
+* Copy the example "docker-compose.yml" file for your database (PostgreSQL, Oracle, SQL Server) from this GitHub repository to a directory on your machine. (e.g. The postgresql version of the file is in the postgresql sub-directory of this repository). Note. On Windows machines ensure that the directory path does not contain any spaces.
 * Copy the example "source_source_daimon.sql" file from this GitHub repository to a directory on your machine. (e.g. The postgresql version of the file is in the postgresql sub-directory of this repository).
 * Edit the example "source_source_daimon.sql" file to specify the database connection strings and database schema prefixes for your database(s). Note. You will run this SQL file manually in a SQL client in a later step.
 * Edit the example Atlas "config-local.js" file to specify the WebAPI URL, otherwise the default is localhost & port 8080.
@@ -61,8 +61,10 @@ Docker Engine & Docker Compose are installed together as part of "Docker Toolbox
 ```
 docker-machine ip
 ```
- * specify the database connection info for your database  
+ * specify the database connection info for your database (for Oracle make sure the schema name is all upper-case) 
    * database name
+   * database schema name
+   * database table prefix
    * database user name
    * database user password
  
