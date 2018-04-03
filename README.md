@@ -183,7 +183,7 @@ To permanently retain the "rstudio" user files in the "rstudio" user home direct
 ```
 volumes:
       - ./home/rstudio:/home/rstudio
-      - ./site-library:/usr/lib/R/site-library
+      - ./site-library:/usr/local/lib/R/site-library
 ```
 
 Any files added to the home/rstudio or site-library sub-directories on the Docker host can be accessed by RStudio in the container.  
