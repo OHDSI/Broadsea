@@ -19,6 +19,7 @@ services:
       - WEBAPI_URL=http://192.168.99.100:8080
       - datasource_driverClassName=org.postgresql.Driver
       - datasource_url=jdbc:postgresql://192.168.99.100:5432/secret-database-name
+      - datasource.ohdsi.schema=ohdsi
       - datasource_username=secret-user-name
       - datasource_password=secret-user-password
       - spring.jpa.properties.hibernate.default_schema=ohdsi
