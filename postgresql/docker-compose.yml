@@ -17,6 +17,7 @@ services:
      - ./config-local.js:/usr/local/tomcat/webapps/atlas/js/config-local.js:ro
     environment:
       - WEBAPI_URL=http://192.168.99.100:8080
+      - env=webapi-postgresql
       - datasource_driverClassName=org.postgresql.Driver
       - datasource_url=jdbc:postgresql://192.168.99.100:5432/secret-database-name
       - datasource.cdm.schema=cdm
