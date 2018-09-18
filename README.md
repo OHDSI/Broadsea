@@ -84,7 +84,6 @@ docker-compose ps
 * **Wait up to a minute for the Broadsea containers to start**.
 * Open the OHDSI RStudio web interface in a web browser at **http://your-docker-host-IP-address>:8787**
 * Open the Atlas OHDSI web application at **http://your-docker-host-ip-address:8080/atlas**
-* Open the Calypso OHDSI web application at **http://your-docker-host-ip-address:8080/calypso**
 * Use the below command to stop the running containers & remove them (new container instances can be started again later):
 ```
 docker-compose down
