@@ -7,6 +7,8 @@ services:
     ports:
       - "8787:8787"
       - "6311:6311"
+    environment:
+      - PASSWORD=mypass
 
   broadsea-webtools:
     image: ohdsi/broadsea-webtools
