@@ -88,6 +88,10 @@ docker-compose ps
 ```
 docker-compose down
 ```
+* Run the OHDSI Achilles R package to populate the Atlas reports Achilles statistics database tables:
+
+[Instructions for running OHDSI Achilles](https://github.com/OHDSI/Achilles)
+
 
 The Broadsea Methods Library container includes RStudio Server.  By default it runs with a single user, userid="rstudio", password="rstudio".  **The "rstudio" user home directory only exists within the Docker container and any files saved to that directory will be lost if the container is removed!**  
 
