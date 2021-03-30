@@ -18,6 +18,7 @@ services:
     environment:
      - WEBAPI_URL=http://192.168.99.100:8080
      - env=webapi-postgresql
+     - security_origin=*
      - datasource.driverClassName=org.postgresql.Driver
      - datasource.url=jdbc:postgresql://192.168.99.100:5432/ohdsi
      - datasource.cdm.schema=cdm

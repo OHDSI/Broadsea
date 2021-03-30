@@ -18,6 +18,7 @@ services:
     environment:
      - WEBAPI_URL=http://192.168.99.100:8080
      - env=webapi-oracle
+     - security_origin=*
      - datasource.driverClassName=oracle.jdbc.driver.OracleDriver
      - datasource.url=jdbc:oracle:thin:@192.168.99.100:1521:secret-database-name
      - datasource.cdm.schema=CDM

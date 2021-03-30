@@ -18,6 +18,7 @@ services:
     environment:
      - WEBAPI_URL=http://192.168.99.100:8080
      - env=webapi-mssql
+     - security_origin=*
      - datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
      - datasource.url=jdbc:sqlserver://192.168.99.100;databasename=secret-database-name
      - datasource.cdm.schema=cdm
