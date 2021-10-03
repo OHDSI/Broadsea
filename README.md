@@ -1,4 +1,4 @@
-# OHDSI Broadsea [In development]
+# OHDSI Broadsea
 
 ## Introduction
 
@@ -119,6 +119,43 @@ The Broadsea Methods Library container includes RStudio Server.  By default it r
   tail -1000 *stdout*
 ```
 
+## Enabling Atlas security in Broadsea
+
+In order to enable Atlas security in Broadsea, the configuration in the config-local.js file and the docker-compose.yml file must be updated. Each Atlas security authentication method has it's own set of configuration values. 
+
+### LDAP authentication
+
+Here is an example showing the javascript code block to add to the config-local.js file for LDAP authentication.
+It is this javascript code that will enable the Atlas Sign In link and the window where the user can enter their user name and password.
+```javascript
+ configLocal.userAuthenticationEnabled = true;
+ configLocal.acceptanceExpiresInDays = 3650;
+
+ configLocal.authProviders = [{
+     		"name": "LDAP Authentication",
+     		"url": "user/login/ldap",
+     		"ajax": true,
+     		"icon": "fa fa-cubes",
+     		"isUseCredentialsForm": true
+ }]
+ ```
+
+Here is an example showing the configuration variables to add to the docker-compose.yml file environment section for LDAP authentication.
+You will need to update the ldap settings based on your ldap server url and your ldap organizational structure.
+The ldap system username and password are used to connect to the ldap server and perform the search specified in the ldap search string.
+In this example the ldap "commonName" field will be searched for a matching username in the Atlas application Sign In Username field. If a match is found then Atlas will also try to bind to that user using the password in the Atlas application Sign In Password field.
+```
+      - security_enabled=true
+      - security_origin=*
+      - security_provider=AtlasRegularSecurity
+      - security.ldap.dn=cn={0},ou=users,dc=example,dc=org
+      - security.ldap.url=ldap://host.docker.internal:1389
+      - security.ldap.baseDn=ou=users,dc=example,dc=org
+      - security.ldap.system.username=user01
+      - security.ldap.system.password=password1
+      - security.ldap.searchString=(&(objectClass=*)(commonName={0}))
+      - security.ldap.searchBase=ou=users,dc=example,dc=org
+```
 
 ## Hardware/OS Requirements for Installing Docker
 
