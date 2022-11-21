@@ -108,7 +108,7 @@ services:
       FLYWAY_LOCATIONS: classpath:db/migration/postgresql
       FLYWAY_PLACEHOLDERS_OHDSISCHEMA: webapi
       FLYWAY_SCHEMAS: webapi
-      FLYWAY_BASELINEONMIGRATE: true
+      FLYWAY_BASELINEONMIGRATE: "true"
       FLYWAY_TABLE: schema_history
       flyway_baselineVersionAsString: "2.2.5.20180212152023"  # this env var is case sensitive
       FLYWAY_BASELINEDESCRIPTION: Base Migration
