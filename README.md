@@ -14,9 +14,9 @@ This repository contains the Docker Compose file used to launch the OHDSI Broads
 
 * OHDSI Atlas - including WebAPI REST services
   * [Atlas GitHub repository](https://github.com/OHDSI/Atlas "OHDSI Atlas GitHub Repository")
-  * [Atlas Docker Hub container image](https://hub.docker.com/r/ohdsi/ohdsi-atlas/ "OHDSI Atlas Docker Image Repository")
+  * [Atlas Docker Hub container image](https://hub.docker.com/r/ohdsi/atlas/ "OHDSI Atlas Docker Image Repository")
   * [WebAPI GitHub repository](https://github.com/OHDSI/WebAPI "OHDSI WebAPI GitHub Repository")
-  * [WebAPI Docker Hub container image](https://hub.docker.com/r/ohdsi/ohdsi-webapi/ "OHDSI WebAPI Docker Image Repository")
+  * [WebAPI Docker Hub container image](https://hub.docker.com/r/ohdsi/webapi/ "OHDSI WebAPI Docker Image Repository")
   * [Atlas application PostgreSQL database GitHub repository](https://github.com/OHDSI/Broadsea-Atlasdb "OHDSI Broadsea Atlas application PostgreSQL database GitHub Repository")
   * [Atlas application PostgreSQL databbase Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-atlasdb/ "OHDSI Broadsea Atlas application PostgreSQL database Docker Image Repository")
 
@@ -31,7 +31,7 @@ This repository contains the Docker Compose file used to launch the OHDSI Broads
 
 Docker Engine & Docker Compose are installed together as part of "Docker Toolbox" or "Docker for Windows" or "Docker for Mac". "Docker for Windows" or "Docker for Mac" are preferred over "Docker Toolbox" for improved performance but "Docker Toolbox" is also supported.
 
-## Broadsea - Getting Started
+## Broadsea - Quick Start
 
 * Download and install Docker. See the installation instructions at the [Docker Web Site](https://docs.docker.com/engine/installation/ "Install Docker")
 * git clone this GitHub repo:
