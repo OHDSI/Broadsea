@@ -10,26 +10,22 @@ This repository contains the Docker Compose file used to launch the OHDSI Broads
 
 * OHDSI R HADES - in RStudio Server
   * [OHDSI Broadsea R HADES GitHub repository](https://github.com/OHDSI/Broadsea-Hades/ "OHDSI Broadsea R HADES GitHub Repository")
-  * [OHDSI Broadsea R HADES Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-hades/ "OHDSI Broadsea HADES Docker Image Repository")  
+  * [OHDSI Broadsea R HADES Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-hades "OHDSI Broadsea HADES Docker Image Repository")  
 
 * OHDSI Atlas - including WebAPI REST services
   * [Atlas GitHub repository](https://github.com/OHDSI/Atlas "OHDSI Atlas GitHub Repository")
-  * [Atlas Docker Hub container image](https://hub.docker.com/r/ohdsi/atlas/ "OHDSI Atlas Docker Image Repository")
+  * [Atlas Docker Hub container image](https://hub.docker.com/r/ohdsi/atlas "OHDSI Atlas Docker Image Repository")
   * [WebAPI GitHub repository](https://github.com/OHDSI/WebAPI "OHDSI WebAPI GitHub Repository")
-  * [WebAPI Docker Hub container image](https://hub.docker.com/r/ohdsi/webapi/ "OHDSI WebAPI Docker Image Repository")
+  * [WebAPI Docker Hub container image](https://hub.docker.com/r/ohdsi/webapi "OHDSI WebAPI Docker Image Repository")
   * [Atlas application PostgreSQL database GitHub repository](https://github.com/OHDSI/Broadsea-Atlasdb "OHDSI Broadsea Atlas application PostgreSQL database GitHub Repository")
-  * [Atlas application PostgreSQL databbase Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-atlasdb/ "OHDSI Broadsea Atlas application PostgreSQL database Docker Image Repository")
+  * [Atlas application PostgreSQL databbase Docker Hub container image](https://hub.docker.com/repository/docker/ohdsi/broadsea-atlasdb "OHDSI Broadsea Atlas application PostgreSQL database Docker Image Repository")
 
 
 ### Broadsea Dependencies
 
-* Docker (Version 1.11 or higher) 
- * Docker Engine
- * Docker Compose
+* Docker
 * Git
 * Chrome web browser
-
-Docker Engine & Docker Compose are installed together as part of "Docker Toolbox" or "Docker for Windows" or "Docker for Mac". "Docker for Windows" or "Docker for Mac" are preferred over "Docker Toolbox" for improved performance but "Docker Toolbox" is also supported.
 
 ## Broadsea - Quick Start
 
@@ -38,13 +34,13 @@ Docker Engine & Docker Compose are installed together as part of "Docker Toolbox
 ```
 https://github.com/OHDSI/Broadsea.git
 ```
-* In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers: (Wait up to one minute for the Docker containers to start)
+* In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers: (wait up to one minute for the Docker containers to start)
 ```
 docker-compose up -d
 ```
 * In your Chrome browser open the URL: "http://127.0.0.1/broadsea"
 * Click on the Atlas link to open Atlas in a new browser window
-* Clink on the Hades link to open HADES (RStudio) in a new browser window.
+* Click on the Hades link to open HADES (RStudio) in a new browser window.
   * The RStudio userid is 'ohdsi' and the password is 'mypass'  
 
 
