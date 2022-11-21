@@ -1,4 +1,4 @@
-# OHDSI Broadsea
+# OHDSI Broadsea 2.0
 
 ## Introduction
 

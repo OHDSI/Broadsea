@@ -1,0 +1,47 @@
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+hr {
+    margin: 20px 35px;
+}
+body {
+    font-family: 'Open Sans';
+    padding-top: 70px;
+}
+.item {
+    width: 100%;
+    text-align: center;
+    margin: 15px 0 15px 0;
+    padding: 5px 0;
+    border-radius: 5px;
+    opacity: 0.8;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.item:hover {
+    box-shadow: 0 0 1px #777777 inset;
+    opacity: 1;
+    cursor: pointer;
+}
+.profile {
+    border-radius: 50%;
+    margin: 5px auto;
+    box-shadow: 5px 5px 15px -10px rgba(0,0,0,0.75);
+    display: table;
+    width: 65%;
+}
+.link {
+    text-transform: capitalize;
+    color: #555555;
+    white-space: nowrap;
+}
+a:hover, a:visited, a:link, a:active
+{
+    text-decoration: none;
+    color: #555555;
+}
+.description {
+    color: #797979;
+    font-style: italic;
+    margin-top: 10px;
+}

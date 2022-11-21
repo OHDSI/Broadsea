@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!--
+     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    -->Y
+
+    <title>OHDSI Broadsea Applications</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+    <link rel="stylesheet" type="test/css" src="style.css">
+
+    <style>
+
+        .navbar {
+            background-color: #000;
+            border: none;
+        }
+        .navbar-header > img {
+            height: 50px;
+            padding: 5px;
+            float: left;
+        }
+        .navbar-brand {
+            color: #999;
+            padding: 15px 0 0 20px;
+        }
+        .navbar-brand:hover {
+            color: #999;
+        }
+        .navbar-brand > img {
+            height: 100%;
+            padding: 0 10px 0 0;
+            width: auto;
+            display: inline-block;
+        }
+    </style>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-fixed-top navbar-light bg-light">
+        <div class="container">
+            <div class="navbar-header">
+                <img src="http://127.0.0.1/broadsea/ohdsi-logo.png" alt="Observational Health Data Sciences and Informatics" width="50" height="50">
+                <span class="navbar-brand">
+                    <p>OHDSI Broadsea 2.0</p>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+
+      <hr>
+      <hr>
+
+      <div class="row">
+        <div class="col-sm">
+          <div class="col-sm-2">
+            <p><img src="http://127.0.0.1/broadsea/atlas.png" alt="Health Analytics Data to Evidence Suite" width="50" height="50"></p>
+            <p class="description"><a class="link" href="http://127.0.0.1/atlas/" target="_blank">Atlas</a></p>
+          </div>
+        </div>
+        <div class="col-sm">
+          <div class="col-sm-12">
+<p class="description">ATLAS is an open source software tool for researchers to conduct scientific analyses on standardized observational data converted to the OMOP Common Data Model V5. Researchers can create cohorts by defining groups of people based on an exposure to a drug or diagnosis of a particular condition using healthcare claims data. ATLAS has vocabulary searching of medical concepts to identify people with specific conditions, drug exposures etc. Patient profiles can be viewed within a specific cohort allowing visualization of a particular subject's health care records. Population effect level estimation analyses allows for comparison of two different cohorts and leverages R packages.</p>
+            <hr>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm">
+          <div class="col-sm-2">
+            <p><img src="http://127.0.0.1/broadsea/hades.png" alt="Health Analytics Data to Evidence Suite" width="50" height="50"></p>
+            <p class="description"><a class="link" href="http://127.0.0.1/" target="_blank">Hades</a></p>
+          </div>
+        </div>
+        <div class="col-sm">
+          <div class="col-sm-12">
+<p class="description">HADES (formally known as the OHDSI Methods Library) is a set of open source R packages for large scale analytics, including population characterization, population-level causal effect estimation, and patient-level prediction. The packages offer R functions that together can be used to perform an observation study from data to estimates and supporting statistics, figures, and tables.</p>
+            <hr>
+          </div>
+        </div>
+      </div>
+
+    <!--
+
+      <div class="row">
+        <div class="col-sm">
+          <div class="col-sm-2">
+            <p><img src="http://127.0.0.1/broadsea/perseus.png" alt="Perseus ETL" width="50" height="50"></p>
+            <p class="description"><a class="link" href="http://127.0.0.1/Perseus/" target="_blank">Perseus</a></p>
+          </div>
+        </div>
+        <div class="col-sm">
+          <div class="col-sm-12">
+<p class="description">Perseus is a web-based UI for ETL (extract, transform, and load) design and implementation to convert data into the OMOP Common Data Model (CDM). Additionally, Perseus has embedded tools for searching the OMOP standardized vocabulary, generating documentation for the ETL process, creating code mappings to standard concepts, and performing data quality checks.</p>
+            <hr>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!--
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://cdn.rawgit.com/judesfernando/initial.js/master/dist/initial.min.js"></script>
+
+    <script>
+        $( document ).ready(function() {
+            $('.profile.initial').initial({
+                charCount: 2,
+                fontSize: 35,
+                height: 80,
+                width: 80,
+                fontWeight: 500
+            });
+
+            $('img').error(function(){
+                $(this).remove();
+            });
+        });
+    </script>
+
+</body>
+
+</html>
