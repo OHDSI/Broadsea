@@ -2,19 +2,59 @@
 
 ## Introduction
 
-Broadsea deploys the full OHDSI technology stack (R methods library & web tools), using cross-platform Docker container technology.
+Broadsea runs the core OHDSI technology stack (The Atlas web application, and the Hades R library within RStudio Server), using cross-platform Docker container technology.
 
 [Information on Observational Health Data Sciences and Informatics (OHDSI)](http://www.ohdsi.org/ "OHSDI Web Site")
 
-This repository contains the example Docker Compose files used to launch the Broadsea Docker containers:  
+This repository contains the Docker Compose file used to launch the OHDSI Broadsea Docker containers:
 
-* OHDSI R Methods Library (in RStudio) - maintained by Marc Suchard
- * [Methods Library GitHub repository](https://github.com/OHDSI/Broadsea-MethodsLibrary "OHDSI Broadsea Methods Library GitHub Repository")
- * [Methods Library Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-methodslibrary/ "OHDSI Broadsea Methods Library Docker Image Repository" )  
+* OHDSI R HADES - in RStudio Server
+  * [OHDSI Broadsea R HADES GitHub repository](https://github.com/OHDSI/Broadsea-Hades/ "OHDSI Broadsea R HADES GitHub Repository")
+  * [OHDSI Broadsea R HADES Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-hades/ "OHDSI Broadsea HADES Docker Image Repository")  
 
-* OHDSI Web Applications e.g. Atlas & Calypso (in Apache Tomcat) - maintained by Lee Evans [LTS Computing LLC](http://www.ltscomputingllc.com)
-  * [Web Applications GitHub repository](https://github.com/OHDSI/Broadsea-WebTools "OHDSI Broadsea Web Tools GitHub Repository")
-  * [Web Applications Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-webtools/ "OHDSI Broadsea Web Tools Docker Image Repository")
+* OHDSI Atlas - including WebAPI REST services
+  * [Atlas GitHub repository](https://github.com/OHDSI/Atlas "OHDSI Atlas GitHub Repository")
+  * [Atlas Docker Hub container image](https://hub.docker.com/r/ohdsi/ohdsi-atlas/ "OHDSI Atlas Docker Image Repository")
+  * [WebAPI GitHub repository](https://github.com/OHDSI/WebAPI "OHDSI WebAPI GitHub Repository")
+  * [WebAPI Docker Hub container image](https://hub.docker.com/r/ohdsi/ohdsi-webapi/ "OHDSI WebAPI Docker Image Repository")
+  * [Atlas application PostgreSQL database GitHub repository](https://github.com/OHDSI/Broadsea-Atlasdb "OHDSI Broadsea Atlas application PostgreSQL database GitHub Repository")
+  * [Atlas application PostgreSQL databbase Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-atlasdb/ "OHDSI Broadsea Atlas application PostgreSQL database Docker Image Repository")
+
+
+### Broadsea Dependencies
+
+* Docker (Version 1.11 or higher) 
+ * Docker Engine
+ * Docker Compose
+* Git
+* Chrome web browser
+
+Docker Engine & Docker Compose are installed together as part of "Docker Toolbox" or "Docker for Windows" or "Docker for Mac". "Docker for Windows" or "Docker for Mac" are preferred over "Docker Toolbox" for improved performance but "Docker Toolbox" is also supported.
+
+## Broadsea - Getting Started
+
+* Download and install Docker. See the installation instructions at the [Docker Web Site](https://docs.docker.com/engine/installation/ "Install Docker")
+* git clone this GitHub repo:
+```
+https://github.com/OHDSI/Broadsea.git
+```
+* In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers: (Wait up to one minute for the Docker containers to start)
+```
+docker-compose up -d
+```
+* In your Chrome browser open the URL: "http://127.0.0.1/broadsea"
+* Click on the Atlas link to open Atlas in a new browser window
+* Clink on the Hades link to open HADES (RStudio) in a new browser window.
+  * The RStudio userid is 'ohdsi' and the password is 'mypass'  
+
+
+## Shutdown Broadsea
+You can stop the running Docker containers & remove them (new container instances can be started again later) with this command:
+```
+docker-compose down
+```
+
+----------------
 
 Broadsea can deploy the OHDSI stack on any of the following infrastructure alternatives:
 
@@ -33,90 +73,30 @@ Broadsea deploys the OHDSI technology stack at your local site so you can use it
 
 it can be used for the following scenarios:
 
-* Try-out / demo the OHDSI R packages & web applications
+* Try-out / demo the OHDSI R packages & web applications - Broadsea-Atlasdb contains the following artifacts for demos:
+ * a tiny simulated patient demo dataset called 'Eunomia'
+ * a simple concept set
+ * a simple cohort definition   
 * Run observational studies on your data (including OHDSI Network studies)
 * Run the OHDSI Achilles R package for database profiling, database characterization, data quality assessment on your data & view the reports as tables/charts in the Atlas web application
 * Query OMOP vocabularies using the Atlas web application
-* Create patient cohorts
+* Define and generate patient cohorts
 * Determine study feasibility based on defined criteria
 
-### Broadsea Dependencies
-
-* Docker (Version 1.11 or higher) 
- * Docker Engine
- * Docker Compose
-* OMOP Common Data Model Version 5 database populated with OMOP vocabulary & observational data
-
-Docker Engine & Docker Compose are installed together as part of "Docker Toolbox" or "Docker for Windows" or "Docker for Mac". "Docker for Windows" or "Docker for Mac" are preferred over "Docker Toolbox" for improved performance but "Docker Toolbox" is also supported.
-
-## Quick Start Broadsea Deployment
-
-* Download and install Docker. See the installation instructions at the [Docker Web Site](https://docs.docker.com/engine/installation/ "Install Docker")
-* Copy the example "docker-compose.yml" file for your database (PostgreSQL, Oracle, SQL Server) from this GitHub repository to a directory on your machine. (e.g. The postgresql version of the file is in the postgresql sub-directory of this repository). Note. On Windows machines ensure that the directory path does not contain any spaces. Optionally specify the IP address of your host machine instead of \'\*\' in the statement \' \- security\_origin\=\* \' if you want to enable CORS checking.
-* Copy the example "source_source_daimon.sql" file from this GitHub repository to a directory on your machine. (e.g. The postgresql version of the file is in the postgresql sub-directory of this repository).
-* Edit the example "source_source_daimon.sql" file to specify the database connection strings and database schema prefixes for your database(s). Note. You will run this SQL file manually in a SQL client in a later step.
-* Edit the example Atlas "config-local.js" file to specify the WebAPI URL, otherwise the default is localhost & port 8080.
-* Edit the docker-compose.yml file to specify the following:
- * set the WEBAPI\_URL environment variable to your Docker host machine IP address. If using "Docker Toolbox" use the following command to find your Docker host machine IP address otherwise you can use "localhost":
-```
-docker-machine ip
-```
- * specify the database connection info for your database (for Oracle make sure the schema name is all upper-case) 
-   * database name
-   * database schema name
-   * database table prefix
-   * database user name
-   * database user password
- 
-* Start the Broadsea Docker Containers:
-```
-docker-compose up -d
-```
-* __Only as part of initial configuration:__
- * stop the containers (**docker-compose down**)
- * run your edited "source_source_daimon.sql" file in your database using a SQL client
- * start the containers again (**docker-compose up -d**)  
- 
-* View the status of the containers:
-```
-docker-compose ps
-```
-* **Wait up to a minute for the Broadsea containers to start**.
-* Open the OHDSI RStudio web interface in a web browser at **http://your-docker-host-IP-address>:8787**
-* Open the Atlas OHDSI web application at **http://your-docker-host-ip-address:8080/atlas**
-* Use the below command to stop the running containers & remove them (new container instances can be started again later):
-```
-docker-compose down
-```
-* Run the OHDSI Achilles R package to populate the Atlas reports Achilles statistics database tables:
-
-[Instructions for running OHDSI Achilles](https://github.com/OHDSI/Achilles)
-
-
-The Broadsea Methods Library container includes RStudio Server.  By default it runs with a single user, userid="rstudio", password="rstudio".  **The "rstudio" user home directory only exists within the Docker container and any files saved to that directory will be lost if the container is removed!**  
-
-**To retain the files in the "rstudio" user home directory on the Docker host machine see section: "Sharing/Saving files between RStudio & Docker host machine") later in this guide.**
-
+---------------
 
 ## Troubleshooting
 
+### View the status of the running Docker containers:
+```
+docker-compose ps
+```
+
 ### Viewing The Broadsea Web Tools Log Files
 
-* Find the name of the running Broadsea Web Tools Docker container (the value in the "Names" column):
-```  
-  docker-compose ps
+* Connect to the OHDSI WebAPI container in a bash shell:
 ```
-* Connect to the Broadsea Web Tools container in a bash shell:
-```
-  docker exec -it <broadsea-web-tools-container-name> bash
-```
-* Change directory to the log directory in the running container and view the stderr and stdout log files:
-  
-  The "*" char is the bash shell file name wild card character.
-```
-  cd /var/log/supervisor
-  tail -1000 *stderr*
-  tail -1000 *stdout*
+docker logs ohdsi-webapi
 ```
 
 ## Enabling Atlas security in Broadsea
