@@ -32,7 +32,7 @@ This repository contains the Docker Compose file used to launch the OHDSI Broads
 * Download and install Docker. See the installation instructions at the [Docker Web Site](https://docs.docker.com/engine/installation/ "Install Docker")
 * git clone this GitHub repo:
 ```
-https://github.com/OHDSI/Broadsea.git
+git clone https://github.com/OHDSI/Broadsea.git
 ```
 * In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers: (wait up to one minute for the Docker containers to start)
 ```
