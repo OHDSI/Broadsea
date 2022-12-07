@@ -55,7 +55,7 @@ docker-compose down
 
 Broadsea can deploy the OHDSI stack on any of the following infrastructure alternatives:
 
-* laptop / desktop
+* laptop / desktop - Note: The Broadsea-Hades Docker container (RStudio server with OHDSI HADES R packages) is not currently supported on Non-Intel Mac computers (M1 or M2)
 * internally hosted server
 * cloud provider hosted server
 * cluster of servers (internally or cloud provider hosted)
@@ -89,11 +89,12 @@ it can be used for the following scenarios:
 docker-compose ps
 ```
 
-### Viewing The Broadsea Web Tools Log Files
+### Viewing Atlas/WebAPI and RStudio HADES Log Files
 
-* Connect to the OHDSI WebAPI container in a bash shell:
 ```
+docker logs ohdsi-atlas
 docker logs ohdsi-webapi
+docker logs broadsea-hades
 ```
 
 ## Enabling Atlas security in Broadsea
