@@ -37,7 +37,7 @@ git clone https://github.com/OHDSI/Broadsea.git
 * In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers: (wait up to one minute for the Docker containers to start)
 On Linux you may need to use 'sudo' to run these commands.
 ```
-docker-compose up -d
+docker compose up -d
 ```
 * In your Chrome browser open the URL: "http://127.0.0.1/broadsea"
 * Click on the Atlas link to open Atlas in a new browser window
@@ -48,7 +48,7 @@ docker-compose up -d
 ## Shutdown Broadsea
 You can stop the running Docker containers & remove them (new container instances can be started again later) with this command:
 ```
-docker-compose down
+docker compose down
 ```
 
 ----------------
