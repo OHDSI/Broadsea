@@ -23,7 +23,7 @@ services:
     labels:
       - "traefik.enable=true"
     ports:
-      - "127.0.0.1:80:80"
+      - "${BROADSEA_HOST}:80:80"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
@@ -35,7 +35,7 @@ services:
       - ./broadsea-content:/usr/share/nginx/html/broadsea:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.nginx.rule=Host(`127.0.0.1`) && PathPrefix(`/broadsea`)"
+      - "traefik.http.routers.nginx.rule=Host(`${BROADSEA_HOST}`) && PathPrefix(`/broadsea`)"
       - "traefik.http.routers.nginx.entrypoints=web"
 
   broadsea-hades:
@@ -49,7 +49,7 @@ services:
       - rstudio-tmp-data:/tmp
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.broadsea-hades.rule=Host(`127.0.0.1`) && PathPrefix(`/`)"
+      - "traefik.http.routers.broadsea-hades.rule=Host(`${BROADSEA_HOST}`) && PathPrefix(`/`)"
       - "traefik.http.routers.broadsea-hades.entrypoints=web"
       - "traefik.http.services.broadsea-hades.loadbalancer.server.port=8787"
     ports:
@@ -63,12 +63,12 @@ services:
     ipc: none
     privileged: false
     environment:
-      WEBAPI_URL: "http://127.0.0.1/WebAPI/"
+      WEBAPI_URL: "http://${BROADSEA_HOST}/WebAPI/"
     depends_on:
       - ohdsi-webapi
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ohdsi-atlas.rule=Host(`127.0.0.1`) && PathPrefix(`/atlas`)"
+      - "traefik.http.routers.ohdsi-atlas.rule=Host(`${BROADSEA_HOST}`) && PathPrefix(`/atlas`)"
       - "traefik.http.routers.ohdsi-atlas.entrypoints=web"
 
   ohdsi-webapi:
@@ -101,12 +101,12 @@ services:
       flyway_baselineVersionAsString: "2.2.5.20180212152023"  # this env var is case sensitive
       FLYWAY_BASELINEDESCRIPTION: Base Migration
       SECURITY_CORS_ENABLED: "true"
-      SECURITY_ORIGIN: "http://127.0.0.1"
+      SECURITY_ORIGIN: "http://${BROADSEA_HOST}"
     depends_on:
       - broadsea-atlasdb
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ohdsi-webapi.rule=Host(`127.0.0.1`) && PathPrefix(`/WebAPI`)"
+      - "traefik.http.routers.ohdsi-webapi.rule=Host(`${BROADSEA_HOST}`) && PathPrefix(`/WebAPI`)"
       - "traefik.http.routers.ohdsi-webapi.entrypoints=web"
 
   broadsea-atlasdb:
