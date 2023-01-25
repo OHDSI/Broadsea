@@ -34,12 +34,13 @@ This repository contains the Docker Compose file used to launch the OHDSI Broads
 ```
 git clone https://github.com/OHDSI/Broadsea.git
 ```
-* In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers: (wait up to one minute for the Docker containers to start)
-On Linux you may need to use 'sudo' to run these commands.
+* In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers: (wait up to one minute for the Docker containers to start) using the below commands.
+* (Replace ```<host-ip-address>``` with the actual host IP address. On Linux you may need to use 'sudo' to run these commands).
 ```
+export BROADSEA_HOST=<host ip address>
 docker compose up -d
 ```
-* In your Chrome browser open the URL: "http://127.0.0.1/broadsea"
+* In your Chrome browser open the URL: ```"http://<host-ip-address>/broadsea"```
 * Click on the Atlas link to open Atlas in a new browser window
 * Click on the Hades link to open HADES (RStudio) in a new browser window.
   * The RStudio userid is 'ohdsi' and the password is 'mypass'  
