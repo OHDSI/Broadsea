@@ -34,22 +34,26 @@ This repository contains the Docker Compose file used to launch the OHDSI Broads
 ```
 git clone https://github.com/OHDSI/Broadsea.git
 ```
-* In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers: (wait up to one minute for the Docker containers to start) using the below commands.
-* (Replace ```<host-ip-address>``` with the actual host IP address. On Linux you may need to use 'sudo' to run these commands).
+* In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers using the below command. On Linux you may need to use 'sudo' to run this command. Wait up to one minute for the Docker containers to start.
 ```
-export BROADSEA_HOST=<host ip address>
 docker compose up -d
 ```
-* In your Chrome browser open the URL: ```"http://<host-ip-address>/broadsea"```
+* In the Chrome browser open the URL: ```"http://127.0.0.1/broadsea"```
 * Click on the Atlas link to open Atlas in a new browser window
 * Click on the Hades link to open HADES (RStudio) in a new browser window.
   * The RStudio userid is 'ohdsi' and the password is 'mypass'  
-
 
 ## Shutdown Broadsea
 You can stop the running Docker containers & remove them (new container instances can be started again later) with this command:
 ```
 docker compose down
+```
+
+## Run Broadsea on a remote server
+Follow the same process as the above quick start but specify the IP address of the remote server in the .env file and the URL.
+```
+Edit the .env file replacing the local host IP address '127.0.0.1' with the remote server host IP address. 
+In the Chrome browser open the URL: http://<host-ip-address>/broadsea (using the remote server host IP address as the '<host-ip-address>').
 ```
 
 ----------------
