@@ -34,9 +34,9 @@ This repository contains the Docker Compose file used to launch the OHDSI Broads
 ```
 git clone https://github.com/OHDSI/Broadsea.git
 ```
-* In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers using the below command. On Linux you may need to use 'sudo' to run this command. Wait up to one minute for the Docker containers to start.
+* In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers using the below command. On Linux you may need to use 'sudo' to run this command. Wait up to one minute for the Docker containers to start. The docker compose pull command ensures that the latest released versions of the OHDSI ATLAS and OHDSI WebAPI docker containers are downloaded.
 ```
-docker compose up -d
+docker compose pull && docker compose up -d
 ```
 * In the Chrome browser open the URL: ```"http://127.0.0.1/broadsea"```
 * Click on the Atlas link to open Atlas in a new browser window
