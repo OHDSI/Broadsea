@@ -157,3 +157,13 @@ services:
       broadsea-solr:
         condition: service_healthy
     command: curl -d "vocab_database_schema=${VOCAB_DATABASE_SCHEMA}" -X POST http://broadsea-solr:8983/solr/${VOCAB_VERSION}/dataimport?command=full-import&entity=concept
+
+  broadsea-ares:
+    profiles: [ "ares" ]
+    container_name: broadsea-ares
+    build:
+      context: https://github.com/alondhe/Ares.git#docker # TODO: Use OHDSI main branch, then eventually Docker Hub image
+    volumes:
+      - ./data:/usr/share/nginx/html/ares/data:ro
+    labels:
+      - "traefik.enable=true"

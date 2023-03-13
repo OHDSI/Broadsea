@@ -38,6 +38,11 @@ http:
       service: "broadsea-solr"
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/solr`)'
 
+    broadsea-ares:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: "broadsea-ares"
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/ares`)'
+
   services:
     traefik:
       loadBalancer:
@@ -68,3 +73,8 @@ http:
       loadBalancer:
         servers:
           - url: http://broadsea-solr:8983
+
+    broadsea-ares:
+      loadBalancer:
+        servers:
+          - url: http://broadsea-ares
