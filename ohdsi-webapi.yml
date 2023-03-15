@@ -32,7 +32,7 @@ services:
       FLYWAY_TABLE: schema_history
       flyway_baselineVersionAsString: "2.2.5.20180212152023"  # this env var is case sensitive
       FLYWAY_BASELINEDESCRIPTION: Base Migration
-      SECURITY_CORS_ENABLED: true
+      SECURITY_CORS_ENABLED: "true"
       SECURITY_ORIGIN: "${HTTP_TYPE}://${BROADSEA_HOST}"
       SOLR_ENDPOINT: "${SOLR_ENDPOINT}"
 
