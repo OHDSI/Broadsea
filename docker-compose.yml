@@ -30,6 +30,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
   broadsea-content:
+    profiles: [ "default", "content" ]
     container_name: broadsea-content
     image: nginx
     restart: unless-stopped
@@ -39,11 +40,12 @@ services:
       - "traefik.enable=true"
 
   broadsea-hades:
+    profiles: [ "default", "hades" ]
     container_name: broadsea-hades
     image: ohdsi/broadsea-hades:4.2.1
     environment:
-      - USER=ohdsi
-      - PASSWORD=mypass
+      - USER=${HADES_USER}
+      - PASSWORD=${HADES_PASSWORD}
     volumes:
       - rstudio-home-data:/home
       - rstudio-tmp-data:/tmp
@@ -53,57 +55,39 @@ services:
       - "8787:8787"
       - "6311:6311"
 
-  ohdsi-atlas:
-    container_name: ohdsi-atlas
-    image: docker.io/ohdsi/atlas:latest
-    restart: unless-stopped
-    ipc: none
-    privileged: false
-    environment:
-      WEBAPI_URL: "${HTTP_TYPE}://${BROADSEA_HOST}/WebAPI/"
-    depends_on:
-      - ohdsi-webapi
-    labels:
-      - "traefik.enable=true"
-
-  ohdsi-webapi:
-    container_name: ohdsi-webapi
+  ohdsi-webapi-from-image:
+    profiles: [ "default", "webapi-from-image" ]
     image: docker.io/ohdsi/webapi:latest
-    restart: unless-stopped
-    ipc: none
-    read_only: true
-    tmpfs:
-      - /tmp
-    privileged: false
-    environment:
-      DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
-      DATASOURCE_URL: jdbc:postgresql://broadsea-atlasdb:5432/postgres
-      DATASOURCE_USERNAME: postgres
-      DATASOURCE_PASSWORD: mypass
-      DATASOURCE_OHDSI_SCHEMA: webapi
-      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
-      SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA: webapi
-      SPRING_BATCH_REPOSITORY_TABLEPREFIX: webapi.BATCH_
-      FLYWAY_DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
-      FLYWAY_DATASOURCE_URL: jdbc:postgresql://broadsea-atlasdb:5432/postgres
-      FLYWAY_DATASOURCE_USERNAME: postgres
-      FLYWAY_DATASOURCE_PASSWORD: postgres
-      FLYWAY_LOCATIONS: classpath:db/migration/postgresql
-      FLYWAY_PLACEHOLDERS_OHDSISCHEMA: webapi
-      FLYWAY_SCHEMAS: webapi
-      FLYWAY_BASELINEONMIGRATE: "true"
-      FLYWAY_TABLE: schema_history
-      flyway_baselineVersionAsString: "2.2.5.20180212152023"  # this env var is case sensitive
-      FLYWAY_BASELINEDESCRIPTION: Base Migration
-      SECURITY_CORS_ENABLED: "true"
-      SECURITY_ORIGIN: "${HTTP_TYPE}://${BROADSEA_HOST}"
-      SOLR_ENDPOINT: http://broadsea-solr:8983/solr
-    depends_on:
-      - broadsea-atlasdb
-    labels:
-      - "traefik.enable=true"
+    extends: 
+      file: "ohdsi-webapi.yml"
+      service: ohdsi-webapi
+
+  ohdsi-atlas-from-image:
+    profiles: [ "default", "atlas-from-image" ]
+    image: docker.io/ohdsi/atlas:latest
+    extends: 
+      file: "ohdsi-atlas.yml"
+      service: ohdsi-atlas
+
+  ohdsi-webapi-from-git:
+    profiles: [ "webapi-from-git" ]
+    build: 
+      context: ${WEBAPI_GITHUB_URL}
+      args:
+        GIT_BRANCH: "unknown -DskipTests=true -DskipUnitTests=true"
+    extends: 
+      file: "ohdsi-webapi.yml"
+      service: ohdsi-webapi
+
+  ohdsi-atlas-from-git:
+    profiles: [ "atlas-from-git" ]
+    build: ${ATLAS_GITHUB_URL}
+    extends: 
+      file: "ohdsi-atlas.yml"
+      service: ohdsi-atlas
 
   broadsea-atlasdb:
+    profiles: [ "default", "atlasdb" ]
     image: ohdsi/broadsea-atlasdb:2.0.0
     container_name: broadsea-atlasdb
     cpus: 2
@@ -122,7 +106,7 @@ services:
       retries: 10
 
   broadsea-solr:
-    profiles: ["solr-no-import", "solr-with-import"]
+    profiles: [ "solr-no-import", "solr-with-import" ]
     container_name: solr
     image: solr:8.11.1
     environment: 
@@ -144,26 +128,27 @@ services:
       - ${VOCAB_VERSION}
       - /tmp/solr_config
     healthcheck:
-      test: curl --fail http://${BROADSEA_HOST}:8983 || exit 1
+      test: curl --fail http://broadsea-solr:8983 || exit 1
       interval: 10s
       timeout: 5s
       retries: 5
 
   broadsea-solr-run-import:
-    profiles: ["solr-with-import"]
+    profiles: [ "solr-with-import" ]
     container_name: solr-run-import
     image: curlimages/curl
     depends_on:
       broadsea-solr:
         condition: service_healthy
-    command: curl -d "vocab_database_schema=${VOCAB_DATABASE_SCHEMA}" -X POST http://broadsea-solr:8983/solr/${VOCAB_VERSION}/dataimport?command=full-import&entity=concept
+    command: curl -d "vocab_database_schema=${VOCAB_DATABASE_SCHEMA}" \ 
+             -X POST http://broadsea-solr:8983/solr/${VOCAB_VERSION}/dataimport?command=full-import&entity=concept
 
   broadsea-ares:
     profiles: [ "ares" ]
     container_name: broadsea-ares
     build:
-      context: https://github.com/alondhe/Ares.git#docker # TODO: Use OHDSI main branch, then eventually Docker Hub image
+      context: https://github.com/alondhe/Ares.git#docker
     volumes:
-      - ./data:/usr/share/nginx/html/ares/data:ro
+      - ./ares_data:/usr/share/nginx/html/ares/data:ro
     labels:
       - "traefik.enable=true"
