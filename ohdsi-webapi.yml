@@ -4,7 +4,7 @@ services:
 
   ohdsi-webapi:
     container_name: ohdsi-webapi
-    platform: linux/amd64
+    platform: ${DOCKER_ARCH}
     restart: unless-stopped
     ipc: none
     read_only: true
@@ -36,6 +36,8 @@ services:
       SECURITY_ORIGIN: "${HTTP_TYPE}://${BROADSEA_HOST}"
       SOLR_ENDPOINT: "${SOLR_ENDPOINT}"
 
+      # Security env variables - Basic
+
       # Security env variables - LDAP
       SECURITY_LDAP_DN: ${SECURITY_LDAP_DN}
       SECURITY_LDAP_URL: ${SECURITY_LDAP_URL}
@@ -44,6 +46,18 @@ services:
       SECURITY_LDAP_SYSTEM_PASSWORD: ${SECURITY_LDAP_SYSTEM_PASSWORD}
       SECURITY_LDAP_SEARCHSTRING: ${SECURITY_LDAP_SEARCHSTRING}
       SECURITY_LDAP_SEARCHBASE: ${SECURITY_LDAP_SEARCHBASE}
+
+      # Security env variables - AD
+
+      # Security env variables - Kerberos
+
+      # Security env variables - OAuth
+
+      # Security env variables - OpenID
+
+      # Security env variables - IAP
+
+      
 
       # Security env variables - CAS
       SECURITY_OAUTH_CALLBACK_UI: ${HTTP_TYPE}://${BROADSEA_HOST}/atlas/#/welcome

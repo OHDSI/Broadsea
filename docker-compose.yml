@@ -43,6 +43,7 @@ services:
     profiles: [ "default", "hades" ]
     container_name: broadsea-hades
     image: ohdsi/broadsea-hades:4.2.1
+    platform: ${DOCKER_ARCH}
     environment:
       - USER=${HADES_USER}
       - PASSWORD=${HADES_PASSWORD}
@@ -74,7 +75,7 @@ services:
     build: 
       context: ${WEBAPI_GITHUB_URL}
       args:
-        GIT_BRANCH: "unknown -DskipTests=true -DskipUnitTests=true"
+        GIT_BRANCH: "unknown -DskipTests=true -DskipUnitTests=true" # hack, need to get a MAVEN_PARAMS arg added to WebAPI Dockerfile
     extends: 
       file: "ohdsi-webapi.yml"
       service: ohdsi-webapi
@@ -90,6 +91,7 @@ services:
     profiles: [ "default", "atlasdb" ]
     image: ohdsi/broadsea-atlasdb:2.0.0
     container_name: broadsea-atlasdb
+    platform: ${DOCKER_ARCH}
     cpus: 2
     mem_limit: "2G"
     environment:
@@ -105,9 +107,9 @@ services:
       timeout: 5s
       retries: 10
 
-  broadsea-solr:
-    profiles: [ "solr-no-import", "solr-with-import" ]
-    container_name: solr
+  broadsea-solr-vocab:
+    profiles: [ "solr-vocab-no-import", "solr-vocab-with-import" ]
+    container_name: solr-vocab
     image: solr:8.11.1
     environment: 
       SOLR_OPTS: 
@@ -128,20 +130,20 @@ services:
       - ${VOCAB_VERSION}
       - /tmp/solr_config
     healthcheck:
-      test: curl --fail http://broadsea-solr:8983 || exit 1
+      test: curl --fail http://broadsea-solr-vocab:8983 || exit 1
       interval: 10s
       timeout: 5s
       retries: 5
 
-  broadsea-solr-run-import:
-    profiles: [ "solr-with-import" ]
-    container_name: solr-run-import
+  broadsea-solr-vocab-run-import:
+    profiles: [ "solr-vocab-with-import" ]
+    container_name: solr-vocab-run-import
     image: curlimages/curl
     depends_on:
-      broadsea-solr:
+      broadsea-solr-vocab:
         condition: service_healthy
     command: curl -d "vocab_database_schema=${VOCAB_DATABASE_SCHEMA}" \ 
-             -X POST http://broadsea-solr:8983/solr/${VOCAB_VERSION}/dataimport?command=full-import&entity=concept
+             -X POST http://broadsea-solr-vocab:8983/solr/${VOCAB_VERSION}/dataimport?command=full-import&entity=concept
 
   broadsea-ares:
     profiles: [ "ares" ]

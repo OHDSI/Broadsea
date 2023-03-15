@@ -33,9 +33,9 @@ http:
       service: "broadsea-hades"
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/`)'
 
-    broadsea-solr:
+    broadsea-solr-vocab:
       entryPoints: '{{ env "HTTP_TYPE" }}'
-      service: "broadsea-solr"
+      service: "broadsea-solr-vocab"
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/solr`)'
 
     broadsea-ares:
@@ -69,10 +69,10 @@ http:
         servers:
           - url: http://broadsea-hades:8787
 
-    broadsea-solr:
+    broadsea-solr-vocab:
       loadBalancer:
         servers:
-          - url: http://broadsea-solr:8983
+          - url: http://broadsea-solr-vocab:8983
 
     broadsea-ares:
       loadBalancer:

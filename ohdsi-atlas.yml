@@ -4,7 +4,10 @@ services:
 
   ohdsi-atlas:
     container_name: ohdsi-atlas
-    platform: linux/amd64
+    platform: ${DOCKER_ARCH}
+    restart: unless-stopped
+    ipc: none
+    privileged: false
     environment:
       WEBAPI_URL: ${BROADSEA_HOST}/WebAPI
       ATLAS_INSTANCE_NAME: ${ATLAS_INSTANCE_NAME}
@@ -20,8 +23,5 @@ services:
       - ./atlas/config-local-template.js:/tmp/config-local.js:ro
       - ./atlas/envsubst.sh:/tmp/envsubst.sh:ro
     entrypoint: ["sh", "/tmp/envsubst.sh" ]
-    restart: unless-stopped
-    ipc: none
-    privileged: false
     labels:
       - "traefik.enable=true"
