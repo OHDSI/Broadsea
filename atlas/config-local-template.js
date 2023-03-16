@@ -8,6 +8,7 @@ define([], function () {
 	var baseUrl = getUrl.protocol + "//" + getUrl.host;
 	
 	// WebAPI
+	configLocal.webAPIRoot = baseUrl + '/WebAPI/';
 	configLocal.api = {
 		name: "$ATLAS_INSTANCE_NAME",
 		url: baseUrl + '/WebAPI/'

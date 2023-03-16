@@ -56,6 +56,7 @@ services:
       - "8787:8787"
       - "6311:6311"
 
+  # WebAPI and Atlas services based on the standard Docker Hub images -------------
   ohdsi-webapi-from-image:
     profiles: [ "default", "webapi-from-image" ]
     image: docker.io/ohdsi/webapi:latest
@@ -70,12 +71,13 @@ services:
       file: "ohdsi-atlas.yml"
       service: ohdsi-atlas
 
+  # WebAPI and Atlas services based on git repo (only for ) -------------
   ohdsi-webapi-from-git:
     profiles: [ "webapi-from-git" ]
     build: 
       context: ${WEBAPI_GITHUB_URL}
       args:
-        GIT_BRANCH: "unknown -DskipTests=true -DskipUnitTests=true" # hack, need to get a MAVEN_PARAMS arg added to WebAPI Dockerfile
+        GIT_BRANCH: "unknown -DskipTests=true -DskipUnitTests=true" # hack, pending WebAPI PR to add MAVEN_PARAMS arg
     extends: 
       file: "ohdsi-webapi.yml"
       service: ohdsi-webapi
@@ -86,6 +88,8 @@ services:
     extends: 
       file: "ohdsi-atlas.yml"
       service: ohdsi-atlas
+
+  # -----------------------------------------------------------------
 
   broadsea-atlasdb:
     profiles: [ "default", "atlasdb" ]
