@@ -11,6 +11,8 @@ services:
     tmpfs:
       - /tmp
     privileged: false
+    volumes:
+      - ./cacerts:/usr/local/openjdk-8/lib/security/cacerts # add a cacerts file if using LDAPS
     environment:
       SECURITY_PROVIDER: ${WEBAPI_SECURITY_PROVIDER}
       DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
