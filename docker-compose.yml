@@ -21,8 +21,8 @@ services:
     labels:
      - "traefik.enable=true"
     ports:
-      - "${BROADSEA_HOST}:80:80"
-      - "${BROADSEA_HOST}:443:443"
+      - "80:80"
+      - "443:443"
     volumes:
       - ./traefik/traefik-${HTTP_TYPE}.yml:/etc/traefik/traefik.yml:ro
       - ./traefik/config.yml:/etc/traefik/config.yml:ro
@@ -71,7 +71,7 @@ services:
       file: "ohdsi-atlas.yml"
       service: ohdsi-atlas
 
-  # WebAPI and Atlas services based on git repo (only for ) -------------
+  # WebAPI and Atlas services based on git repo (for developers) -------------
   ohdsi-webapi-from-git:
     profiles: [ "webapi-from-git" ]
     build: 
