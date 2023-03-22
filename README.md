@@ -1,8 +1,8 @@
-# OHDSI Broadsea 3.0 (Documentation Pending)
+# OHDSI Broadsea 3.0
 
 ## Introduction
 
-Broadsea runs the core OHDSI technology stack (The Atlas web application, and the Hades R library within RStudio Server), using cross-platform Docker container technology.
+Broadsea runs the core OHDSI technology stack using cross-platform Docker container technology.
 
 [Information on Observational Health Data Sciences and Informatics (OHDSI)](http://www.ohdsi.org/ "OHSDI Web Site")
 
@@ -19,13 +19,20 @@ This repository contains the Docker Compose file used to launch the OHDSI Broads
   * [WebAPI Docker Hub container image](https://hub.docker.com/r/ohdsi/webapi "OHDSI WebAPI Docker Image Repository")
   * [Atlas application PostgreSQL database GitHub repository](https://github.com/OHDSI/Broadsea-Atlasdb "OHDSI Broadsea Atlas application PostgreSQL database GitHub Repository")
   * [Atlas application PostgreSQL databbase Docker Hub container image](https://hub.docker.com/repository/docker/ohdsi/broadsea-atlasdb "OHDSI Broadsea Atlas application PostgreSQL database Docker Image Repository")
+  * SOLR based OMOP Vocab search
 
+* OHDSI Ares
+  * [Ares GitHub repository](https://github.com/OHDSI/Ares "OHDSI Ares GitHub Repository")
 
 ### Broadsea Dependencies
 
 * Docker
 * Git
-* Chrome web browser
+* Chromium-based web browser (Chrome, Edge, etc.)
+
+### Mac Silicon
+
+If using Mac Silicon (M1, M2), set the DOCKER_ARCH variable in Section 1 of the .env file to "linux/arm64"
 
 ## Broadsea - Quick start
 
@@ -36,12 +43,98 @@ git clone https://github.com/OHDSI/Broadsea.git
 ```
 * In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers using the below command. On Linux you may need to use 'sudo' to run this command. Wait up to one minute for the Docker containers to start. The docker compose pull command ensures that the latest released versions of the OHDSI ATLAS and OHDSI WebAPI docker containers are downloaded.
 ```
-docker compose pull && docker compose up -d
+docker compose pull && docker-compose --profile default up -d
 ```
-* In the Chrome browser open the URL: ```"http://127.0.0.1/broadsea"```
+* In your web browser open the URL: ```"http://127.0.0.1/broadsea"```
 * Click on the Atlas link to open Atlas in a new browser window
 * Click on the Hades link to open HADES (RStudio) in a new browser window.
   * The RStudio userid is 'ohdsi' and the password is 'mypass'  
+
+## Broadsea - Advanced Usage
+
+### .env file
+
+The .env file that comes with Broadsea has default and sample values. For advanced use, modify the values as appropriate, as covered below.
+
+#### Run Broadsea on a remote server
+
+Specify the IP address or host name of the remote server in the BROADSEA_HOST environment variable.
+
+### Docker profiles
+
+This docker compose file makes use of [Docker profiles](https://docs.docker.com/compose/profiles/ "Docker Profiles") to allow for either a full default deployment ("default"), or a more a-la-carte approach in which you can pick and choose which services you'd like to deploy.
+
+You can use this syntax for this approach, substituting profile names in:
+
+```
+docker compose pull && docker-compose --profile profile1 --profile profile2 .... up -d
+```
+
+Here are the profiles available:
+
+- default
+  - atlas ("/atlas")
+  - WebAPI ("/WebAPI")
+  - AtlasDB (a Postgres instance for Atlas/WebAPI)
+  - HADES ("/")
+  - A splash page for Broadsea ("/broadsea")
+
+- atlas-from-image
+  - Pulls the standard Atlas image from Docker Hub
+
+- atlas-from-git
+  - Builds Atlas from a Git repo
+  - Useful for testing new versions of Atlas that aren't in Docker Hub
+
+- webapi-from-image:
+  - Pulls the standard WebAPI image from Docker Hub
+
+- webapi-from-git
+  - Builds WebAPI from a Git repo
+  - Useful for testing new versions of WebAPI that aren't in Docker Hub
+
+- atlasdb
+  - Pulls the standard Atlas DB image, a Postgres instance for Atlas/WebAPI
+
+- solr-vocab-no-import
+  - Pulls the standard SOLR image from Docker Hub
+  - Initializes a core for the OMOP Vocabulary specified in the .env file
+  - No data is imported into the core, left to you to run through the SOLR Admin GUI at "/solr"
+
+- solr-vocab-with-import
+  - Pulls the standard SOLR image from Docker Hub
+  - Initializes a core for the OMOP Vocabulary specified in the .env file
+  - Runs the data import for that core
+
+- ares
+  - Builds Ares web app from Ares GitHub repo
+  - Exposes a volume mount point for adding Ares files (see [Ares GitHub IO page](https://ohdsi.github.io/Ares/ "Ares GitHub IO"))
+
+- content
+  - A splash page for Broadsea ("/broadsea")
+
+### SSL
+
+Broadsea uses Traefik as a proxy for all containers within. Traefik can be set up with SSL to enable HTTPS:
+
+1. Add your crt and key files to a ./certs folder
+2. In Section 1 of the .env file, change the HTTP_TYPE to "https"
+
+### Atlas/WebAPI Security
+
+To enable a security provider for authentication and identity management in Atlas/WebAPI, review and fill out Sections 4 and 5 in the .env file.
+
+### Atlas/WebAPI from Git repo
+
+To build either Atlas or WebAPI from a git repo instead of from Docker Hub, use Section 6 to specify the Git repo paths. Branches and commits can be in the URL after a "#".
+
+### SOLR Vocab
+
+To enable the use of SOLR for fast OMOP Vocab search in Atlas, review and fill out Section 7 of the .env file. You can either point to an existing SOLR instance, or have Broadsea build one.
+
+### HADES RStudio default login
+
+The credentials for the RStudio user can be established in Section 8 of the .env file.
 
 ## Shutdown Broadsea
 You can stop the running Docker containers & remove them (new container instances can be started again later) with this command:
@@ -49,14 +142,8 @@ You can stop the running Docker containers & remove them (new container instance
 docker compose down
 ```
 
-## Run Broadsea on a remote server
-Follow the same process as the above quick start but specify the IP address of the remote server in the .env file and the URL.
-```
-Edit the .env file replacing the local host IP address '127.0.0.1' with the remote server host IP address. 
-In the Chrome browser open the URL: http://<host-ip-address>/broadsea (using the remote server host IP address as the '<host-ip-address>').
-```
 
-----------------
+## Broadsea Intended Uses
 
 Broadsea can deploy the OHDSI stack on any of the following infrastructure alternatives:
 
@@ -102,50 +189,14 @@ docker logs ohdsi-webapi
 docker logs broadsea-hades
 ```
 
-## Enabling Atlas security in Broadsea
-
-In order to enable Atlas security in Broadsea, the configuration in the config-local.js file and the docker-compose.yml file must be updated. Each Atlas security authentication method has it's own set of configuration values. 
-
-### LDAP authentication
-
-Here is an example showing the javascript code block to add to the config-local.js file for LDAP authentication.
-It is this javascript code that will enable the Atlas Sign In link and the window where the user can enter their user name and password.
-```javascript
- configLocal.userAuthenticationEnabled = true;
- configLocal.acceptanceExpiresInDays = 3650;
-
- configLocal.authProviders = [{
-     		"name": "LDAP Authentication",
-     		"url": "user/login/ldap",
-     		"ajax": true,
-     		"icon": "fa fa-cubes",
-     		"isUseCredentialsForm": true
- }]
- ```
-
-Here is an example showing the configuration variables to add to the docker-compose.yml file environment section for LDAP authentication.
-You will need to update the ldap settings based on your ldap server url and your ldap organizational structure.
-The ldap system username and password are used to connect to the ldap server and perform the search specified in the ldap search string.
-In this example the ldap "commonName" field will be searched for a matching username in the Atlas application Sign In Username field. If a match is found then Atlas will also try to bind to that user using the password in the Atlas application Sign In Password field.
-```
-      - security_enabled=true
-      - security_origin=*
-      - security_provider=AtlasRegularSecurity
-      - security.ldap.dn=cn={0},ou=users,dc=example,dc=org
-      - security.ldap.url=ldap://host.docker.internal:1389
-      - security.ldap.baseDn=ou=users,dc=example,dc=org
-      - security.ldap.system.username=user01
-      - security.ldap.system.password=password1
-      - security.ldap.searchString=(&(objectClass=*)(commonName={0}))
-      - security.ldap.searchBase=ou=users,dc=example,dc=org
-```
-
 ## Hardware/OS Requirements for Installing Docker
 
 ### Mac OS X
 
 Follow the instructions here - [Install Docker for Mac](https://www.docker.com/products/docker#/mac)  
 *Docker for Mac* includes both Docker Engine & Docker Compose
+
+For Mac Silicon, you may need to enable "Use Rosetta for x86/amd64 emulation on Apple Silicon" in the "Features in Development" Settings menu.
 
 ### Mac OS X Requirements
 
@@ -172,7 +223,7 @@ Follow the instructions here - [Install Docker Toolbox on Windows](https://docs.
 
 64bit Windows 7 or higher.  The Hyper-V package must be enabled. The Docker for Windows installer will enable it for you, if needed. (This requires a reboot).
 
-###Linux
+### Linux
 
 Follow the instructions here:  
 [Install Docker for Linux](https://www.docker.com/products/docker#/linux)  
