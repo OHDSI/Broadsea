@@ -118,8 +118,9 @@ Here are the profiles available:
 
 Broadsea uses Traefik as a proxy for all containers within. Traefik can be set up with SSL to enable HTTPS:
 
-1. Add your crt and key files to a ./certs folder
-2. In Section 1 of the .env file, change the HTTP_TYPE to "https"
+1. Obtain a crt and key file. Rename them to "broadsea.crt" and "broadsea.key", respectively.
+2. Add these files to a ./certs folder
+3. In Section 1 of the .env file, change the HTTP_TYPE to "https"
 
 ### Atlas/WebAPI Security
 
