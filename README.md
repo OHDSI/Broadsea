@@ -264,7 +264,7 @@ Any files added to the home/rstudio or site-library sub-directories on the Docke
 
 The Broadsea Methods container RStudio /usr/lib/R/site-library originally contains the "littler" and "rgl" R packages. Volume mapping masks the original files in the directory so you will need to add those 2 packages to your Docker host site-library sub-directory if you need them.
 
-##Other Information
+## Other Information
 
 ### Licensing
 
