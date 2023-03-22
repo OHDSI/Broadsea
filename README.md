@@ -58,7 +58,7 @@ The .env file that comes with Broadsea has default and sample values. For advanc
 
 #### Run Broadsea on a remote server
 
-Specify the IP address or host name of the remote server in the BROADSEA_HOST environment variable.
+In Section 1 of the .env file, set BROADSEA_HOST as the IP address or host name (without http/https) of the remote server.
 
 ### Docker profiles
 
@@ -95,6 +95,7 @@ Here are the profiles available:
 
 - atlasdb
   - Pulls the standard Atlas DB image, a Postgres instance for Atlas/WebAPI
+  - Useful if you do not have an existing Postgres instance for Atlas/WebAPI
 
 - solr-vocab-no-import
   - Pulls the standard SOLR image from Docker Hub
@@ -123,6 +124,10 @@ Broadsea uses Traefik as a proxy for all containers within. Traefik can be set u
 ### Atlas/WebAPI Security
 
 To enable a security provider for authentication and identity management in Atlas/WebAPI, review and fill out Sections 4 and 5 in the .env file.
+
+#### LDAPS (LDAP over SSL or secure LDAP)
+
+To use a secure LDAP instance, add your cacerts file to ./cacerts within the Broadsea directory. WebAPI can then leverage it for LDAPS.
 
 ### Atlas/WebAPI from Git repo
 
