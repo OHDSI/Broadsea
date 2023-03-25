@@ -106,6 +106,7 @@ Here are the profiles available:
   - Pulls the standard SOLR image from Docker Hub
   - Initializes a core for the OMOP Vocabulary specified in the .env file
   - Runs the data import for that core
+  - Once complete, the solr-run-import container will finish with an exit status; you can remove this container
 
 - ares
   - Builds Ares web app from Ares GitHub repo
@@ -113,6 +114,20 @@ Here are the profiles available:
 
 - content
   - A splash page for Broadsea ("/broadsea")
+
+- omop-vocab-pg-load
+  - Using OMOP Vocab files downloaded from Athena, this can load them into a Postgres instance (can be Broadsea's atlasdb or an external one)
+  - Rebuilds the CPTs using the CPT jar file from Athena, with UMLS API Key (see .env file Section 9)
+  - Creates the schema if necessary
+  - Runs copy command for each vocabulary CSV file
+  - Creates all necessary Postgres indices
+  - Once complete, the omop-vocab-load container will finish with an exit status; you can remove this container
+
+- phoebe-pg-load
+  - For Atlas 2.12+, which offers Concept Recommendation options based on the [Phoebe project](https://forums.ohdsi.org/t/phoebe-2-0/17410 "Phoebe Project")
+  - Loads Phoebe files into an existing OMOP Vocabulary hosted in a Postgres instance (can be Broadsea's atlasdb or an external one)
+  - Note: your Atlas instance must use this OMOP Vocabulary as its default vocabulary source in order to use this feature
+  - Once complete, the phoebe-load container will finish with an exit status; you can remove this container
 
 ### SSL
 
@@ -137,6 +152,16 @@ To build either Atlas or WebAPI from a git repo instead of from Docker Hub, use 
 ### SOLR Vocab
 
 To enable the use of SOLR for fast OMOP Vocab search in Atlas, review and fill out Section 7 of the .env file. You can either point to an existing SOLR instance, or have Broadsea build one.
+
+### OMOP Vocab loading
+
+To load a new OMOP Vocabulary into a Postgres schema, review and fill out Section 9 of the .env file. Please note: this service will attempt to run the CPT4 import process for the CONCEPT table, so you will need a UMLS API Key in order to fulfull the UMLS_API_KEY variable (from https://uts.nlm.nih.gov/uts/profile).
+
+The Broadsea atlasdb Postgres instance is listed by default, but you can use an external Postgres instance. You need to copy your Athena downloaded files into ./omop_vocab/files.
+
+### Phoebe Integration for Atlas
+
+With Atlas 2.12.0 and above, a new concept recommendation feature is available, based upon the [Phoebe project](https://forums.ohdsi.org/t/phoebe-2-0/17410 "Phoebe Project"). Review and fill out Section 10 of the .env file to load the concept_recommended table needed for this feature into a Postgres hosted OMOP Vocabulary.
 
 ### HADES RStudio default login
 

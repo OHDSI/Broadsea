@@ -158,3 +158,39 @@ services:
       - ./ares_data:/usr/share/nginx/html/ares/data:ro
     labels:
       - "traefik.enable=true"
+
+
+  broadsea-omop-vocab-load:
+    profiles: [ "omop-vocab-pg-load" ]
+    container_name: omop-vocab-load
+    extends:
+      file: "postgres-load.yml"
+      service: broadsea-postgres-load
+    environment:
+      VOCAB_PG_HOST: ${VOCAB_PG_HOST}
+      VOCAB_PG_DATABASE: ${VOCAB_PG_DATABASE}
+      VOCAB_PG_SCHEMA: ${VOCAB_PG_SCHEMA}
+      VOCAB_PG_USER: ${VOCAB_PG_USER}
+      VOCAB_PG_PASSWORD: ${VOCAB_PG_PASSWORD}
+      UMLS_API_KEY: ${UMLS_API_KEY}
+    volumes:
+      - ./omop_vocab:/tmp
+    entrypoint: ["sh", "/tmp/scripts/load_omop_vocab.sh" ]
+
+
+  broadsea-phoebe-load:
+    profiles: [ "phoebe-pg-load" ]
+    container_name: broadsea-phoebe-load
+    extends:
+      file: "postgres-load.yml"
+      service: broadsea-postgres-load
+    environment:
+      VOCAB_PG_HOST: ${PHOEBE_PG_HOST}
+      VOCAB_PG_DATABASE: ${PHOEBE_PG_DATABASE}
+      VOCAB_PG_SCHEMA: ${PHOEBE_PG_SCHEMA}
+      VOCAB_PG_USER: ${PHOEBE_PG_USER}
+      VOCAB_PG_PASSWORD: ${PHOEBE_PG_PASSWORD}
+    volumes:
+      - ./phoebe:/tmp
+    entrypoint: ["sh", "/tmp/load_phoebe.sh" ]
+    
