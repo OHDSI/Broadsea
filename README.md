@@ -143,7 +143,7 @@ To enable a security provider for authentication and identity management in Atla
 
 #### LDAPS (LDAP over SSL or secure LDAP)
 
-To use a secure LDAP instance, add your cacerts file to ./cacerts within the Broadsea directory. WebAPI can then leverage it for LDAPS.
+To use a secure LDAP instance, overwrite the blank ./cacerts within the Broadsea directory with your own cacerts file. WebAPI can then leverage it for LDAPS.
 
 ### Atlas/WebAPI from Git repo
 
