@@ -2,13 +2,17 @@
 
 set -e
 
-apk add openjdk11
 apk add postgresql-client
 
 cd /tmp/files
-chmod +x ./cpt.sh
-chmod +x ./cpt4.jar
-sh ./cpt.sh $UMLS_API_KEY
+
+if [ -z "$UMLS_API_KEY" ]
+then
+    apk add openjdk11
+    chmod +x ./cpt.sh
+    chmod +x ./cpt4.jar
+    sh ./cpt.sh $UMLS_API_KEY
+fi
 
 PGPASSWORD=$VOCAB_PG_PASSWORD psql -v vocab_schema=$VOCAB_PG_SCHEMA -h $VOCAB_PG_HOST -U $VOCAB_PG_USER -d $VOCAB_PG_DATABASE -a -f /tmp/scripts/omop_vocab_ddl.sql
 
