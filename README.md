@@ -151,7 +151,7 @@ To build either Atlas or WebAPI from a git repo instead of from Docker Hub, use 
 
 ### SOLR Vocab
 
-To enable the use of SOLR for fast OMOP Vocab search in Atlas, review and fill out Section 7 of the .env file. You can either point to an existing SOLR instance, or have Broadsea build one.
+To enable the use of SOLR for fast OMOP Vocab search in Atlas, review and fill out Section 7 of the .env file. You can either point to an existing SOLR instance, or have Broadsea build one. The JDBC jar file is needed in the Broadsea root folder in order for Solr to perform the dataimport step.
 
 ### OMOP Vocab loading
 

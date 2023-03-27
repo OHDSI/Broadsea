@@ -185,11 +185,11 @@ services:
       file: "postgres-load.yml"
       service: broadsea-postgres-load
     environment:
-      VOCAB_PG_HOST: ${PHOEBE_PG_HOST}
-      VOCAB_PG_DATABASE: ${PHOEBE_PG_DATABASE}
-      VOCAB_PG_SCHEMA: ${PHOEBE_PG_SCHEMA}
-      VOCAB_PG_USER: ${PHOEBE_PG_USER}
-      VOCAB_PG_PASSWORD: ${PHOEBE_PG_PASSWORD}
+      PHOEBE_PG_HOST: ${PHOEBE_PG_HOST}
+      PHOEBE_PG_DATABASE: ${PHOEBE_PG_DATABASE}
+      PHOEBE_PG_SCHEMA: ${PHOEBE_PG_SCHEMA}
+      PHOEBE_PG_USER: ${PHOEBE_PG_USER}
+      PHOEBE_PG_PASSWORD: ${PHOEBE_PG_PASSWORD}
     volumes:
       - ./phoebe:/tmp
     entrypoint: ["sh", "/tmp/load_phoebe.sh" ]

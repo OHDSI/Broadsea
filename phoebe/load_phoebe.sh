@@ -6,7 +6,7 @@ apk add postgresql-client
 apk add zip
 
 cd /tmp
-unzip concept_recommended.csv.zip
+unzip -o concept_recommended.csv.zip
 
 PGPASSWORD=$PHOEBE_PG_PASSWORD psql -v vocab_schema=$PHOEBE_PG_SCHEMA -h $PHOEBE_PG_HOST -U $PHOEBE_PG_USER -d $PHOEBE_PG_DATABASE -a -f concept_recommended.sql
 
