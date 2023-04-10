@@ -152,10 +152,11 @@ services:
   broadsea-ares:
     profiles: [ "ares" ]
     container_name: broadsea-ares
+    restart: unless-stopped
     build:
       context: https://github.com/alondhe/Ares.git#docker
     volumes:
-      - ./ares_data:/usr/share/nginx/html/ares/data:ro
+      - ${ARES_DATA_FOLDER}:/usr/share/nginx/html/ares/data:ro
     labels:
       - "traefik.enable=true"
 

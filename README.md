@@ -163,6 +163,10 @@ The Broadsea atlasdb Postgres instance is listed by default, but you can use an 
 
 With Atlas 2.12.0 and above, a new concept recommendation feature is available, based upon the [Phoebe project](https://forums.ohdsi.org/t/phoebe-2-0/17410 "Phoebe Project"). Review and fill out Section 10 of the .env file to load the concept_recommended table needed for this feature into a Postgres hosted OMOP Vocabulary.
 
+### Ares
+
+To mount files prepared for Ares (see [Ares GitHub IO](https://ohdsi.github.io/Ares/ "Ares") on how to run the necessary DataQualityDashboard, Achilles, and AresIndexer functions), add your Ares data folder path to ARES_DATA_FOLDER in Section 11. By default, it will look for a folder at ./ares_data.
+
 ### HADES RStudio default login
 
 The credentials for the RStudio user can be established in Section 8 of the .env file.
@@ -178,14 +182,14 @@ docker compose down
 
 Broadsea can deploy the OHDSI stack on any of the following infrastructure alternatives:
 
-* laptop / desktop - Note: The Broadsea-Hades Docker container (RStudio server with OHDSI HADES R packages) is not currently supported on Non-Intel Mac computers (M1 or M2)
+* laptop / desktop - Note: The Broadsea-Hades Docker container (RStudio server with OHDSI HADES R packages)
 * internally hosted server
 * cloud provider hosted server
 * cluster of servers (internally or cloud provider hosted)
 
-It supports any database management system that the OHDSI stack supports. The examples provided in this repository are for connecting to PostgreSQL, Oracle or Microsoft SQL Server databases.
+It supports any database management system that the OHDSI stack supports, though some services are specific to Postgresql.
 
-It supports any OS where Docker containers can run, including Windows, Mac OS X and Linux (including Ubuntu, CentOS & CoreOS)
+It supports any OS where Docker containers can run, including Windows, Mac OS X, and Linux (including Ubuntu, CentOS & CoreOS)
 
 ### Usage Scenarios:
 
