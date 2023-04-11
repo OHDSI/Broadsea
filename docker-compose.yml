@@ -1,4 +1,4 @@
-version: '3'
+version: '3.9'
 
 volumes:
   atlasdb-postgres-data:
@@ -9,25 +9,28 @@ volumes:
     name: rstudio-tmp-data
 
 services:
-
+  
   traefik:
     image: docker.io/library/traefik:v2.9.4@sha256:4c388f477f5b7aa48420694d90db0ecb96b4ecede60b9b7589c87858abf87b60
     container_name: traefik
     restart: unless-stopped
     ipc: none
     read_only: true
-    command:
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
+    environment:
+      BROADSEA_HOST: ${BROADSEA_HOST}
     labels:
-      - "traefik.enable=true"
+     - "traefik.enable=true"
     ports:
-      - "${BROADSEA_HOST}:80:80"
+      - "80:80"
+      - "443:443"
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - ./traefik/traefik-${HTTP_TYPE}.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/config.yml:/etc/traefik/config.yml:ro
+      - ./certs:/etc/certs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
 
   broadsea-content:
+    profiles: [ "default", "content" ]
     container_name: broadsea-content
     image: nginx
     restart: unless-stopped
@@ -35,83 +38,64 @@ services:
       - ./broadsea-content:/usr/share/nginx/html/broadsea:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.nginx.rule=Host(`${BROADSEA_HOST}`) && PathPrefix(`/broadsea`)"
-      - "traefik.http.routers.nginx.entrypoints=web"
 
   broadsea-hades:
+    profiles: [ "default", "hades" ]
     container_name: broadsea-hades
     image: ohdsi/broadsea-hades:4.2.1
+    platform: ${DOCKER_ARCH}
     environment:
-      - USER=ohdsi
-      - PASSWORD=mypass
+      - USER=${HADES_USER}
+      - PASSWORD=${HADES_PASSWORD}
     volumes:
       - rstudio-home-data:/home
       - rstudio-tmp-data:/tmp
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.broadsea-hades.rule=Host(`${BROADSEA_HOST}`) && PathPrefix(`/`)"
-      - "traefik.http.routers.broadsea-hades.entrypoints=web"
-      - "traefik.http.services.broadsea-hades.loadbalancer.server.port=8787"
     ports:
       - "8787:8787"
       - "6311:6311"
 
-  ohdsi-atlas:
-    container_name: ohdsi-atlas
-    image: docker.io/ohdsi/atlas:latest
-    restart: unless-stopped
-    ipc: none
-    privileged: false
-    environment:
-      WEBAPI_URL: "http://${BROADSEA_HOST}/WebAPI/"
-    depends_on:
-      - ohdsi-webapi
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.ohdsi-atlas.rule=Host(`${BROADSEA_HOST}`) && PathPrefix(`/atlas`)"
-      - "traefik.http.routers.ohdsi-atlas.entrypoints=web"
-
-  ohdsi-webapi:
-    container_name: ohdsi-webapi
+  # WebAPI and Atlas services based on the standard Docker Hub images -------------
+  ohdsi-webapi-from-image:
+    profiles: [ "default", "webapi-from-image" ]
     image: docker.io/ohdsi/webapi:latest
-    restart: unless-stopped
-    ipc: none
-    read_only: true
-    tmpfs:
-      - /tmp
-    privileged: false
-    environment:
-      DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
-      DATASOURCE_URL: jdbc:postgresql://broadsea-atlasdb:5432/postgres
-      DATASOURCE_USERNAME: postgres
-      DATASOURCE_PASSWORD: mypass
-      DATASOURCE_OHDSI_SCHEMA: webapi
-      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
-      SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA: webapi
-      SPRING_BATCH_REPOSITORY_TABLEPREFIX: webapi.BATCH_
-      FLYWAY_DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
-      FLYWAY_DATASOURCE_URL: jdbc:postgresql://broadsea-atlasdb:5432/postgres
-      FLYWAY_DATASOURCE_USERNAME: postgres
-      FLYWAY_DATASOURCE_PASSWORD: postgres
-      FLYWAY_LOCATIONS: classpath:db/migration/postgresql
-      FLYWAY_PLACEHOLDERS_OHDSISCHEMA: webapi
-      FLYWAY_SCHEMAS: webapi
-      FLYWAY_BASELINEONMIGRATE: "true"
-      FLYWAY_TABLE: schema_history
-      flyway_baselineVersionAsString: "2.2.5.20180212152023"  # this env var is case sensitive
-      FLYWAY_BASELINEDESCRIPTION: Base Migration
-      SECURITY_CORS_ENABLED: "true"
-      SECURITY_ORIGIN: "http://${BROADSEA_HOST}"
-    depends_on:
-      - broadsea-atlasdb
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.ohdsi-webapi.rule=Host(`${BROADSEA_HOST}`) && PathPrefix(`/WebAPI`)"
-      - "traefik.http.routers.ohdsi-webapi.entrypoints=web"
+    extends: 
+      file: "ohdsi-webapi.yml"
+      service: ohdsi-webapi
+
+  ohdsi-atlas-from-image:
+    profiles: [ "default", "atlas-from-image" ]
+    image: docker.io/ohdsi/atlas:latest
+    extends: 
+      file: "ohdsi-atlas.yml"
+      service: ohdsi-atlas
+
+  # WebAPI and Atlas services based on git repo (for developers) -------------
+  ohdsi-webapi-from-git:
+    profiles: [ "webapi-from-git" ]
+    build: 
+      context: ${WEBAPI_GITHUB_URL}
+      args:
+        GIT_BRANCH: "unknown -DskipTests=true -DskipUnitTests=true" # hack, pending WebAPI PR to add MAVEN_PARAMS arg
+    extends: 
+      file: "ohdsi-webapi.yml"
+      service: ohdsi-webapi
+
+  ohdsi-atlas-from-git:
+    profiles: [ "atlas-from-git" ]
+    build: ${ATLAS_GITHUB_URL}
+    extends: 
+      file: "ohdsi-atlas.yml"
+      service: ohdsi-atlas
+
+  # -----------------------------------------------------------------
 
   broadsea-atlasdb:
+    profiles: [ "default", "atlasdb" ]
     image: ohdsi/broadsea-atlasdb:2.0.0
     container_name: broadsea-atlasdb
+    platform: ${DOCKER_ARCH}
     cpus: 2
     mem_limit: "2G"
     environment:
@@ -126,3 +110,88 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  broadsea-solr-vocab:
+    profiles: [ "solr-vocab-no-import", "solr-vocab-with-import" ]
+    container_name: solr-vocab
+    image: solr:8.11.1
+    environment: 
+      SOLR_OPTS: 
+        -DVOCAB_VERSION=${VOCAB_VERSION}
+        -DVOCAB_JDBC_DRIVER_PATH=${VOCAB_JDBC_DRIVER_PATH}
+        -DVOCAB_JDBC_URL=${VOCAB_JDBC_URL}
+        -DVOCAB_JDBC_USER=${VOCAB_JDBC_USER}
+        -DVOCAB_JDBC_PASSWORD=${VOCAB_JDBC_PASSWORD}
+    volumes:
+      - ./${VOCAB_JDBC_FILE_NAME}:/opt/solr-8.11.1/server/lib/${VOCAB_JDBC_FILE_NAME}:ro
+      - ./solr:/tmp/solr_config:ro
+    ports:
+      - "8983:8983"
+    labels:
+      - "traefik.enable=true"
+    command:
+      - solr-precreate
+      - ${VOCAB_VERSION}
+      - /tmp/solr_config
+    healthcheck:
+      test: curl --fail http://broadsea-solr-vocab:8983 || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  broadsea-solr-vocab-run-import:
+    profiles: [ "solr-vocab-with-import" ]
+    container_name: solr-vocab-run-import
+    image: curlimages/curl
+    depends_on:
+      broadsea-solr-vocab:
+        condition: service_healthy
+    command: curl -d "vocab_database_schema=${VOCAB_DATABASE_SCHEMA}" \ 
+             -X POST http://broadsea-solr-vocab:8983/solr/${VOCAB_VERSION}/dataimport?command=full-import&entity=concept
+
+  broadsea-ares:
+    profiles: [ "ares" ]
+    container_name: broadsea-ares
+    restart: unless-stopped
+    build:
+      context: https://github.com/alondhe/Ares.git#docker
+    volumes:
+      - ${ARES_DATA_FOLDER}:/usr/share/nginx/html/ares/data:ro
+    labels:
+      - "traefik.enable=true"
+
+
+  broadsea-omop-vocab-load:
+    profiles: [ "omop-vocab-pg-load" ]
+    container_name: omop-vocab-load
+    extends:
+      file: "postgres-load.yml"
+      service: broadsea-postgres-load
+    environment:
+      VOCAB_PG_HOST: ${VOCAB_PG_HOST}
+      VOCAB_PG_DATABASE: ${VOCAB_PG_DATABASE}
+      VOCAB_PG_SCHEMA: ${VOCAB_PG_SCHEMA}
+      VOCAB_PG_USER: ${VOCAB_PG_USER}
+      VOCAB_PG_PASSWORD: ${VOCAB_PG_PASSWORD}
+      UMLS_API_KEY: ${UMLS_API_KEY}
+    volumes:
+      - ./omop_vocab:/tmp
+    entrypoint: ["sh", "/tmp/scripts/load_omop_vocab.sh" ]
+
+
+  broadsea-phoebe-load:
+    profiles: [ "phoebe-pg-load" ]
+    container_name: broadsea-phoebe-load
+    extends:
+      file: "postgres-load.yml"
+      service: broadsea-postgres-load
+    environment:
+      PHOEBE_PG_HOST: ${PHOEBE_PG_HOST}
+      PHOEBE_PG_DATABASE: ${PHOEBE_PG_DATABASE}
+      PHOEBE_PG_SCHEMA: ${PHOEBE_PG_SCHEMA}
+      PHOEBE_PG_USER: ${PHOEBE_PG_USER}
+      PHOEBE_PG_PASSWORD: ${PHOEBE_PG_PASSWORD}
+    volumes:
+      - ./phoebe:/tmp
+    entrypoint: ["sh", "/tmp/load_phoebe.sh" ]
+    
