@@ -77,7 +77,7 @@ services:
     build: 
       context: ${WEBAPI_GITHUB_URL}
       args:
-        GIT_BRANCH: "unknown -DskipTests=true -DskipUnitTests=true" # hack, pending WebAPI PR to add MAVEN_PARAMS arg
+        MAVEN_PARAMS: "-DskipTests=true -DskipUnitTests=true"
     extends: 
       file: "ohdsi-webapi.yml"
       service: ohdsi-webapi
@@ -134,7 +134,7 @@ services:
       - ${VOCAB_VERSION}
       - /tmp/solr_config
     healthcheck:
-      test: curl --fail http://broadsea-solr-vocab:8983 || exit 1
+      test: curl --fail ${SOLR_VOCAB_ENDPOINT} || exit 1
       interval: 10s
       timeout: 5s
       retries: 5
@@ -147,14 +147,14 @@ services:
       broadsea-solr-vocab:
         condition: service_healthy
     command: curl -d "vocab_database_schema=${VOCAB_DATABASE_SCHEMA}" \ 
-             -X POST http://broadsea-solr-vocab:8983/solr/${VOCAB_VERSION}/dataimport?command=full-import&entity=concept
+             -X POST ${SOLR_VOCAB_ENDPOINT}/${VOCAB_VERSION}/dataimport?command=full-import&entity=concept
 
   broadsea-ares:
     profiles: [ "ares" ]
     container_name: broadsea-ares
     restart: unless-stopped
     build:
-      context: https://github.com/alondhe/Ares.git#docker
+      context: https://github.com/alondhe/Ares.git#docker  # hack until Dockerfile is added to OHDSI/Ares
     volumes:
       - ${ARES_DATA_FOLDER}:/usr/share/nginx/html/ares/data:ro
     labels:
