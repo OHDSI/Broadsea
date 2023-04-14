@@ -76,8 +76,8 @@ Here are the profiles available:
   - atlas ("/atlas")
   - WebAPI ("/WebAPI")
   - AtlasDB (a Postgres instance for Atlas/WebAPI)
-  - HADES ("/")
-  - A splash page for Broadsea ("/broadsea")
+  - HADES ("/hades")
+  - A splash page for Broadsea ("/")
 
 - atlas-from-image
   - Pulls the standard Atlas image from Docker Hub
@@ -134,8 +134,9 @@ Here are the profiles available:
 Broadsea uses Traefik as a proxy for all containers within. Traefik can be set up with SSL to enable HTTPS:
 
 1. Obtain a crt and key file. Rename them to "broadsea.crt" and "broadsea.key", respectively.
-2. Add these files to a ./certs folder
-3. In Section 1 of the .env file, change the HTTP_TYPE to "https"
+2. In Section 1 of the .env file:
+  - Update the BROADSEA_CERTS_FOLDER to the folder that holds these cert files.
+  - Update the HTTP_TYPE to "https"
 
 ### Atlas/WebAPI Security
 
@@ -170,6 +171,10 @@ To mount files prepared for Ares (see [Ares GitHub IO](https://ohdsi.github.io/A
 ### HADES RStudio default login
 
 The credentials for the RStudio user can be established in Section 8 of the .env file.
+
+### Broadsea Content Page
+
+To adjust which app links to display on the Broadsea content page ("/"), refer to Section 12 of the .env file. Use "show" to display the div or "none" to hide it.
 
 ## Shutdown Broadsea
 You can stop the running Docker containers & remove them (new container instances can be started again later) with this command:

@@ -26,7 +26,7 @@ services:
     volumes:
       - ./traefik/traefik-${HTTP_TYPE}.yml:/etc/traefik/traefik.yml:ro
       - ./traefik/config.yml:/etc/traefik/config.yml:ro
-      - ./certs:/etc/certs:ro
+      - ${BROADSEA_CERTS_FOLDER}:/etc/certs:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
   broadsea-content:
@@ -34,8 +34,16 @@ services:
     container_name: broadsea-content
     image: nginx
     restart: unless-stopped
+    environment:
+      CONTENT_ARES_DISPLAY: ${CONTENT_ARES_DISPLAY}
+      CONTENT_ATLAS_DISPLAY: ${CONTENT_ATLAS_DISPLAY}
+      CONTENT_HADES_DISPLAY: ${CONTENT_HADES_DISPLAY}
     volumes:
-      - ./broadsea-content:/usr/share/nginx/html/broadsea:ro
+      - ./broadsea-content/images:/usr/share/nginx/html/images
+      - ./broadsea-content/style.css:/usr/share/nginx/html/style.css
+      - ./broadsea-content/index.html:/tmp/index.html
+      - ./broadsea-content/envsubst.sh:/tmp/envsubst.sh:ro
+    entrypoint: ["sh", "/tmp/envsubst.sh" ]
     labels:
       - "traefik.enable=true"
 

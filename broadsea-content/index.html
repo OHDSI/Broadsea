@@ -2,16 +2,13 @@
 <html lang="en">
 
 <head>
-
+    <link rel="shortcut icon" type="image/x-icon" href="./images/favicon.ico">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-
-    <!--
-     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    -->Y
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
     <title>OHDSI Broadsea Applications</title>
 
@@ -50,12 +47,14 @@
 <body>
     <nav class="navbar navbar-fixed-top navbar-light bg-light">
         <div class="container">
+          <a href="/">
             <div class="navbar-header">
-                <img src="ohdsi-logo.png" alt="Observational Health Data Sciences and Informatics" width="50" height="50">
+                <img src="images/ohdsi-logo.png" alt="Observational Health Data Sciences and Informatics" width="50" height="50">
                 <span class="navbar-brand">
-                    <p>OHDSI Broadsea 2.0</p>
+                    <p>OHDSI Broadsea 3.0</p>
                 </span>
             </div>
+          </a>
         </div>
     </nav>
 
@@ -64,11 +63,13 @@
       <hr>
       <hr>
 
-      <div class="row">
+      <div class="row" style="display: '$CONTENT_ATLAS_DISPLAY'">
         <div class="col-sm">
           <div class="col-sm-2">
-            <p><img src="atlas.png" alt="Health Analytics Data to Evidence Suite" width="50" height="50"></p>
-            <p class="description"><a class="link" href="../atlas/" target="_blank">Atlas</a></p>
+            <a class="link" href="../atlas" target="_blank">
+              <p><img src="images/atlas.png" alt="Atlas" width="50"></p>
+              <p class="description">Atlas</p>
+            </a>
           </div>
         </div>
         <div class="col-sm">
@@ -79,11 +80,30 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row" style="display: '$CONTENT_ARES_DISPLAY'">
         <div class="col-sm">
           <div class="col-sm-2">
-            <p><img src="hades.png" alt="Health Analytics Data to Evidence Suite" width="50" height="50"></p>
-            <p class="description"><a class="link" href="../" target="_blank">Hades</a></p>
+            <a class="link" href="../ares" target="_blank">
+              <p><img src="images/ares.png" alt="Ares (A Research Exploration System)" width="50" height="50"></p>
+              <p class="description">Ares</p>
+            </a>
+          </div>
+        </div>
+        <div class="col-sm">
+          <div class="col-sm-12">
+<p class="description">A Research Exploration System that facilitates exploration of patient level, observational data research accompanied by source data characterization and quality assessment ensuring that results are presented with proper context.</p>
+            <hr>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" style="display: '$CONTENT_HADES_DISPLAY'">
+        <div class="col-sm">
+          <div class="col-sm-2">
+            <a class="link" href="../hades" target="_blank">
+              <p><img src="images/hades.png" alt="Health Analytics Data to Evidence Suite" width="50" height="50"></p>
+              <p class="description">Hades</p>
+            </a>
           </div>
         </div>
         <div class="col-sm">
@@ -94,46 +114,7 @@
         </div>
       </div>
 
-    <!--
-
-      <div class="row">
-        <div class="col-sm">
-          <div class="col-sm-2">
-            <p><img src="perseus.png" alt="Perseus ETL" width="50" height="50"></p>
-            <p class="description"><a class="link" href="../Perseus/" target="_blank">Perseus</a></p>
-          </div>
-        </div>
-        <div class="col-sm">
-          <div class="col-sm-12">
-<p class="description">Perseus is a web-based UI for ETL (extract, transform, and load) design and implementation to convert data into the OMOP Common Data Model (CDM). Additionally, Perseus has embedded tools for searching the OMOP standardized vocabulary, generating documentation for the ETL process, creating code mappings to standard concepts, and performing data quality checks.</p>
-            <hr>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!--
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://cdn.rawgit.com/judesfernando/initial.js/master/dist/initial.min.js"></script>
-
-    <script>
-        $( document ).ready(function() {
-            $('.profile.initial').initial({
-                charCount: 2,
-                fontSize: 35,
-                height: 80,
-                width: 80,
-                fontWeight: 500
-            });
-
-            $('img').error(function(){
-                $(this).remove();
-            });
-        });
-    </script>
+      <p>Powered by <a href="https://github.com/OHDSI/Broadsea" target="_blank">OHDSI Broadsea</a></p>
 
 </body>
 

@@ -16,7 +16,7 @@ http:
     broadsea-content:
       entryPoints: '{{ env "HTTP_TYPE" }}'
       service: "broadsea-content"
-      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/broadsea`)'
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/`)'
       
     ohdsi-atlas:
       entryPoints: '{{ env "HTTP_TYPE" }}'
@@ -31,7 +31,10 @@ http:
     broadsea-hades:
       entryPoints: '{{ env "HTTP_TYPE" }}'
       service: "broadsea-hades"
-      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/`)'
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/hades`)'
+      middlewares:
+        - "rstudio-server-root-path-header"
+        - "rstudio-server-path-strip"
 
     broadsea-solr-vocab:
       entryPoints: '{{ env "HTTP_TYPE" }}'
@@ -42,6 +45,18 @@ http:
       entryPoints: '{{ env "HTTP_TYPE" }}'
       service: "broadsea-ares"
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/ares`)'
+
+  middlewares:
+    rstudio-server-path-strip:
+      stripPrefix:
+        prefixes: 
+          - "/hades/"
+        forceSlash: false
+
+    rstudio-server-root-path-header:
+      headers:
+        customRequestHeaders:
+          X-RStudio-Root-Path: "/hades/"
 
   services:
     traefik:
