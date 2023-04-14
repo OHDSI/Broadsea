@@ -122,6 +122,7 @@ services:
   broadsea-solr-vocab:
     profiles: [ "solr-vocab-no-import", "solr-vocab-with-import" ]
     container_name: solr-vocab
+    restart: unless-stopped
     image: solr:8.11.1
     environment: 
       SOLR_OPTS: 
