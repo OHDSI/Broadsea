@@ -51,7 +51,7 @@ services:
     profiles: [ "default", "hades" ]
     container_name: broadsea-hades
     image: ohdsi/broadsea-hades:4.2.1
-    platform: ${DOCKER_ARCH}
+    platform: "linux/amd64"
     environment:
       - USER=${HADES_USER}
       - PASSWORD=${HADES_PASSWORD}
@@ -103,7 +103,7 @@ services:
     profiles: [ "default", "atlasdb" ]
     image: ohdsi/broadsea-atlasdb:2.0.0
     container_name: broadsea-atlasdb
-    platform: ${DOCKER_ARCH}
+    platform: "linux/amd64"
     cpus: 2
     mem_limit: "2G"
     environment:
