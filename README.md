@@ -32,7 +32,7 @@ This repository contains the Docker Compose file used to launch the OHDSI Broads
 
 ### Mac Silicon
 
-If using Mac Silicon (M1, M2), set the DOCKER_ARCH variable in Section 1 of the .env file to "linux/arm64"
+If using Mac Silicon (M1, M2), set the DOCKER_ARCH variable in Section 1 of the .env file to "linux/arm64". Some Broadsea services still need to run via emulation of linux/amd64 and are hard-coded as such.
 
 ## Broadsea - Quick start
 
@@ -45,7 +45,7 @@ git clone https://github.com/OHDSI/Broadsea.git
 ```
 docker compose pull && docker-compose --profile default up -d
 ```
-* In your web browser open the URL: ```"http://127.0.0.1/broadsea"```
+* In your web browser open the URL: ```"http://127.0.0.1"```
 * Click on the Atlas link to open Atlas in a new browser window
 * Click on the Hades link to open HADES (RStudio) in a new browser window.
   * The RStudio userid is 'ohdsi' and the password is 'mypass'  

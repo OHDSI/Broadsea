@@ -33,8 +33,8 @@ http:
       service: "broadsea-hades"
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/hades`)'
       middlewares:
-        - "rstudio-server-root-path-header"
-        - "rstudio-server-path-strip"
+        - "broadsea-hades-root-path-header"
+        - "broadsea-hades-path-strip"
 
     broadsea-solr-vocab:
       entryPoints: '{{ env "HTTP_TYPE" }}'
@@ -47,16 +47,16 @@ http:
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/ares`)'
 
   middlewares:
-    rstudio-server-path-strip:
+    broadsea-hades-path-strip:
       stripPrefix:
         prefixes: 
-          - "/hades/"
+          - "/hades"
         forceSlash: false
 
-    rstudio-server-root-path-header:
+    broadsea-hades-root-path-header:
       headers:
         customRequestHeaders:
-          X-RStudio-Root-Path: "/hades/"
+          X-RStudio-Root-Path: "/hades"
 
   services:
     traefik:
