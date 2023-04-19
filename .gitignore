@@ -1,1 +1,4 @@
 .DS_Store
+omop_vocab/files
+.env_local
+*.jar
