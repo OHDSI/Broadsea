@@ -24,6 +24,12 @@ This repository contains the Docker Compose file used to launch the OHDSI Broads
 * OHDSI Ares
   * [Ares GitHub repository](https://github.com/OHDSI/Ares "OHDSI Ares GitHub Repository")
 
+Additionally, Broadsea offers some services for non-OHDSI applications that often are useful for deployment:
+
+* Apache Solr for OMOP Vocab Search in Atlas
+* OpenLDAP for testing security in Atlas
+* Posit Connect for sites with commercial Posit licenses, for deploying Shiny apps
+
 ### Broadsea Dependencies
 
 * Docker
@@ -128,6 +134,12 @@ Here are the profiles available:
   - Loads Phoebe files into an existing OMOP Vocabulary hosted in a Postgres instance (can be Broadsea's atlasdb or an external one)
   - Note: your Atlas instance must use this OMOP Vocabulary as its default vocabulary source in order to use this feature
   - Once complete, the phoebe-load container will finish with an exit status; you can remove this container
+
+- openldap
+  - For testing security in Atlas, this Open LDAP container can be used to assess security needs
+
+- posit-connect
+  - For sites with commercial Posit Connect licenses, this can be useful for convenient publication of Shiny apps
 
 ### SSL
 

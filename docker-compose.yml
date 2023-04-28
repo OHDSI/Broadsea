@@ -7,6 +7,8 @@ volumes:
     name: rstudio-home-data
   rstudio-tmp-data:
     name: rstudio-tmp-data
+  openldap-data:
+    name: openldap-data
 
 services:
   
@@ -203,4 +205,40 @@ services:
     volumes:
       - ./phoebe:/tmp
     entrypoint: ["sh", "/tmp/load_phoebe.sh" ]
+
+
+  ### In development
+
+  broadsea-openldap:
+    profiles: [ "openldap" ]
+    image: docker.io/bitnami/openldap:2.6
+    container_name: broadsea-openldap
+    ports:
+      - '1389:1389'
+      - '1636:1636'
+    environment:
+      LDAP_ADMIN_USERNAME: ${SECURITY_LDAP_SYSTEM_USERNAME}
+      LDAP_ADMIN_PASSWORD: ${SECURITY_LDAP_SYSTEM_PASSWORD}
+      LDAP_USERS: ${OPEN_LDAP_USERS}
+      LDAP_PASSWORDS: ${OPEN_LDAP_PASSWORDS}
     
+
+  broadsea-posit-connect:
+    profiles: [ "posit-connect" ]
+    image: rstudio/rstudio-connect
+    platform: "linux/amd64"
+    container_name: broadsea-posit-connect
+    ports:
+      - "3939:3939"
+    privileged: true
+    environment:
+      RSC_LICENSE: ${POSIT_CONNECT_LICENSE}
+      RSC_LICENSE_SERVER: ${POSIT_CONNECT_LICENSE_SERVER}
+      CONNECT_SERVER_ADDRESS: ${HTTP_TYPE}://${BROADSEA_HOST}/connect
+      CONNECT_SERVER_NAME: ${POSIT_CONNECT_SERVER_NAME}
+      CONNECT_HTTP_LISTEN: ":3939"
+      CONNECT_HTTP_NO_WARNING: true
+    volumes:
+      - ${POSIT_CONNECT_LICENSE_FILE}:/etc/rstudio-connect/license.lic:ro
+    labels:
+      - "traefik.enable=true" 

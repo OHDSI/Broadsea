@@ -46,7 +46,18 @@ http:
       service: "broadsea-ares"
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/ares`)'
 
+    broadsea-posit-connect:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: "broadsea-posit-connect"
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/connect`)'
+
+    broadsea-posit-api:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: "broadsea-posit-connect"
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/__`)'
+
   middlewares:
+
     broadsea-hades-path-strip:
       stripPrefix:
         prefixes: 
@@ -93,3 +104,8 @@ http:
       loadBalancer:
         servers:
           - url: http://broadsea-ares
+
+    broadsea-posit-connect:
+      loadBalancer:
+        servers:
+          - url: http://broadsea-posit-connect:3939
