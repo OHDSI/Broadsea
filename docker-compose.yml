@@ -13,7 +13,7 @@ volumes:
 services:
   
   traefik:
-    image: docker.io/library/traefik:v2.9.4@sha256:4c388f477f5b7aa48420694d90db0ecb96b4ecede60b9b7589c87858abf87b60
+    image: docker.io/library/traefik:v2.10.1
     container_name: traefik
     restart: unless-stopped
     ipc: none
@@ -207,7 +207,7 @@ services:
     entrypoint: ["sh", "/tmp/load_phoebe.sh" ]
 
 
-  ### In development
+  # Security providers for testing purposes
 
   broadsea-openldap:
     profiles: [ "openldap" ]
@@ -221,11 +221,24 @@ services:
       LDAP_ADMIN_PASSWORD: ${SECURITY_LDAP_SYSTEM_PASSWORD}
       LDAP_USERS: ${OPEN_LDAP_USERS}
       LDAP_PASSWORDS: ${OPEN_LDAP_PASSWORDS}
-    
+
+  # shiny server options (open-source and commercial)
+
+  broadsea-open-shiny-server:
+    profiles: [ "open-shiny-server" ]
+    image: rocker/shiny:4.3.0
+    platform: "linux/amd64"
+    container_name: broadsea-open-shiny-server
+    ports:
+      - "3838:3838"
+    volumes:
+      - ${OPEN_SHINY_SERVER_APP_ROOT}:/srv/shiny-server/apps:ro
+    labels:
+      - "traefik.enable=true" 
 
   broadsea-posit-connect:
     profiles: [ "posit-connect" ]
-    image: rstudio/rstudio-connect
+    image: rstudio/rstudio-connect:jammy-2023.05.0
     platform: "linux/amd64"
     container_name: broadsea-posit-connect
     ports:
@@ -234,11 +247,9 @@ services:
     environment:
       RSC_LICENSE: ${POSIT_CONNECT_LICENSE}
       RSC_LICENSE_SERVER: ${POSIT_CONNECT_LICENSE_SERVER}
-      CONNECT_SERVER_ADDRESS: ${HTTP_TYPE}://${BROADSEA_HOST}/connect
-      CONNECT_SERVER_NAME: ${POSIT_CONNECT_SERVER_NAME}
-      CONNECT_HTTP_LISTEN: ":3939"
-      CONNECT_HTTP_NO_WARNING: true
+      R_VERSION: ${POSIT_CONNECT_R_VERSION}
     volumes:
       - ${POSIT_CONNECT_LICENSE_FILE}:/etc/rstudio-connect/license.lic:ro
+      - ${POSIT_CONNECT_GCFG_FILE}:/etc/rstudio-connect/rstudio-connect.gcfg:ro
     labels:
-      - "traefik.enable=true" 
+      - "traefik.enable=true"

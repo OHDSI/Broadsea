@@ -17,6 +17,7 @@ define([], function () {
 	configLocal.cohortComparisonResultsEnabled = $ATLAS_COHORT_COMPARISON_RESULTS_ENABLED;
 	configLocal.userAuthenticationEnabled = $ATLAS_USER_AUTH_ENABLED;
 	configLocal.plpResultsEnabled = $ATLAS_PLP_RESULTS_ENABLED;
+	configLocal.disableBrowserCheck = $ATLAS_DISABLE_BROWSER_CHECK;
 
 	configLocal.authProviders = [{
 		"name": "$ATLAS_SECURITY_PROVIDER_NAME",

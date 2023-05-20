@@ -2,3 +2,5 @@
 omop_vocab/files
 .env_local
 *.jar
+*.lic
+.github/workflows

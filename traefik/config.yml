@@ -46,6 +46,13 @@ http:
       service: "broadsea-ares"
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/ares`)'
 
+    broadsea-open-shiny-server:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: "broadsea-open-shiny-server"
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/shiny`)'
+      middlewares: 
+        - "broadsea-open-shiny-server-path-strip"
+
     broadsea-posit-connect:
       entryPoints: '{{ env "HTTP_TYPE" }}'
       service: "broadsea-posit-connect"
@@ -68,6 +75,12 @@ http:
       headers:
         customRequestHeaders:
           X-RStudio-Root-Path: "/hades"
+
+    broadsea-open-shiny-server-path-strip:
+      stripPrefix:
+        prefixes: 
+          - "/shiny"
+        forceSlash: false
 
   services:
     traefik:
@@ -104,6 +117,11 @@ http:
       loadBalancer:
         servers:
           - url: http://broadsea-ares
+
+    broadsea-open-shiny-server:
+      loadBalancer:
+        servers:
+          - url: http://broadsea-open-shiny-server:3838
 
     broadsea-posit-connect:
       loadBalancer:

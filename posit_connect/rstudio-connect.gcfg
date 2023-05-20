@@ -1,0 +1,10 @@
+; /etc/rstudio-connect/rstudio-connect.gcfg
+
+[Server]
+Address = https://127.0.0.1/connect
+ServerName = "Broadsea Posit Connect"
+
+
+[HTTP]
+Listen = :3939
+NoWarning = true

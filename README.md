@@ -24,10 +24,10 @@ This repository contains the Docker Compose file used to launch the OHDSI Broads
 * OHDSI Ares
   * [Ares GitHub repository](https://github.com/OHDSI/Ares "OHDSI Ares GitHub Repository")
 
-Additionally, Broadsea offers some services for non-OHDSI applications that often are useful for deployment:
+Additionally, Broadsea offers some services not specifically needed for OHDSI applications that often are useful:
 
-* Apache Solr for OMOP Vocab Search in Atlas
 * OpenLDAP for testing security in Atlas
+* Open Shiny Server for deploying Shiny apps without a commercial license
 * Posit Connect for sites with commercial Posit licenses, for deploying Shiny apps
 
 ### Broadsea Dependencies
@@ -49,7 +49,7 @@ git clone https://github.com/OHDSI/Broadsea.git
 ```
 * In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers using the below command. On Linux you may need to use 'sudo' to run this command. Wait up to one minute for the Docker containers to start. The docker compose pull command ensures that the latest released versions of the OHDSI ATLAS and OHDSI WebAPI docker containers are downloaded.
 ```
-docker compose pull && docker-compose --profile default up -d
+docker-compose --profile default up -d
 ```
 * In your web browser open the URL: ```"http://127.0.0.1"```
 * Click on the Atlas link to open Atlas in a new browser window
@@ -73,7 +73,7 @@ This docker compose file makes use of [Docker profiles](https://docs.docker.com/
 You can use this syntax for this approach, substituting profile names in:
 
 ```
-docker compose pull && docker-compose --profile profile1 --profile profile2 .... up -d
+docker-compose --profile profile1 --profile profile2 .... up -d
 ```
 
 Here are the profiles available:
@@ -138,6 +138,10 @@ Here are the profiles available:
 - openldap
   - For testing security in Atlas, this Open LDAP container can be used to assess security needs
 
+- open-shiny-server
+  - An open source version of Shiny Server, where you can drop shiny apps into a mounted folder.
+  - Recommended if your organization does not have a Posit Connect license.
+
 - posit-connect
   - For sites with commercial Posit Connect licenses, this can be useful for convenient publication of Shiny apps
 
@@ -187,6 +191,18 @@ The credentials for the RStudio user can be established in Section 8 of the .env
 ### Broadsea Content Page
 
 To adjust which app links to display on the Broadsea content page ("/"), refer to Section 12 of the .env file. Use "show" to display the div or "none" to hide it.
+
+### Open LDAP
+
+OpenLDAP is provided for testing purposes, and is not recommended for any production deployment. Refer to Section 13 of the .env file to establish user accounts for this LDAP instance. A GUI-based LDAP explorer, such as [Apache Directory Studio](https://directory.apache.org/studio/ "Apache Directory Studio") is recommended for managing this instance.
+
+### Open Shiny Server
+
+To configure an open-source Shiny Server, refer to Section 14 of the .env file. Use the OPEN_SHINY_SERVER_APP_ROOT variable to point to a folder that will host Shiny apps.
+
+### Posit Connect
+
+The pattern for using Posit Connect deviates from the rest of Broadsea due to the many configuration options available. A sample .gcfg file is included, but you likely will need to make modifications to it. See [Posit Connect configuration guide](https://docs.posit.co/connect/admin/appendix/configuration "Posit Connect Configuration") for more information.
 
 ## Shutdown Broadsea
 You can stop the running Docker containers & remove them (new container instances can be started again later) with this command:
