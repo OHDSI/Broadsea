@@ -13,6 +13,7 @@ services:
     privileged: false
     volumes:
       - ./cacerts:/usr/local/openjdk-8/lib/security/cacerts:ro # add a cacerts file if using LDAPS
+      - ./webapi/${WEBAPI_ADDITIONAL_JDBC_FILE}:/var/lib/ohdsi/webapi/WEB-INF/lib/${WEBAPI_ADDITIONAL_JDBC_FILE}
     environment:
 
       DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
@@ -133,6 +134,11 @@ services:
       SECURITY_SAML_CALLBACKURL: ${SECURITY_SAML_CALLBACKURL}
       SECURITY_SAML_SLOURL: ${SECURITY_SAML_SLOURL}
       SECURITY_SAML_MAXIMUMAUTHENTICATIONLIFETIME: ${SECURITY_SAML_MAXIMUMAUTHENTICATIONLIFETIME}
+
+      # Atlas cohort caching
+
+      CACHE_GENERATION_INVALIDAFTERDAYS: ${CACHE_GENERATION_INVALIDAFTERDAYS}
+      CACHE_GENERATION_CLEANUPINTERVAL: ${CACHE_GENERATION_CLEANUPINTERVAL}
 
     labels:
       - "traefik.enable=true"
