@@ -37,9 +37,12 @@ services:
     image: nginx
     restart: unless-stopped
     environment:
+      CONTENT_TITLE: ${CONTENT_TITLE}
       CONTENT_ARES_DISPLAY: ${CONTENT_ARES_DISPLAY}
       CONTENT_ATLAS_DISPLAY: ${CONTENT_ATLAS_DISPLAY}
       CONTENT_HADES_DISPLAY: ${CONTENT_HADES_DISPLAY}
+      CONTENT_OPENSHINYSERVER_DISPLAY: ${CONTENT_OPENSHINYSERVER_DISPLAY}
+      CONTENT_POSITCONNECT_DISPLAY: ${CONTENT_POSITCONNECT_DISPLAY}
     volumes:
       - ./broadsea-content/images:/usr/share/nginx/html/images
       - ./broadsea-content/style.css:/usr/share/nginx/html/style.css
