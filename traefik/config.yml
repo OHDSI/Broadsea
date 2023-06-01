@@ -46,6 +46,11 @@ http:
       service: "broadsea-ares"
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/ares`)'
 
+    # broadsea-arachne-execution-engine:
+    #   entryPoints: '{{ env "HTTP_TYPE" }}'
+    #   service: "broadsea-arachne-execution-engine"
+    #   rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/execution-engine`)'
+
     broadsea-open-shiny-server:
       entryPoints: '{{ env "HTTP_TYPE" }}'
       service: "broadsea-open-shiny-server"
@@ -117,6 +122,11 @@ http:
       loadBalancer:
         servers:
           - url: http://broadsea-ares
+
+    # broadsea-arachne-execution-engine:
+    #   loadBalancer:
+    #     servers:
+    #       -url: http://broadsea-arachne-execution-engine:8888
 
     broadsea-open-shiny-server:
       loadBalancer:

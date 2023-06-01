@@ -210,12 +210,28 @@ services:
     entrypoint: ["sh", "/tmp/load_phoebe.sh" ]
 
 
+  broadsea-arachne-execution-engine:
+    profiles: [ "arachne-execution-engine" ]
+    image: odysseusinc/execution_engine:1.19.1
+    container_name: broadsea-arachne-execution-engine
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+    privileged: true
+    platform: "linux/amd64"
+    volumes:
+      - ./execution_engine:/dist
+    labels:
+     - "traefik.enable=true"
+
+
   # Security providers for testing purposes
 
   broadsea-openldap:
     profiles: [ "openldap" ]
     image: docker.io/bitnami/openldap:2.6
     container_name: broadsea-openldap
+    restart: unless-stopped
     ports:
       - '1389:1389'
       - '1636:1636'
@@ -232,6 +248,7 @@ services:
     image: rocker/shiny:4.3.0
     platform: "linux/amd64"
     container_name: broadsea-open-shiny-server
+    restart: unless-stopped
     ports:
       - "3838:3838"
     volumes:
@@ -244,6 +261,7 @@ services:
     image: rstudio/rstudio-connect:jammy-2023.05.0
     platform: "linux/amd64"
     container_name: broadsea-posit-connect
+    restart: unless-stopped
     ports:
       - "3939:3939"
     privileged: true

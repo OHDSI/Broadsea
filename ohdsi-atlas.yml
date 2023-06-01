@@ -20,6 +20,7 @@ services:
       ATLAS_SECURITY_USE_FORM: ${ATLAS_SECURITY_USE_FORM}
       ATLAS_SECURITY_USE_AJAX: ${ATLAS_SECURITY_USE_AJAX}
       ATLAS_DISABLE_BROWSER_CHECK: ${ATLAS_DISABLE_BROWSER_CHECK}
+      ATLAS_USE_EXECUTION_ENGINE: ${ATLAS_USE_EXECUTION_ENGINE}
     volumes:
       - ./atlas/config-local-template.js:/tmp/config-local.js:ro
       - ./atlas/envsubst.sh:/tmp/envsubst.sh:ro

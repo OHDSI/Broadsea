@@ -146,5 +146,15 @@ services:
 
       I18N_ENABLED: ${I18N_ENABLED}
 
+      # Execution engine
+
+      EXECUTIONENGINE_URL: ${EXECUTIONENGINE_URL}
+      EXECUTIONENGINE_TOKEN: 
+      EXECUTIONENGINE_UPDATESTATUSCALLBACK: "http://ohdsi-webapi:8080/WebAPI/executionservice/callbacks/submission/{id}/status/update/{password}"
+      EXECUTIONENGINE_RESULTCALLBACK: "http://ohdsi-webapi:8080/WebAPI/executionservice/callbacks/submission/{id}/result/{password}"
+      EXECUTION_INVALIDATION_MAXAGE_HOURS: 72
+      EXECUTIONENGINE_RESULTEXCLUSIONS: "*.sqlite,covariates"
+
+
     labels:
       - "traefik.enable=true"

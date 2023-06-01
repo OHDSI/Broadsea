@@ -14,6 +14,7 @@ define([], function () {
 		url: baseUrl + '/WebAPI/'
 	};
 
+	configLocal.useExecutionEngine = $ATLAS_USE_EXECUTION_ENGINE;
 	configLocal.cohortComparisonResultsEnabled = $ATLAS_COHORT_COMPARISON_RESULTS_ENABLED;
 	configLocal.userAuthenticationEnabled = $ATLAS_USER_AUTH_ENABLED;
 	configLocal.plpResultsEnabled = $ATLAS_PLP_RESULTS_ENABLED;
