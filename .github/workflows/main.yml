@@ -13,8 +13,7 @@ jobs:
       - name: Install docker on Mac
         if: runner.os == 'macOS'
         run: |
-          brew install colima 
-          colima start
+          brew install docker docker-compose
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build traefik container
