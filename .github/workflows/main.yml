@@ -6,8 +6,6 @@ jobs:
       matrix:
         os: 
           - ubuntu-latest
-          - mac-latest
-      fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -15,4 +13,10 @@ jobs:
       - name: Build default profile
         run: docker-compose --profile default up -d
       - name: Test content container
-        run: curl -s --retry 30 --retry-connrefused http://127.0.0.1
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1
+      - name: Test WebAPI
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info
+      - name: Test Atlas
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/atlas
+      - name: Test HADES
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/hades
