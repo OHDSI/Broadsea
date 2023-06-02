@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build traefik container
-        run: docker-compose up -d
+        run: docker compose up -d
       - name: Check docker container
         run: docker logs traefik
   default:
@@ -26,9 +26,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build traefik container
-        run: docker-compose up -d
+        run: docker compose up -d
       - name: Build default profile
-        run: docker-compose --profile default up -d
+        run: docker compose --profile default up -d
       - name: Test content container
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1
       - name: Test WebAPI
