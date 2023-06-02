@@ -7,10 +7,15 @@ jobs:
         os: 
           - ubuntu-22.04
           - macos-12
+          - windows-2022
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: docker-practice/actions-setup-docker@master
-        timeout-minutes: 12
+      - name: Install docker on Mac 
+        run: |
+          if [ "$RUNNER_OS" == "macOS" ]; then
+          brew install docker 
+          colima start
+          fi
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build traefik container
