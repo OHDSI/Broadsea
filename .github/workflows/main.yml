@@ -1,17 +1,32 @@
 name: Broadsea Docker Compose
 on: push
 jobs:
-  default:
+  traefik:
     strategy:
       matrix:
         os: 
-          - ubuntu-latest
+          - ubuntu-22.04
+          - macos-12
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      #- name: Build traefik container
-      #  run: docker-compose up -d
+      - name: Build traefik container
+        run: docker-compose up -d
+      - name: Check docker container
+        run: docker logs traefik
+  default:
+    strategy:
+      matrix:
+        os: 
+          - ubuntu-22.04
+          - macos-12
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build traefik container
+        run: docker-compose up -d
       - name: Build default profile
         run: docker-compose --profile default up -d
       - name: Test content container
