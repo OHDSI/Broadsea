@@ -6,13 +6,12 @@ jobs:
       matrix:
         os: 
           - ubuntu-latest
-          - mac-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Build traefik container
-        run: docker-compose up -d
+      #- name: Build traefik container
+      #  run: docker-compose up -d
       - name: Build default profile
         run: docker-compose --profile default up -d
       - name: Test content container
