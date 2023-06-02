@@ -9,6 +9,8 @@ jobs:
           - macos-12
     runs-on: ${{ matrix.os }}
     steps:
+      - uses: docker-practice/actions-setup-docker@master
+        timeout-minutes: 12
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build traefik container
@@ -20,7 +22,6 @@ jobs:
       matrix:
         os: 
           - ubuntu-22.04
-          - macos-12
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
