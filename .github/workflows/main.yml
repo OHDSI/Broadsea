@@ -2,10 +2,10 @@ name: Broadsea Docker Compose
 on: push
 jobs:
   default:
-    runs-on: ${{ matrix.os.host }}
     strategy:
       matrix:
         os: [ubuntu-latest, mac-latest, windows-latest]
+    runs-on: ${{ matrix.os.host }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
