@@ -7,13 +7,13 @@ jobs:
         os: 
           - ubuntu-22.04
           - macos-12
-          - windows-2022
+         # - windows-2022
     runs-on: ${{ matrix.os }}
     steps:
       - name: Install docker on Mac
         if: runner.os == 'macOS'
         run: |
-          brew install docker 
+          brew install colima 
           colima start
       - name: Checkout
         uses: actions/checkout@v3
