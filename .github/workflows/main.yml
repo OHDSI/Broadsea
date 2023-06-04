@@ -16,6 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Create certs folder
+        if: runner.os == 'macOS'
         run: mkdir /Users/runner/work/Broadsea/Broadsea/certs
       - name: Build traefik container
         run: docker-compose up -d
