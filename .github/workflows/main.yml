@@ -10,12 +10,8 @@ jobs:
          # - windows-2022
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Install docker on Mac
-        if: runner.os == 'macOS'
-        run: |
-          brew install docker docker-compose
-          brew install --head colima
-          colima start
+      - name: Setup Docker on macOS
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build traefik container
