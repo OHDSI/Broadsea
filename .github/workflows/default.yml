@@ -1,13 +1,12 @@
-name: Broadsea Docker Compose
+name: Broadsea Default Profile
 on: push
 jobs:
-  traefik:
+  default:
     strategy:
       matrix:
         os: 
           - ubuntu-22.04
           - macos-12
-         # - windows-2022
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup Docker on macOS
@@ -20,21 +19,10 @@ jobs:
         run: mkdir /Users/runner/work/Broadsea/Broadsea/certs
       - name: Build traefik container
         run: docker-compose up -d
-      - name: Check docker container
+      - name: Check traefik container
         run: docker logs traefik
-  default:
-    strategy:
-      matrix:
-        os: 
-          - ubuntu-22.04
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Build traefik container
-        run: docker compose up -d
       - name: Build default profile
-        run: docker compose --profile default up -d
+        run: docker-compose --profile default up -d
       - name: Test content container
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1
       - name: Test WebAPI
