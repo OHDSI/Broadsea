@@ -15,6 +15,8 @@ jobs:
         uses: douglascamata/setup-docker-macos-action@v1-alpha
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Create certs folder
+        run: mkdir /Users/runner/work/Broadsea/Broadsea/certs
       - name: Build traefik container
         run: docker-compose up -d
       - name: Check docker container
