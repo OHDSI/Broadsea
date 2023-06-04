@@ -1,4 +1,4 @@
-name: Broadsea Default Profile
+name: Broadsea Default Profile (Linux and Mac)
 on: push
 jobs:
   default:
@@ -7,7 +7,6 @@ jobs:
         os: 
           - ubuntu-22.04
           - macos-12
-          - windows-2022
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup Docker on macOS
