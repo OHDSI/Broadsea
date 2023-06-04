@@ -14,7 +14,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install docker docker-compose
-          brew install colima
+          brew install --head colima
           colima start
       - name: Checkout
         uses: actions/checkout@v3
