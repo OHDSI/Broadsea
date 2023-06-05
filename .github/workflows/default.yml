@@ -9,6 +9,15 @@ jobs:
           - macos-12
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Generate certificates for next step
+        uses: kofemann/action-create-certificate@v0.0.4
+        with:
+          hostcert: 'broadsea.crt'
+          hostkey:  'broadsea.key'
+          cachain:  'ca-chain.pem'
+      - name: Use generated certificates
+        run: |
+            openssl x509 -in broadsea.crt -noout -text
       - name: Setup Docker on macOS
         if: runner.os == 'macOS'
         uses: douglascamata/setup-docker-macos-action@v1-alpha
