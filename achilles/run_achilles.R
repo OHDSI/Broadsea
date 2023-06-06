@@ -34,3 +34,15 @@ result <- achillesWrapper(
     sqlDialect = connectionDetails$dbms,
     outputFolder = outputFolder
 )
+
+aresOutputPath <- file.path("/ares", envVars$ACHILLES_CDM_DATABASE_SCHEMA)
+if (!file.exists(outputFolder)) {
+    dir.create(path = aresOutputPath, recursive = TRUE)
+}
+
+Achilles::exportToAres(connectionDetails = connectionDetails,
+                       cdmDatabaseSchema = envVars$ACHILLES_CDM_DATABASE_SCHEMA,
+                       resultsDatabaseSchema = envVars$ACHILLES_RESULTS_DATABASE_SCHEMA,
+                       vocabDatabaseSchema = envVars$ACHILLES_VOCAB_DATABASE_SCHEMA,
+                       outputPath = aresOutputPath,
+                       reports = c())

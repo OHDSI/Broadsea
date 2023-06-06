@@ -11,6 +11,8 @@ volumes:
     name: openldap-data
   achilles-data:
     name: achilles-data
+  ares-data:
+    name: ares-data
 
 services:
   
@@ -277,6 +279,7 @@ services:
     labels:
       - "traefik.enable=true"
 
+# CDM Post-Processing
 
   broadsea-achilles:
     profiles: [ "achilles" ]
@@ -288,6 +291,7 @@ services:
     container_name: broadsea-achilles
     volumes:
       - achilles-data:/achilles
+      - ares-data:/ares
       - ./achilles/run_achilles.R:/achilles/scripts/${ACHILLES_CDM_DATABASE_SCHEMA}.R
       - ./achilles/set_vars.R:/achilles/scripts/set_vars.R
     environment:
