@@ -9,6 +9,8 @@ volumes:
     name: rstudio-tmp-data
   openldap-data:
     name: openldap-data
+  jdbc-drivers-data:
+    name: jdbc-drivers-data
   achilles-data:
     name: achilles-data
   ares-data:
@@ -290,6 +292,7 @@ services:
     platform: "linux/amd64"
     container_name: broadsea-achilles
     volumes:
+      - jdbc-drivers-data:/jdbc
       - achilles-data:/achilles
       - ares-data:/ares
       - ./achilles/run_achilles.R:/achilles/scripts/${ACHILLES_CDM_DATABASE_SCHEMA}.R
@@ -321,4 +324,18 @@ services:
       ACHILLES_SQL_DIALECT: ${ACHILLES_SQL_DIALECT}
     entrypoint: ["Rscript", "/achilles/scripts/${ACHILLES_CDM_DATABASE_SCHEMA}.R" ]
 
+
+  # broadsea-load-phenotype-library:
+  #   profiles: [ "load-phenotype-library" ]
+  #   container_name: load-phenotype-library
+  #   extends:
+  #     file: "postgres-load.yml"
+  #     service: broadsea-postgres-load
+  #   environment:
+  #     PHENOTYPE_PG_HOST: ${VOCAB_PG_HOST}
+  #     PHENOTYPE_PG_DATABASE: ${VOCAB_PG_DATABASE}
+  #     PHENOTYPE_PG_SCHEMA: ${VOCAB_PG_SCHEMA}
+  #     PHENOTYPE_PG_USER: ${VOCAB_PG_USER}
+  #     PHENOTYPE_PG_PASSWORD: ${VOCAB_PG_PASSWORD}
+  #   entrypoint: ["sh", "/tmp/scripts/load_omop_vocab.sh" ]
     

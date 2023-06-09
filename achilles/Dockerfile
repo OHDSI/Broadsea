@@ -20,4 +20,4 @@ R CMD javareconf
 EOF
 
 RUN R -e "remotes::install_github('OHDSI/Achilles')"
-RUN R -e "DatabaseConnector::downloadJdbcDrivers(dbms = '$ACHILLES_SQL_DIALECT', pathToDriver = '/achilles/drivers')"
+RUN R -e "DatabaseConnector::downloadJdbcDrivers(dbms = '$ACHILLES_SQL_DIALECT', pathToDriver = '/jdbc')"

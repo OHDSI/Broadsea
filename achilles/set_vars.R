@@ -38,7 +38,7 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
     user = Sys.getenv("ACHILLES_CDM_USERNAME"),
     password = Sys.getenv("ACHILLES_CDM_PASSWORD"),
     connectionString = Sys.getenv("ACHILLES_JDBC_URL"),
-    pathToDriver = "/achilles/drivers"
+    pathToDriver = "/jdbc"
 )
 
 achillesWrapper <- function(connectionDetails,
