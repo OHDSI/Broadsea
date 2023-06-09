@@ -174,7 +174,7 @@ services:
     container_name: broadsea-ares
     restart: unless-stopped
     build:
-      context: https://github.com/alondhe/Ares.git#docker  # hack until Dockerfile is added to OHDSI/Ares
+      context: https://github.com/OHDSI/Ares.git
     volumes:
       - ${ARES_DATA_FOLDER}:/usr/share/nginx/html/ares/data:ro
     labels:
