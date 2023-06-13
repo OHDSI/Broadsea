@@ -26,8 +26,7 @@ jobs:
       - name: Build openldap profile
         run: docker-compose --profile openldap up -d
       - name: Build webapi profile
-        run: WEBAPI_SECURITY_PROVIDER="AtlasRegularSecurity" SECURITY_AUTH_LDAP_ENABLED="true" \
-             docker-compose --profile webapi-from-image up -d
+        run: WEBAPI_SECURITY_PROVIDER="AtlasRegularSecurity" SECURITY_AUTH_LDAP_ENABLED="true" docker-compose --profile webapi-from-image up -d
       - name: Test WebAPI
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info
       - name: Test WebAPI with LDAP
