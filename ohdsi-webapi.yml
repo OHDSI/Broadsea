@@ -36,7 +36,7 @@ services:
       FLYWAY_BASELINEDESCRIPTION: Base Migration
       SECURITY_CORS_ENABLED: "true"
       SECURITY_ORIGIN: "${HTTP_TYPE}://${BROADSEA_HOST}"
-      SOLR_VOCAB_ENDPOINT: "${SOLR_VOCAB_ENDPOINT}"
+      SOLR_ENDPOINT: "${SOLR_VOCAB_ENDPOINT}"
 
       # Security provider enabling/disabling
       
