@@ -166,8 +166,7 @@ services:
     depends_on:
       broadsea-solr-vocab:
         condition: service_healthy
-    command: curl -d "vocab_database_schema=${VOCAB_DATABASE_SCHEMA}" \ 
-             -X POST ${SOLR_VOCAB_ENDPOINT}/${VOCAB_VERSION}/dataimport?command=full-import&entity=concept
+    command: curl -d "vocab_database_schema=${VOCAB_DATABASE_SCHEMA}" -X POST ${SOLR_VOCAB_ENDPOINT}/${VOCAB_VERSION}/dataimport?command=full-import&entity=concept
 
   broadsea-ares:
     profiles: [ "ares" ]
@@ -195,7 +194,8 @@ services:
       VOCAB_PG_PASSWORD: ${VOCAB_PG_PASSWORD}
       UMLS_API_KEY: ${UMLS_API_KEY}
     volumes:
-      - ./omop_vocab:/tmp
+      - ./omop_vocab/scripts:/tmp/scripts
+      - ${VOCAB_PG_FILES_PATH}:/tmp/files
     entrypoint: ["sh", "/tmp/scripts/load_omop_vocab.sh" ]
 
 

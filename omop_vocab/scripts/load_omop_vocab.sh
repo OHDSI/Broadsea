@@ -8,6 +8,9 @@ cd /tmp/files
 
 if [ -z "$UMLS_API_KEY" ]
 then
+      echo "\$UMLS_API_KEY is empty"
+else
+    echo 'Running CPT4 process'
     apk add openjdk11
     chmod +x ./cpt.sh
     chmod +x ./cpt4.jar

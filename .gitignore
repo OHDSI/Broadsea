@@ -4,3 +4,5 @@ omop_vocab/files
 *.jar
 *.lic
 .github/workflows
+phoebe/concept_recommended.csv
+phoebe/__MACOSX
