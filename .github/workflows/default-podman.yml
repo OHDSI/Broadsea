@@ -11,7 +11,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install Podman Compose
-        run: pip3 install podman-compose
+        run: pip3 install https://github.com/containers/podman-compose/archive/devel.tar.gz
       - name: Build traefik container
         run: podman-compose up
       - name: Check traefik container
