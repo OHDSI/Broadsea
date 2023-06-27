@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: change ip_unprivileged_port_start
+        run: sudo sysctl net.ipv4.ip_unprivileged_port_start=80
       - name: Install CNI plugins
         run: |
               sudo curl -O http://archive.ubuntu.com/ubuntu/pool/universe/g/golang-github-containernetworking-plugins/containernetworking-plugins_1.1.1+ds1-1_amd64.deb
