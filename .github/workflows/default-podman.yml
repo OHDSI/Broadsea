@@ -8,23 +8,20 @@ jobs:
           - ubuntu-22.04
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
       - name: change ip_unprivileged_port_start
         run: sudo sysctl net.ipv4.ip_unprivileged_port_start=80
-      - name: Install CNI plugins
-        run: |
-              sudo curl -O http://archive.ubuntu.com/ubuntu/pool/universe/g/golang-github-containernetworking-plugins/containernetworking-plugins_1.1.1+ds1-1_amd64.deb
-              sudo dpkg -i containernetworking-plugins_1.1.1+ds1-1_amd64.deb
-              podman system reset --force
-      - name: Install Podman Compose
-        run: pip3 install https://github.com/containers/podman-compose/archive/devel.tar.gz
+      - name: Stop Docker daemon
+        run: sudo systemctl stop docker
+      - name: Start Podman
+        run: sudo systemctl enable --now podman.socket
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Build traefik container
-        run: podman-compose up
+        run: docker-compose up
       - name: Check traefik container
         run: docker logs traefik
       - name: Build default profile
-        run: podman-compose --profile default up
+        run: docker-compose --profile default up
       - name: Test content container
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1
       - name: Test WebAPI
