@@ -11,11 +11,11 @@ jobs:
       - name: Install Podman Compose
         run: pip3 install podman-compose
       - name: Build traefik container
-        run: podman compose up -d
+        run: podman compose up
       - name: Check traefik container
         run: docker logs traefik
       - name: Build default profile
-        run: podman compose --profile default up -d
+        run: podman compose --profile default up
       - name: Test content container
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1
       - name: Test WebAPI
