@@ -8,6 +8,8 @@ jobs:
           - ubuntu-22.04
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Install Podman Compose
         run: pip3 install podman-compose
       - name: Build traefik container
