@@ -10,6 +10,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Install CNI plugins
+        run: |
+              sudo apt install containernetworking-plugins
+              sudo apt update
+              podman system reset --force
       - name: Install Podman Compose
         run: pip3 install https://github.com/containers/podman-compose/archive/devel.tar.gz
       - name: Build traefik container
