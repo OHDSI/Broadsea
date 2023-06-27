@@ -1,0 +1,26 @@
+name: Broadsea Default Profile (Linux)
+on: push
+jobs:
+  default:
+    strategy:
+      matrix:
+        os: 
+          - ubuntu-22.04
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Install Podman Compose
+        run: pip3 install podman-compose
+      - name: Build traefik container
+        run: podman compose up -d
+      - name: Check traefik container
+        run: docker logs traefik
+      - name: Build default profile
+        run: podman compose --profile default up -d
+      - name: Test content container
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1
+      - name: Test WebAPI
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info
+      - name: Test Atlas
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/atlas
+      - name: Test HADES
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/hades
