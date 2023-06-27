@@ -12,8 +12,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Install CNI plugins
         run: |
-              sudo apt install containernetworking-plugins
-              sudo apt update
+              curl -O http://archive.ubuntu.com/ubuntu/pool/universe/g/golang-github-containernetworking-plugins/containernetworking-plugins_1.1.1+ds1-1_amd64.deb
+              dpkg -i containernetworking-plugins_1.1.1+ds1-1_amd64.deb
               podman system reset --force
       - name: Install Podman Compose
         run: pip3 install https://github.com/containers/podman-compose/archive/devel.tar.gz
