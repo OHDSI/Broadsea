@@ -1,9 +1,12 @@
 ######################################
-# HTTP Traefik (No SSL)
+# HTTPS Traefik (with SSL)
 ######################################
 
 global:
   sendAnonymousUsage: false
+
+api:
+  dashboard: true
 
 providers:
   docker:
@@ -22,3 +25,13 @@ log:
 entryPoints:
   http:
     address: ":80"
+    http:
+      tls: false
+      redirections:
+        entryPoint:
+          to: https
+          scheme: https
+  https:
+    address: ":443"
+    http:
+      tls: true

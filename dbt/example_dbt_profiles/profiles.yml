@@ -1,0 +1,14 @@
+default:
+
+  target: dev
+
+  outputs:
+
+    dev:
+      type: postgres
+      host: broadsea-atlasdb
+      user: postgres
+      password: mypass
+      port: 5432
+      dbname: postgres
+      schema: public

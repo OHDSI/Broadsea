@@ -8,6 +8,12 @@ tls:
 
 http:
   routers:
+
+    traefik-dashboard:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: api@internal
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/api`, `/dashboard`)'
+
     traefik:
       entryPoints: '{{ env "HTTP_TYPE" }}'
       service: "traefik"
@@ -68,6 +74,16 @@ http:
       service: "broadsea-posit-connect"
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/__`)'
 
+
+    # perseus-white-rabbit:
+    #   entryPoints: '{{ env "HTTP_TYPE" }}'
+    #   service: "perseus-white-rabbit"
+    #   rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/white-rabbit`)'
+    #   middlewares:
+    #   #  - "perseus-white-rabbit-path-strip"
+    #     - "perseus-headers"
+
+
   middlewares:
 
     broadsea-hades-path-strip:
@@ -75,6 +91,23 @@ http:
         prefixes: 
           - "/hades"
         forceSlash: false
+
+    # perseus-white-rabbit-path-strip:
+    #   stripPrefix:
+    #     prefixes: 
+    #       - "/white-rabbit"
+    #     forceSlash: false
+    
+    # perseus-headers:
+    #   headers:
+    #     customRequestHeaders:
+    #       Host: "https://127.0.0.1"
+    #       X-Real-IP: "https://127.0.0.1"
+    #       #Host(`{{ env "BROADSEA_HOST" }}`)
+    #       #X-Real-IP $remote_addr;
+		#       #X-Forwarded-For $proxy_add_x_forwarded_for;
+		#       #X-Forwarded-Proto $scheme;
+		#       #Host $host;
 
     broadsea-hades-root-path-header:
       headers:
@@ -137,3 +170,9 @@ http:
       loadBalancer:
         servers:
           - url: http://broadsea-posit-connect:3939
+
+
+    # perseus-white-rabbit:
+    #   loadBalancer:
+    #     servers:
+    #       - url: http://perseus-white-rabbit:8000
