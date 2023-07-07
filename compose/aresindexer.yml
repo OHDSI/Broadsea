@@ -3,7 +3,7 @@ version: '3.9'
 services:
 
   broadsea-run-aresindexer:
-    build: "https://github.com/alondhe/AresIndexer.git#dockerfile"
+    build: ../ares
     platform: "linux/amd64"
     container_name: broadsea-run-aresindexer
     environment:

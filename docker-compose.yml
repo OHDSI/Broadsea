@@ -285,7 +285,7 @@ services:
 
   broadsea-run-achilles:
     profiles: [ "cdm-postprocessing", "achilles" ]
-    build: "https://github.com/alondhe/Achilles.git#dockerfile"
+    build: ./achilles
     platform: "linux/amd64"
     container_name: broadsea-run-achilles
     volumes:
@@ -325,7 +325,7 @@ services:
 
   broadsea-run-dqd:
     profiles: [ "cdm-postprocessing", "dqd" ]
-    build: "https://github.com/alondhe/DataQualityDashboard.git#dockerfile"
+    build: ./dqd
     platform: "linux/amd64"
     container_name: broadsea-run-dqd
     volumes:

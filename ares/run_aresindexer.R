@@ -46,12 +46,10 @@ Achilles::exportToAres(connectionDetails = connectionDetails,
 # perform temporal characterization ------------
 
 outputFile <- file.path(datasourceReleaseOutputFolder, "temporal-characterization.csv")
-Achilles::performTemporalCharacterization(
-  connectionDetails = connectionDetails,
-  cdmDatabaseSchema = cdmConfig$CDM_DATABASE_SCHEMA,
-  resultsDatabaseSchema = cdmConfig$RESULTS_DATABASE_SCHEMA,
-  outputFile = outputFile
-)
+Achilles::performTemporalCharacterization(connectionDetails = connectionDetails,
+                                          cdmDatabaseSchema = cdmConfig$CDM_DATABASE_SCHEMA,
+                                          resultsDatabaseSchema = cdmConfig$RESULTS_DATABASE_SCHEMA,
+                                          outputFile = outputFile)
 
 # augment concept files with temporal characterization data ---------------
 
