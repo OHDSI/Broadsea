@@ -1,10 +1,8 @@
-{ pkgs ? import <nixpkgs> { }, pythonPackages ? pkgs.python3Packages }:
+{ pkgs ? import <nixpkgs> {}}:
 
-pkgs.mkShell {
-  buildInputs = [
-     pythonPackages.numpy
-     pythonPackages.scipy
-     pythonPackages.jupyterlab
+  environment.systemPackages = [
+    pkgs.R
   ];
 
 }
+
