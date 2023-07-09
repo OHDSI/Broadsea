@@ -32,4 +32,5 @@ jobs:
     - run: nix-build
     - run: nix-shell --run "echo OK"
     - run: podman --version
+    - run: pip3 install podman-compose
     - run: podman-compose up -d
