@@ -2,10 +2,8 @@
 
 pkgs.mkShell {
   buildInputs = [
-     pythonPackages.numpy
-     pythonPackages.scipy
-     pythonPackages.jupyterlab
      pkgs.R
+     pkgs.traefik
   ];
 
 }
