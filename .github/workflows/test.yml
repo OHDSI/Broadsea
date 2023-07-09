@@ -17,3 +17,4 @@ jobs:
     - run: nix-build
     - run: nix-shell --run "echo OK"
     - run: docker --version
+    - run: docker-compose up -d
