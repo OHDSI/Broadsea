@@ -1,4 +1,4 @@
-name: "Test"
+name: "test-docker-compose"
 on:
   pull_request:
   push:

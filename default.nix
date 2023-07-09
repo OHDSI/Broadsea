@@ -3,6 +3,7 @@
 pkgs.mkShell {
   buildInputs = [
      pkgs.docker
+     pkgs.podman
   ];
 
 }
