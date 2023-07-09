@@ -1,9 +1,8 @@
-{ pkgs ? import <nixpkgs> {}, pythonPackages ? pkgs.python3Packages }:
+{ pkgs ? import <nixpkgs> {}}:
 
 pkgs.mkShell {
   buildInputs = [
-     pkgs.R
-     pkgs.traefik
+     pkgs.Docker
   ];
 
 }
