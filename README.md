@@ -1,5 +1,4 @@
-# OHDSI Broadsea 3.0
-
+# OHDSI Broadsea 3.0 Nix
 ## Introduction
 
 Broadsea runs the core OHDSI technology stack using cross-platform Docker container technology.
