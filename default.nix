@@ -2,7 +2,7 @@
 
 pkgs.mkShell {
   buildInputs = [
-     docker
+     pkgs.docker
   ];
 
 }
