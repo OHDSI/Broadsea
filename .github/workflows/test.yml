@@ -12,10 +12,7 @@ jobs:
         nix_path: nixpkgs=channel:nixos-unstable
     - uses: cachix/cachix-action@v12
       with:
-        name: mycache
-        # If you chose signing key for write access
-        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
-        # If you chose API tokens for write access OR if you have a private cache
+        name: broadseanix
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
     - run: nix-build
     - run: nix-shell --run "echo OK"
