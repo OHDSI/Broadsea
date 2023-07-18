@@ -20,9 +20,9 @@ http:
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`)'
 
     broadsea-content:
-      entryPoints: '{{ env "HTTP_TYPE" }}'
-      service: "broadsea-content"
-      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/`)'
+     entryPoints: '{{ env "HTTP_TYPE" }}'
+     service: "broadsea-content"
+     rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/`)'
       
     ohdsi-atlas:
       entryPoints: '{{ env "HTTP_TYPE" }}'
@@ -75,14 +75,12 @@ http:
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/__`)'
 
 
-    # perseus-white-rabbit:
-    #   entryPoints: '{{ env "HTTP_TYPE" }}'
-    #   service: "perseus-white-rabbit"
-    #   rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/white-rabbit`)'
-    #   middlewares:
-    #   #  - "perseus-white-rabbit-path-strip"
-    #     - "perseus-headers"
-
+    perseus-web:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: "perseus-web"
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/perseus`)'
+      middlewares:
+        - "broadsea-perseus-strip-prefix"
 
   middlewares:
 
@@ -92,27 +90,25 @@ http:
           - "/hades"
         forceSlash: false
 
-    # perseus-white-rabbit-path-strip:
-    #   stripPrefix:
-    #     prefixes: 
-    #       - "/white-rabbit"
-    #     forceSlash: false
-    
-    # perseus-headers:
-    #   headers:
-    #     customRequestHeaders:
-    #       Host: "https://127.0.0.1"
-    #       X-Real-IP: "https://127.0.0.1"
-    #       #Host(`{{ env "BROADSEA_HOST" }}`)
-    #       #X-Real-IP $remote_addr;
-		#       #X-Forwarded-For $proxy_add_x_forwarded_for;
-		#       #X-Forwarded-Proto $scheme;
-		#       #Host $host;
+    broadsea-perseus-strip-prefix:
+      stripPrefix:
+        prefixes: 
+          - "/perseus"
+        forceSlash: false
+
+    broadsea-perseus-add-prefix:
+      addPrefix:
+        prefix: "/perseus"
 
     broadsea-hades-root-path-header:
       headers:
         customRequestHeaders:
           X-RStudio-Root-Path: "/hades"
+
+    perseus-username-header:
+      headers:
+        customRequestHeaders:
+          Username: "Username"
 
     broadsea-open-shiny-server-path-strip:
       stripPrefix:
@@ -172,7 +168,7 @@ http:
           - url: http://broadsea-posit-connect:3939
 
 
-    # perseus-white-rabbit:
-    #   loadBalancer:
-    #     servers:
-    #       - url: http://perseus-white-rabbit:8000
+    perseus-web:
+      loadBalancer:
+        servers:
+          - url: http://perseus-web:80

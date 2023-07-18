@@ -13,8 +13,12 @@ volumes:
     name: jdbc-drivers-data
   cdm-postprocessing-data:
     name: cdm-postprocessing-data
-  shareddb:
-    name: shareddb
+  perseus-shareddb:
+    name: perseus-shareddb
+  perseus-vocabularydb:
+    name: perseus-vocabularydb
+  perseus-solr:
+    name: perseus-solr
 
 services:
   
@@ -50,10 +54,10 @@ services:
       CONTENT_OPENSHINYSERVER_DISPLAY: ${CONTENT_OPENSHINYSERVER_DISPLAY}
       CONTENT_POSITCONNECT_DISPLAY: ${CONTENT_POSITCONNECT_DISPLAY}
     volumes:
-      - ./broadsea_content/images:/usr/share/nginx/html/images
-      - ./broadsea_content/style.css:/usr/share/nginx/html/style.css
-      - ./broadsea_content/index.html:/tmp/index.html
-      - ./broadsea_content/envsubst.sh:/tmp/envsubst.sh:ro
+      - ./content/images:/usr/share/nginx/html/images
+      - ./content/style.css:/usr/share/nginx/html/style.css
+      - ./content/index.html:/tmp/index.html
+      - ./content/envsubst.sh:/tmp/envsubst.sh:ro
     entrypoint: ["sh", "/tmp/envsubst.sh" ]
     labels:
       - "traefik.enable=true"
@@ -123,7 +127,7 @@ services:
       - "5432:5432"
     volumes:
      - atlasdb-postgres-data:/var/lib/postgresql/data
-     - ./100_populate_source_source_daimon.sql:/docker-entrypoint-initdb.d/100_populate_source_source_daimon.sql:ro
+     - ./atlasdb/100_populate_source_source_daimon.sql:/docker-entrypoint-initdb.d/100_populate_source_source_daimon.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -145,8 +149,6 @@ services:
     volumes:
       - ./${VOCAB_JDBC_FILE_NAME}:/opt/solr-8.11.1/server/lib/${VOCAB_JDBC_FILE_NAME}:ro
       - ./solr:/tmp/solr_config:ro
-    ports:
-      - "8983:8983"
     labels:
       - "traefik.enable=true"
     command:
@@ -218,7 +220,7 @@ services:
 
   broadsea-arachne-execution-engine:
     profiles: [ "arachne-execution-engine" ]
-    image: odysseusinc/execution_engine:1.19.1
+    build: ./arachne
     container_name: broadsea-arachne-execution-engine
     restart: unless-stopped
     ports:
@@ -395,44 +397,205 @@ services:
 
   ### Perseus
 
-  # shareddb:
-  #   profiles: [ "perseus" ]
-  #   image: perseushub/shareddb:latest
-  #   platform: "linux/amd64"
-  #   container_name: shareddb
-  #   restart: unless-stopped
-  #   volumes:
-  #     - shareddb:/data/postgres
-  #   ports:
-  #     - "5433:5432"
+  perseus-shareddb:
+    profiles: [ "perseus-shareddb", "perseus" ]
+    image: perseushub/shareddb:latest
+    platform: "linux/amd64"
+    container_name: perseus-shareddb
+    restart: unless-stopped
+    volumes:
+      - perseus-shareddb:/data/postgres
+      
 
-  # files-manager:
-  #   profiles: [ "perseus" ]
-  #   image: perseushub/files-manager:latest
-  #   platform: "linux/amd64"
-  #   container_name: files-manager
-  #   restart: unless-stopped
-  #   ports:
-  #     - "10500:10500"
-  #   environment:
-  #     SPRING_PROFILES_ACTIVE: docker
-  #     DATASOURCE_URL: jdbc:postgresql://shareddb:5433/shared
-  #   depends_on:
-  #     - shareddb
+  perseus-files-manager:
+    profiles: [ "perseus-files-manager", "perseus" ]
+    image: perseushub/files-manager:latest
+    platform: "linux/amd64"
+    container_name: perseus-files-manager
+    restart: unless-stopped
+    ports:
+      - "10500:10500"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://perseus-shareddb:5432/shared
+    depends_on:
+      - perseus-shareddb
 
-  # perseus-white-rabbit:
-  #   profiles: [ "perseus" ]
-  #   image: ohdsi/perseus-white-rabbit:latest
-  #   platform: "linux/amd64"
-  #   container_name: perseus-white-rabbit
-  #   restart: unless-stopped
-  #   ports:
-  #     - "8000:8000"
-  #   environment:
-  #     SPRING_PROFILES_ACTIVE: docker
-  #     HOSTNAME: ${BROADSEA_HOST}
-  #   depends_on:
-  #     - shareddb
-  #     - files-manager
-  #   labels:
-  #     - "traefik.enable=true"
+
+  perseus-web:
+    profiles: [ "perseus-web", "perseus" ]
+    image: perseushub/web:latest
+    platform: linux/amd64
+    container_name: perseus-web
+    restart: always
+    labels:
+      - "traefik.enable=true"
+
+
+  perseus-user:
+    profiles: [ "perseus-user", "perseus" ]
+    image: perseushub/user:latest
+    platform: linux/amd64
+    container_name: perseus-user
+    environment:
+      DB_HOST: perseus-shareddb
+      SMTP_SERVER: ${PERSEUS_SMTP_SERVER}
+      SMTP_PORT: ${PERSEUS_SMTP_PORT}
+      SMTP_EMAIL: ${PERSEUS_SMTP_EMAIL}
+      SMTP_USER: ${PERSEUS_SMTP_USER}
+      SMTP_PWD: ${PERSEUS_SMTP_PWD}
+      TOKEN_SECRET_KEY: ${PERSEUS_TOKEN_SECRET_KEY}
+      EMAIL_SECRET_KEY: ${PERSEUS_EMAIL_SECRET_KEY}
+      USER_ENV: Docker
+      #SERVER_ADDRESS: ${HTTP_TYPE}://${BROADSEA_HOST}/perseus/
+    volumes:
+      - ./perseus/user/config.py:/app/config.py
+    ports:
+      - "5001:5001"
+    depends_on:
+      - perseus-shareddb
+
+  perseus-backend:
+    profiles: [ "perseus-backend", "perseus" ]
+    image: perseushub/backend:latest
+    platform: linux/amd64
+    container_name: perseus-backend
+    environment:
+      PERSEUS_ENV: Docker
+    volumes:
+      - ./perseus/backend/config.py:/app/config.py
+    ports:
+      - "5000:5000"
+    depends_on:
+      - perseus-shareddb
+      - perseus-files-manager
+
+  perseus-frontend:
+    profiles: [ "perseus-frontend", "perseus" ]
+    image: ohdsi/perseus-frontend:0.2.0
+    platform: linux/amd64
+    container_name: perseus-frontend
+    ports:
+      - "4200:4200"
+
+  perseus-vocabularydb:
+    profiles: [ "perseus-vocabularydb", "perseus" ]
+    image: perseushub/vocabularydb:latest
+    platform: linux/amd64
+    container_name: perseus-vocabularydb
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "vocabulary", "-U", "admin" ]
+      timeout: 60s
+      interval: 30s
+      retries: 10
+    volumes:
+      - perseus-vocabularydb:/data/postgres
+      - ${PERSEUS_VOCAB_FILES_PATH}:/vocabulary
+    ports:
+      - "5431:5432"
+
+  perseus-cdm-builder:
+    profiles: [ "perseus-cdm-builder", "perseus" ]
+    image: perseushub/cdm-builder:latest
+    platform: linux/amd64
+    container_name: perseus-cdm-builder
+    ports:
+      - "9000:9000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    depends_on:
+      - perseus-shareddb
+      - perseus-files-manager
+      - perseus-vocabularydb
+
+  perseus-solr:
+    profiles: [ "perseus-solr", "perseus" ]
+    image: perseushub/solr:latest
+    platform: linux/amd64
+    container_name: perseus-solr
+    ports:
+      - "8983:8983"
+    volumes:
+      - perseus-solr:/var/solr
+    depends_on:
+      - perseus-vocabularydb
+  
+  perseus-athena:
+    profiles: [ "perseus-athena", "perseus" ]
+    image: perseushub/athena:latest
+    platform: linux/amd64
+    container_name: perseus-athena
+    environment:
+      ATHENA_ENV: Docker
+    volumes:
+      - ./perseus/athena/config.py:/app/config.py
+    ports:
+      - "5002:5002"
+    depends_on:
+      - perseus-solr
+
+  perseus-usagi:
+    profiles: [ "perseus-usagi", "perseus" ]
+    image: perseushub/usagi:latest
+    platform: linux/amd64
+    command: python /app/main.py
+    container_name: perseus-usagi
+    environment:
+      USAGI_ENV: Docker
+    volumes:
+      - ./perseus/usagi/config.py:/app/config.py
+    ports:
+      - "5003:5003"
+    depends_on:
+      - perseus-shareddb
+      - perseus-solr
+
+  perseus-r-serve:
+    profiles: [ "perseus-r-serve", "perseus" ]
+    image: perseushub/r-serve:latest
+    platform: linux/amd64
+    container_name: perseus-r-serve
+    ports:
+      - "6311:6311"
+    depends_on:
+      - perseus-shareddb
+  
+  perseus-data-quality-dashboard:
+    profiles: [ "perseus-dqd", "perseus" ]
+    image: perseushub/data-quality-dashboard:latest
+    platform: linux/amd64
+    container_name: perseus-data-quality-dashboard
+    ports:
+      - "8001:8001"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://perseus-shareddb:5432/shared
+      FILES_MANAGER_URL: http://perseus-files-manager:10500/files-manager
+    depends_on:
+      - perseus-shareddb
+      - perseus-files-manager
+      - perseus-r-serve
+
+  perseus-swagger:
+    profiles: [ "perseus-swagger", "perseus" ]
+    image: perseushub/swagger:latest
+    platform: linux/amd64
+    container_name: perseus-swagger
+    ports:
+      - 8080:8080
+
+  perseus-white-rabbit:
+    profiles: [ "perseus-white-rabbit", "perseus" ]
+    image: ohdsi/perseus-white-rabbit:latest
+    platform: "linux/amd64"
+    container_name: perseus-white-rabbit
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://perseus-shareddb:5432/shared
+      files-manager-url: "http://perseus-files-manager:10500/files-manager"
+    depends_on:
+      - perseus-shareddb
+      - perseus-files-manager
