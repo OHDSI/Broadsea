@@ -1,0 +1,33 @@
+name: Broadsea Default Profile (Linux and Mac)
+on: push
+jobs:
+  default:
+    strategy:
+      matrix:
+        os: 
+          - ubuntu-22.04
+          - macos-12
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Setup Docker on macOS
+        if: runner.os == 'macOS'
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Create certs folder
+        if: runner.os == 'macOS'
+        run: mkdir /Users/runner/work/Broadsea/Broadsea/certs
+      - name: Build traefik container
+        run: docker-compose up -d
+      - name: Check traefik container
+        run: docker logs traefik
+      - name: Build default profile
+        run: docker-compose --profile default up -d
+      - name: Test content container
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1
+      - name: Test WebAPI
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info
+      - name: Test Atlas
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/atlas
+      - name: Test HADES
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/hades

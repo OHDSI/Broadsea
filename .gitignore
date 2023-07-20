@@ -3,6 +3,5 @@ omop_vocab/files
 .env_local
 *.jar
 *.lic
-.github/workflows
 phoebe/concept_recommended.csv
 phoebe/__MACOSX
