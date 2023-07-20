@@ -13,7 +13,7 @@ services:
     privileged: false
     volumes:
       - ../cacerts:/usr/local/openjdk-8/lib/security/cacerts:ro # add a cacerts file if using LDAPS
-      - ../webapi/${WEBAPI_ADDITIONAL_JDBC_FILE}:/var/lib/ohdsi/webapi/WEB-INF/lib/${WEBAPI_ADDITIONAL_JDBC_FILE}
+      - ${WEBAPI_ADDITIONAL_JDBC_FILE_PATH}:/var/lib/ohdsi/webapi/WEB-INF/lib/webapi_additional_jdbc_driver.jar
     secrets:
       - WEBAPI_DATASOURCE_PASSWORD
       - SECURITY_LDAP_SYSTEM_PASSWORD

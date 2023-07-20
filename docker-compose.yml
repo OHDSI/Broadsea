@@ -150,7 +150,7 @@ services:
         -DVOCAB_JDBC_USER=${SOLR_VOCAB_JDBC_USER}
         -DVOCAB_JDBC_PASSWORD="$$(</run/secrets/SOLR_VOCAB_JDBC_PASSWORD)"
     volumes:
-      - ./${SOLR_VOCAB_JDBC_FILE_NAME}:/opt/solr-8.11.1/server/lib/${SOLR_VOCAB_JDBC_FILE_NAME}:ro
+      - ${SOLR_VOCAB_JDBC_FILE_PATH}:/opt/solr-8.11.1/server/lib/solr_jdbc_driver.jar:ro
       - ./solr:/tmp/solr_config:ro
     labels:
       - "traefik.enable=true"
