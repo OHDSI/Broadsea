@@ -96,19 +96,10 @@ http:
           - "/perseus"
         forceSlash: false
 
-    broadsea-perseus-add-prefix:
-      addPrefix:
-        prefix: "/perseus"
-
     broadsea-hades-root-path-header:
       headers:
         customRequestHeaders:
           X-RStudio-Root-Path: "/hades"
-
-    perseus-username-header:
-      headers:
-        customRequestHeaders:
-          Username: "Username"
 
     broadsea-open-shiny-server-path-strip:
       stripPrefix:

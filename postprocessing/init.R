@@ -1,7 +1,6 @@
 envVarNames <- list(
     "CDM_CONNECTIONDETAILS_DBMS",
     "CDM_CONNECTIONDETAILS_USER",
-    "CDM_CONNECTIONDETAILS_PASSWORD",
     "CDM_CONNECTIONDETAILS_SERVER",
     "CDM_CONNECTIONDETAILS_PORT",
     "CDM_CONNECTIONDETAILS_EXTRA_SETTINGS",
@@ -13,6 +12,11 @@ envVarNames <- list(
     "CDM_SOURCE_NAME",
     "CDM_VERSION"
 )
+
+
+Sys.setenv("CDM_CONNECTIONDETAILS_PASSWORD" =
+    readChar("/run/secrets/CDM_CONNECTIONDETAILS_PASSWORD",
+         file.info("/run/secrets/CDM_CONNECTIONDETAILS_PASSWORD")$size))
 
 cdmConfig <- as.list(Sys.getenv(envVarNames, unset = NA))
 
