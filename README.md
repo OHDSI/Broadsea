@@ -1,10 +1,12 @@
-# OHDSI Broadsea 3.0
+# OHDSI Broadsea 3.1
+
+[![Default Profile](https://github.com/OHDSI/Broadsea/actions/workflows/default.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/default.yml)
 
 ## Introduction
 
 Broadsea runs the core OHDSI technology stack using cross-platform Docker container technology.
 
-[Information on Observational Health Data Sciences and Informatics (OHDSI)](http://www.ohdsi.org/ "OHSDI Web Site")
+[Information on Observational Health Data Sciences and Informatics (OHDSI)](http://www.ohdsi.org/ "OHDSI Website")
 
 This repository contains the Docker Compose file used to launch the OHDSI Broadsea Docker containers:
 
@@ -24,14 +26,19 @@ This repository contains the Docker Compose file used to launch the OHDSI Broads
 * OHDSI Ares
   * [Ares GitHub repository](https://github.com/OHDSI/Ares "OHDSI Ares GitHub Repository")
 
+* OHDSI Perseus
+  * [Perseus GitHub repository](https://github.com/OHDSI/Perseus "OHDSI Perseus GitHub Repository")
+
 Additionally, Broadsea offers some services not specifically needed for OHDSI applications that often are useful:
 
 * OpenLDAP for testing security in Atlas
 * Open Shiny Server for deploying Shiny apps without a commercial license
 * Posit Connect for sites with commercial Posit licenses, for deploying Shiny apps
+* DBT for ETL design
 
 ### Broadsea Dependencies
 
+* Linux, Mac, or Windows with WSL
 * Docker
 * Git
 * Chromium-based web browser (Chrome, Edge, etc.)
@@ -54,7 +61,7 @@ docker-compose --profile default up -d
 * In your web browser open the URL: ```"http://127.0.0.1"```
 * Click on the Atlas link to open Atlas in a new browser window
 * Click on the Hades link to open HADES (RStudio) in a new browser window.
-  * The RStudio userid is 'ohdsi' and the password is 'mypass'  
+  * The default RStudio userid is 'ohdsi' and the default password is located in the `./secrets/hades/HADES_PASSWORD` file.
 
 ## Broadsea - Advanced Usage
 
@@ -62,9 +69,17 @@ docker-compose --profile default up -d
 
 The .env file that comes with Broadsea has default and sample values. For advanced use, modify the values as appropriate, as covered below.
 
+### Docker Secrets
+
+Broadsea now leverages [Docker Secrets](https://docs.docker.com/engine/swarm/secrets/ "Docker Secrets") to handle sensitive passwords and secret keys. 
+
+*(In Broadsea 3.0, these were handled via plain-text environment variables, which is not best security practice)*
+
+Now in Broadsea 3.1, each sensitive password or secret key is to be stored in a file; the paths to these files is then set in the .env file per Section. Please refer to the default `./secrets` folder for examples on how to set up these files for your site.
+
 #### Run Broadsea on a remote server
 
-In Section 1 of the .env file, set BROADSEA_HOST as the IP address or host name (without http/https) of the remote server.
+In Section 1 of the .env file, set BROADSEA_HOST as the IP address or host name **(without http/https)** of the remote server.
 
 ### Docker profiles
 
@@ -137,6 +152,8 @@ Here are the profiles available:
 
 - openldap
   - For testing security in Atlas, this Open LDAP container can be used to assess security needs
+  - You can specify a comma separated list of user ids and passwords
+  - This is not recommended for any production level setup
 
 - open-shiny-server
   - An open source version of Shiny Server, where you can drop shiny apps into a mounted folder.
@@ -145,16 +162,105 @@ Here are the profiles available:
 - posit-connect
   - For sites with commercial Posit Connect licenses, this can be useful for convenient publication of Shiny apps
 
+- cdm-postprocessing
+  - For a specified CDM database, executes Achilles and DataQualityDashboard, then AresIndexer
+  - Useful for Atlas Data Sources reports and populating the files needed for the Ares application
+
+- achilles
+  - Executes only Achilles for a specified CDM database
+
+- dqd
+  - Executes only DataQualityDashboard for a specified CDM database
+
+- aresindexer
+  - Executes only AresIndexer for a specified CDM database
+  - Only run this if Achilles and DataQualityDashboard have been executed
+
+- dbt
+  - Sets up the dbt command-line tool for ETL design
+
+- perseus
+  - Deploys the entire Perseus stack of services, but in the Broadsea network
+  - Services include: 
+  - Currently, does have overlapping capabilities (e.g. Solr, OMOP Vocab on Postgres)
+
+- perseus-shareddb
+  - Deploys only the shareddb Postgres backend for Perseus
+
+- perseus-files-manager
+  - Deploys only the files-manager backend for Perseus
+
+- perseus-web
+  - Deploys only the web server for Perseus
+
+- perseus-user
+  - Deploys only the user management system for Perseus
+
+- perseus-backend
+  - Deploys only the API backend for Perseus
+
+- perseus-frontend
+  - Deploys only the Perseus web application
+
+- perseus-vocabularydb
+  - Deploys only the Vocabulary Postgres for Perseus
+
+- perseus-cdm-builder
+  - Deploys only the CDM Builder tool for Perseus
+
+- perseus-solr
+  - Deploys only the Solr instance for Perseus
+
+- perseus-athena
+  - Deploys only the Athena instance for Perseus
+
+- perseus-usagi
+  - Deploys only the Usagi instance for Perseus
+
+- perseus-r-serve
+  - Deploys the R Server instance for Perseus
+
+- perseus-dqd
+   - Deploys the DataQualityDashboard instance for Perseus
+
+- perseus-swagger
+  - Deploys the Swagger instance for Perseus
+
+- perseus-white-rabbit
+  - Deploys the White Rabbit instance for Perseus
+
+### Traefik Dashboard
+
+Broadsea uses Traefik as a proxy for all containers within. The traefik dashboard is enabled by default at `/dashboard`, and can be useful for debugging the proxy network.
+
 ### SSL
 
-Broadsea uses Traefik as a proxy for all containers within. Traefik can be set up with SSL to enable HTTPS:
+Traefik can be set up with SSL to enable HTTPS:
 
 1. Obtain a crt and key file. Rename them to "broadsea.crt" and "broadsea.key", respectively.
 2. In Section 1 of the .env file:
   - Update the BROADSEA_CERTS_FOLDER to the folder that holds these cert files.
   - Update the HTTP_TYPE to "https"
 
-### Atlas/WebAPI Security
+### Broadsea Content Page
+
+To adjust which app links to display on the Broadsea content page ("/"), refer to Section 12 of the .env file. Use "show" to display the div or "none" to hide it.
+
+### Vocabulary Loading
+
+#### OMOP Vocabulary in Postgres
+
+To load a new OMOP Vocabulary into a Postgres schema, review and fill out Section 9 of the .env file. Please note: this service will attempt to run the CPT4 import process for the CONCEPT table, so you will need a UMLS API Key from https://uts.nlm.nih.gov/uts/profile; store this in a file and set the path to the file as UMLS_API_KEY_FILE.
+
+The Broadsea atlasdb Postgres instance is listed by default, but you can use an external Postgres instance. You need to copy your Athena downloaded files into ./omop_vocab/files.
+
+#### Build SOLR Vocab for Atlas
+
+To enable the use of SOLR for fast OMOP Vocab search in Atlas, review and fill out Section 7 of the .env file. You can either point to an existing SOLR instance, or have Broadsea build one. The JDBC jar file is needed in the Broadsea root folder in order for Solr to perform the dataimport step.
+
+### OHDSI Web Applications
+
+#### Atlas/WebAPI Security
 
 To enable a security provider for authentication and identity management in Atlas/WebAPI, review and fill out Sections 4 and 5 in the .env file.
 
@@ -162,54 +268,81 @@ To enable a security provider for authentication and identity management in Atla
 
 To use a secure LDAP instance, overwrite the blank ./cacerts within the Broadsea directory with your own cacerts file. WebAPI can then leverage it for LDAPS.
 
-### Atlas/WebAPI from Git repo
+#### Open LDAP
+
+OpenLDAP is provided for testing purposes, and is not recommended for any production deployment. Refer to Section 13 of the .env file to establish user accounts (using secrets files) for this LDAP instance. A GUI-based LDAP explorer, such as [Apache Directory Studio](https://directory.apache.org/studio/ "Apache Directory Studio") is recommended for managing this instance.
+
+#### Atlas/WebAPI from Git repo
 
 To build either Atlas or WebAPI from a git repo instead of from Docker Hub, use Section 6 to specify the Git repo paths. Branches and commits can be in the URL after a "#".
 
-### SOLR Vocab
-
-To enable the use of SOLR for fast OMOP Vocab search in Atlas, review and fill out Section 7 of the .env file. You can either point to an existing SOLR instance, or have Broadsea build one. The JDBC jar file is needed in the Broadsea root folder in order for Solr to perform the dataimport step.
-
-### OMOP Vocab loading
-
-To load a new OMOP Vocabulary into a Postgres schema, review and fill out Section 9 of the .env file. Please note: this service will attempt to run the CPT4 import process for the CONCEPT table, so you will need a UMLS API Key in order to fulfull the UMLS_API_KEY variable (from https://uts.nlm.nih.gov/uts/profile).
-
-The Broadsea atlasdb Postgres instance is listed by default, but you can use an external Postgres instance. You need to copy your Athena downloaded files into ./omop_vocab/files.
-
-### Phoebe Integration for Atlas
+#### Phoebe Integration for Atlas
 
 With Atlas 2.12.0 and above, a new concept recommendation feature is available, based upon the [Phoebe project](https://forums.ohdsi.org/t/phoebe-2-0/17410 "Phoebe Project"). Review and fill out Section 10 of the .env file to load the concept_recommended table needed for this feature into a Postgres hosted OMOP Vocabulary.
 
-### Ares
+#### Ares Web Application
 
-To mount files prepared for Ares (see [Ares GitHub IO](https://ohdsi.github.io/Ares/ "Ares") on how to run the necessary DataQualityDashboard, Achilles, and AresIndexer functions), add your Ares data folder path to ARES_DATA_FOLDER in Section 11. By default, it will look for a folder at ./ares_data.
+To mount files prepared for Ares (see [CDM Post Processing](#CDM-Post-Processing)), add your Ares data folder path to ARES_DATA_FOLDER in Section 11. By default, it will use the Broadsea shared volume `cdm-postprocessing-data/ares` used by the aresindexer service.
 
-### HADES RStudio default login
+### CDM ETL Design and Execution
 
-The credentials for the RStudio user can be established in Section 8 of the .env file.
+#### DBT
 
-### Broadsea Content Page
+DBT provides a command-line tool for ETL design. See Section 16 for configuring DBT.
 
-To adjust which app links to display on the Broadsea content page ("/"), refer to Section 12 of the .env file. Use "show" to display the div or "none" to hide it.
+#### Perseus
 
-### Open LDAP
+Perseus offers a full suite of services for data profiling, vocabulary mapping, ETL design, and ETL execution. See Section 16 for configuring Perseus.
 
-OpenLDAP is provided for testing purposes, and is not recommended for any production deployment. Refer to Section 13 of the .env file to establish user accounts for this LDAP instance. A GUI-based LDAP explorer, such as [Apache Directory Studio](https://directory.apache.org/studio/ "Apache Directory Studio") is recommended for managing this instance.
+### CDM Post Processing
 
-### Open Shiny Server
+Once you have a CDM database available, it is important to run summary level statistics and data quality analyses prior to publishing the source to users. Broadsea provides services for running Achilles, DataQualityDashboard, and AresIndexer. See Section 17 for setting up the CDM connection details and the various application settings needed.
+
+### Evidence Generation
+
+#### HADES in RStudio
+
+The credentials for the RStudio user can be established in Section 8 of the .env file (with a password stored in a secrets file).
+
+#### Sharing/Saving files between RStudio and Docker host machine
+
+To permanently retain the "rstudio" user files in the "rstudio" user home directory, and make local R packages available to RStudio in the Broadsea Methods container the following steps are required:
+
+* In the same directory where the docker-compose.yml is stored create a sub-directory tree called "home/rstudio" and a sub-directory called "site-library"
+* **Set the file permissions for the "home/rstudio" sub-directory tree and the "site-library" sub-directory to public read, write and execute.**
+* Add the below volume mapping statements to the end of the broadsea-methods-library section of the docker-compose.yml file.
+```
+volumes:
+      - ./home/rstudio:/home/rstudio
+      - ./site-library:/usr/local/lib/R/site-library
+```
+
+Any files added to the home/rstudio or site-library sub-directories on the Docker host can be accessed by RStudio in the container.  
+
+The Broadsea Methods container RStudio /usr/lib/R/site-library originally contains the "littler" and "rgl" R packages. Volume mapping masks the original files in the directory so you will need to add those 2 packages to your Docker host site-library sub-directory if you need them.
+
+### Evidence Dissemination
+
+#### Open Shiny Server
 
 To configure an open-source Shiny Server, refer to Section 14 of the .env file. Use the OPEN_SHINY_SERVER_APP_ROOT variable to point to a folder that will host Shiny apps.
 
-### Posit Connect
+#### Posit Connect
 
 The pattern for using Posit Connect deviates from the rest of Broadsea due to the many configuration options available. A sample .gcfg file is included, but you likely will need to make modifications to it. See [Posit Connect configuration guide](https://docs.posit.co/connect/admin/appendix/configuration "Posit Connect Configuration") for more information.
 
 ## Shutdown Broadsea
+
 You can stop the running Docker containers & remove them (new container instances can be started again later) with this command:
 ```
 docker compose down
 ```
 
+You can stop a profile specifically by using:
+
+```
+docker compose --profile profilename down
+```
 
 ## Broadsea Intended Uses
 
@@ -249,12 +382,11 @@ it can be used for the following scenarios:
 docker-compose ps
 ```
 
-### Viewing Atlas/WebAPI and RStudio HADES Log Files
+### Viewing Log Files
 
+Logs per container are available using this syntax:
 ```
-docker logs ohdsi-atlas
-docker logs ohdsi-webapi
-docker logs broadsea-hades
+docker logs containername
 ```
 
 ## Hardware/OS Requirements for Installing Docker
@@ -303,34 +435,6 @@ Docker requires a 64-bit installation. Additionally, your kernel must be 3.10 at
 
 Kernels older than 3.10 lack some of the features required to run Docker containers.
 
-## Broadsea Web Tools Customization Options
-
-### Deploy Proprietary Database Drivers
-
-The PostgreSQL jdbc database driver is open source and may be freely distributed. A PostgreSQL jdbc database driver is already included within the OHDSI Broadsea webapi-web-apps container.
-
-If you are using a proprietary database server (e.g. Oracle or Microsoft SQL Server) download your own copy of the database jdbc driver jar file and copy it to the same host directory where the docker-compose.yml file is located.
-
-When the OHDSI Web Tools container runs it will automatically load the jdbc database driver, if it exists in the host directory.
-
-## Broadsea Methods Library Configuration Options
-
-### Sharing/Saving files between RStudio and Docker host machine
-
-To permanently retain the "rstudio" user files in the "rstudio" user home directory, and make local R packages available to RStudio in the Broadsea Methods container the following steps are required:
-
-* In the same directory where the docker-compose.yml is stored create a sub-directory tree called "home/rstudio" and a sub-directory called "site-library"
-* **Set the file permissions for the "home/rstudio" sub-directory tree and the "site-library" sub-directory to public read, write and execute.**
-* Add the below volume mapping statements to the end of the broadsea-methods-library section of the docker-compose.yml file.
-```
-volumes:
-      - ./home/rstudio:/home/rstudio
-      - ./site-library:/usr/local/lib/R/site-library
-```
-
-Any files added to the home/rstudio or site-library sub-directories on the Docker host can be accessed by RStudio in the container.  
-
-The Broadsea Methods container RStudio /usr/lib/R/site-library originally contains the "littler" and "rgl" R packages. Volume mapping masks the original files in the directory so you will need to add those 2 packages to your Docker host site-library sub-directory if you need them.
 
 ## Other Information
 
