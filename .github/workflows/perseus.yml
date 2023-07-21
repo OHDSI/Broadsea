@@ -1,4 +1,4 @@
-name: Broadsea Default Profile (Linux and Mac)
+name: Broadsea Perseus Profile (Linux and Mac)
 on: push
 jobs:
   default:
@@ -6,7 +6,7 @@ jobs:
       matrix:
         os: 
           - ubuntu-22.04
-#          - macos-12
+          - macos-12
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup Docker on macOS
@@ -23,13 +23,7 @@ jobs:
         run: docker-compose up -d
       - name: Check traefik container
         run: docker logs traefik
-      - name: Build default profile
-        run: docker-compose --profile default up -d
-      - name: Test content container
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1
-      - name: Test Atlas
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/atlas/#/home
-      - name: Test HADES
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/hades/auth-sign-in
-      - name: Test WebAPI
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info
+      - name: Build perseus profile
+        run: docker-compose --profile perseus up -d
+      - name: Test perseus frontend
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/perseus
