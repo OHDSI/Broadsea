@@ -273,7 +273,7 @@ services:
 
   broadsea-posit-connect:
     profiles: [ "posit-connect" ]
-    image: rstudio/rstudio-connect:jammy-2023.05.0
+    image: rstudio/rstudio-connect
     platform: "linux/amd64"
     container_name: broadsea-posit-connect
     restart: unless-stopped
