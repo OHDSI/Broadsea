@@ -44,21 +44,17 @@ services:
   broadsea-content:
     profiles: [ "default", "content" ]
     container_name: broadsea-content
-    image: nginx
+    platform: "linux/amd64"
+    build:
+      context: ./content
+      args:
+        CONTENT_TITLE: ${CONTENT_TITLE}
+        CONTENT_ARES_DISPLAY: ${CONTENT_ARES_DISPLAY}
+        CONTENT_ATLAS_DISPLAY: ${CONTENT_ATLAS_DISPLAY}
+        CONTENT_HADES_DISPLAY: ${CONTENT_HADES_DISPLAY}
+        CONTENT_OPENSHINYSERVER_DISPLAY: ${CONTENT_OPENSHINYSERVER_DISPLAY}
+        CONTENT_POSITCONNECT_DISPLAY: ${CONTENT_POSITCONNECT_DISPLAY}
     restart: unless-stopped
-    environment:
-      CONTENT_TITLE: ${CONTENT_TITLE}
-      CONTENT_ARES_DISPLAY: ${CONTENT_ARES_DISPLAY}
-      CONTENT_ATLAS_DISPLAY: ${CONTENT_ATLAS_DISPLAY}
-      CONTENT_HADES_DISPLAY: ${CONTENT_HADES_DISPLAY}
-      CONTENT_OPENSHINYSERVER_DISPLAY: ${CONTENT_OPENSHINYSERVER_DISPLAY}
-      CONTENT_POSITCONNECT_DISPLAY: ${CONTENT_POSITCONNECT_DISPLAY}
-    volumes:
-      - ./content/images:/usr/share/nginx/html/images
-      - ./content/style.css:/usr/share/nginx/html/style.css
-      - ./content/index.html:/tmp/index.html
-      - ./content/envsubst.sh:/tmp/envsubst.sh:ro
-    entrypoint: [ "sh", "/tmp/envsubst.sh" ]
     labels:
       - "traefik.enable=true"
 
