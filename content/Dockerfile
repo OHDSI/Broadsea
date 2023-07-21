@@ -9,7 +9,10 @@ ARG CONTENT_POSITCONNECT_DISPLAY
 
 WORKDIR /tmp
 RUN <<EOF
+apt-get update
 apt-get install -y --no-install-recommends wget
+apt-get clean
+rm -rf /var/lib/apt/lists/*
 wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.3.433/quarto-1.3.433-linux-amd64.deb
 dpkg -i /tmp/quarto-1.3.433-linux-amd64.deb
 EOF
