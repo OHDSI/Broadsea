@@ -14,8 +14,6 @@ jobs:
         uses: douglascamata/setup-docker-macos-action@v1-alpha
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          ref: develop
       - name: Create certs folder
         if: runner.os == 'macOS'
         run: mkdir /Users/runner/work/Broadsea/Broadsea/certs
