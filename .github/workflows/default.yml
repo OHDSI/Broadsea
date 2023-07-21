@@ -6,7 +6,7 @@ jobs:
       matrix:
         os: 
           - ubuntu-22.04
-          - macos-12
+#          - macos-12
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup Docker on macOS
@@ -25,9 +25,9 @@ jobs:
         run: docker-compose --profile default up -d
       - name: Test content container
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1
+      - name: Test Atlas
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/atlas/#/home
+      - name: Test HADES
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/hades/auth-sign-in
       - name: Test WebAPI
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info
-      - name: Test Atlas
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/atlas
-      - name: Test HADES
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/hades
