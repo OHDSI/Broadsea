@@ -24,4 +24,4 @@ jobs:
       - name: Build perseus profile
         run: docker-compose --profile perseus up -d
       - name: Test perseus frontend
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/perseus
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/perseus/sign-in

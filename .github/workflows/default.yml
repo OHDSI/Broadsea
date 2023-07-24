@@ -19,15 +19,23 @@ jobs:
         run: mkdir /Users/runner/work/Broadsea/Broadsea/certs
       - name: Build traefik container
         run: docker-compose up -d
-      - name: Check traefik container
+      - name: Build atlasdb profile
+        run: docker-compose --profile atlasdb up -d
+      - name: Build content profile
+        run: docker-compose --profile content up -d
+      - name: Build hades profile
+        run: docker-compose --profile hades up -d
+      - name: Build atlas profile
+        run: docker-compose --profile atlas-from-image up -d
+      - name: Build webapi profile
+        run: docker-compose --profile webapi-from-image up -d
+      - name: Test traefik container
         run: docker logs traefik
-      - name: Build default profile
-        run: docker-compose --profile default up -d
       - name: Test content container
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1
-      - name: Test Atlas
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/atlas/#/home
       - name: Test HADES
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/hades/auth-sign-in
+      - name: Test Atlas
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/atlas/#/home
       - name: Test WebAPI
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info

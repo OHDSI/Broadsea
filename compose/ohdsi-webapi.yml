@@ -13,7 +13,7 @@ services:
     privileged: false
     volumes:
       - ../cacerts:/usr/local/openjdk-8/lib/security/cacerts:ro # add a cacerts file if using LDAPS
-      - ${WEBAPI_ADDITIONAL_JDBC_FILE_PATH}:/tmp/jdbc/another.jar
+      - ${WEBAPI_ADDITIONAL_JDBC_FILE_PATH}:/var/lib/ohdsi/webapi/lib/additional/broadsea_mounted.jar
     secrets:
       - WEBAPI_DATASOURCE_PASSWORD
       - SECURITY_LDAP_SYSTEM_PASSWORD
@@ -37,7 +37,7 @@ services:
                  -DSECURITY_SAML_KEYMANAGER_STOREPASSWORD="$$(</run/secrets/SECURITY_SAML_KEYMANAGER_STOREPASSWORD)"
                  -DSECURITY_SAML_KEYMANAGER_PASSWORDS_ARACHNENETWORK="$$(</run/secrets/SECURITY_SAML_KEYMANAGER_PASSWORDS_ARACHNENETWORK)"
 
-      CLASSPATH: ":/tmp/jdbc/another.jar"
+      CLASSPATH: ":/var/lib/ohdsi/webapi/lib/additional/broadsea_mounted.jar"
       DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
       DATASOURCE_URL: ${WEBAPI_DATASOURCE_URL}
       DATASOURCE_USERNAME: ${WEBAPI_DATASOURCE_USERNAME}
