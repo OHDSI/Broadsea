@@ -111,7 +111,8 @@ services:
 
   broadsea-atlasdb:
     profiles: [ "default", "atlasdb" ]
-    image: ohdsi/broadsea-atlasdb:2.0.0
+    #image: ohdsi/broadsea-atlasdb:2.0.0
+    build: https://github.com/alondhe/Broadsea-Atlasdb.git
     container_name: broadsea-atlasdb
     platform: "linux/amd64"
     cpus: 2
@@ -120,7 +121,6 @@ services:
       - ATLASDB_POSTGRES_PASSWORD
     environment:
       POSTGRES_PASSWORD_FILE: /run/secrets/ATLASDB_POSTGRES_PASSWORD
-      POSTGRES_PASSWORD: 
     ports:
       - "5432:5432"
     volumes:
