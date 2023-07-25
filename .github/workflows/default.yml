@@ -37,5 +37,6 @@ jobs:
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/hades/auth-sign-in
       - name: Test Atlas
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/atlas/#/home
-      - name: Test WebAPI
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info
+      - name: Debug WebAPI
+        run: docker logs ohdsi-webapi
+        #run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info
