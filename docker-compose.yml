@@ -23,7 +23,7 @@ volumes:
 services:
   
   traefik:
-    image: docker.io/library/traefik:v2.10.1
+    image: docker.io/library/traefik:v2.10.4
     container_name: traefik
     restart: unless-stopped
     ipc: none
@@ -111,21 +111,16 @@ services:
 
   broadsea-atlasdb:
     profiles: [ "default", "atlasdb" ]
-    #image: ohdsi/broadsea-atlasdb:2.0.0
-    build: https://github.com/alondhe/Broadsea-Atlasdb.git#main
+    image: ohdsi/broadsea-atlasdb:2.1.0-secret
     container_name: broadsea-atlasdb
-    platform: "linux/amd64"
+    platform: linux/amd64
     cpus: 2
     mem_limit: "2G"
-    secrets:
-      - ATLASDB_POSTGRES_PASSWORD
-    environment:
-      POSTGRES_PASSWORD_FILE: /run/secrets/ATLASDB_POSTGRES_PASSWORD
     ports:
       - "5432:5432"
     volumes:
-     - atlasdb-postgres-data:/var/lib/postgresql/data
-     - ./atlasdb/100_populate_source_source_daimon.sql:/docker-entrypoint-initdb.d/100_populate_source_source_daimon.sql:ro
+      - atlasdb-postgres-data:/var/lib/postgresql/data
+      - ./atlasdb/100_populate_source_source_daimon.sql:/docker-entrypoint-initdb.d/100_populate_source_source_daimon.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -633,8 +628,6 @@ secrets:
     file: ${SECURITY_SAML_KEYMANAGER_PASSWORDS_ARACHNENETWORK_FILE}
   HADES_PASSWORD:
     file: ${HADES_PASSWORD_FILE}
-  ATLASDB_POSTGRES_PASSWORD:
-    file: ${ATLASDB_POSTGRES_PASSWORD_FILE}
   SOLR_VOCAB_JDBC_PASSWORD:
     file: ${SOLR_VOCAB_JDBC_PASSWORD_FILE}
   VOCAB_PG_PASSWORD:
