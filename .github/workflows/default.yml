@@ -20,7 +20,9 @@ jobs:
       - name: Build traefik container
         run: docker-compose up -d
       - name: Build atlasdb profile
-        run: docker-compose --profile atlasdb up -d
+        run: |
+          docker-compose --profile atlasdb up -d
+          sleep 180
       - name: Build content profile
         run: docker-compose --profile content up -d
       - name: Build hades profile
