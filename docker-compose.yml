@@ -117,6 +117,8 @@ services:
     platform: linux/amd64
     cpus: 2
     mem_limit: "2G"
+    environment:
+      POSTGRES_PASSWORD: mypass
     ports:
       - "5432:5432"
     volumes:
@@ -399,6 +401,10 @@ services:
     volumes:
       - ${DBT_PROJECT_PATH}:/usr/app
       - ${DBT_PROFILE_PATH}:/root/.dbt/
+
+  #broadsea-init-cdm-atlas:
+  #  profiles: [ "cdm-postprocessing", "init-cdm-atlas" ]
+  #  build: ./
 
   ### Perseus
 

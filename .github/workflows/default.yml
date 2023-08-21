@@ -29,15 +29,15 @@ jobs:
       #  run: docker-compose --env-file $ENV_FILE --profile hades up -d
       #- name: Build atlas profile
       #  run: docker-compose --env-file $ENV_FILE --profile atlas-from-image up -d
-      - name: Test atlasdb
+      #- name: Test atlasdb
+      #  run: |
+      #    sudo apt-get update
+      #    sudo apt-get install --yes --no-install-recommends postgresql-client
+      #    pg_isready -d postgres -h 127.0.0.1 -p 5432 -U postgres 
+      - name: Build webapi profile
         run: |
-          sudo apt-get update
-          sudo apt-get install --yes --no-install-recommends postgresql-client
-          pg_isready -d postgres -h 127.0.0.1 -p 5432 -U postgres 
-      - name: Build webapi profile, sleep 3 mins
-        run: |
+          cat ./secrets/webapi/WEBAPI_DATASOURCE_PASSWORD
           docker-compose --env-file $ENV_FILE --profile webapi-from-image up -d
-          sleep 180
           docker logs ohdsi-webapi
       #- name: Test content container
       #  run: curl -s $LOCALHOST_URL
