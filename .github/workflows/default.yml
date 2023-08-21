@@ -18,16 +18,16 @@ jobs:
         if: runner.os == 'macOS'
         run: mkdir /Users/runner/work/Broadsea/Broadsea/certs
       - name: Build traefik container
-        run: docker-compose --env-file /Users/runner/work/Broadsea/Broadsea/.env up -d
+        run: docker-compose --env-file ./.env up -d
       - name: Build atlasdb profile
         run: |
-          docker-compose --env-file /Users/runner/work/Broadsea/Broadsea/.env --profile atlasdb up -d
+          docker-compose --env-file ./.env --profile atlasdb up -d
       - name: Build content profile
-        run: docker-compose --env-file /Users/runner/work/Broadsea/Broadsea/.env --profile content up -d
+        run: docker-compose --env-file ./.env --profile content up -d
       - name: Build hades profile
-        run: docker-compose --env-file /Users/runner/work/Broadsea/Broadsea/.env --profile hades up -d
+        run: docker-compose --env-file ./.env --profile hades up -d
       - name: Build atlas profile
-        run: docker-compose --env-file /Users/runner/work/Broadsea/Broadsea/.env --profile atlas-from-image up -d
+        run: docker-compose --env-file ./.env --profile atlas-from-image up -d
       - name: Test atlasdb
         run: |
           sudo apt-get update
@@ -35,7 +35,7 @@ jobs:
           pg_isready -d postgres -h 127.0.0.1 -p 5432 -U postgres 
       - name: Build webapi profile
         run: |
-          docker-compose --env-file /Users/runner/work/Broadsea/Broadsea/.env --profile webapi-from-image up -d
+          docker-compose --env-file ./.env --profile webapi-from-image up -d
           sleep 360
       - name: Test traefik container
         run: docker logs traefik
