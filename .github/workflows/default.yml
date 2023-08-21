@@ -2,6 +2,8 @@ name: Broadsea Default Profile (Linux and Mac)
 on: push
 jobs:
   default:
+    env:
+      ENV_FILE: ./.env
     strategy:
       matrix:
         os: 
@@ -14,30 +16,27 @@ jobs:
         uses: douglascamata/setup-docker-macos-action@v1-alpha
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Create certs folder (Mac)
-        if: runner.os == 'macOS'
-        run: mkdir /Users/runner/work/Broadsea/Broadsea/certs
-      - name: Create certs folder (Linux)
-        if: runner.os == 'Linux'
+      #- name: Create certs folder (Mac)
+      #  if: runner.os == 'macOS'
+      #  run: mkdir /Users/runner/work/Broadsea/Broadsea/certs
+      - name: Create certs folder
         run: mkdir -p ./certs
-      - name: Public IP
-        id: ip
-        uses: haythem/public-ip@v1.3
-      - name: Print Public IP
-        run: |
-          echo ${{ steps.ip.outputs.ipv4 }}
-          echo ${{ steps.ip.outputs.ipv6 }}
+      #- name: Public IP
+      #  id: ip
+      #  uses: haythem/public-ip@v1.3
+      #- name: Edit .env file
+      #  run: sed -i 's/BROADSEA_HOST="127.0.0.1"/BROADSEA_HOST="${{ steps.ip.outputs.ipv4 }}"/g' ./env 
       - name: Build traefik container
-        run: docker-compose --env-file ./.env up -d
+        run: docker-compose --env-file $ENV_FILE up -d
       - name: Build atlasdb profile
         run: |
-          docker-compose --env-file ./.env --profile atlasdb up -d
+          docker-compose --env-file $ENV_FILE --profile atlasdb up -d
       - name: Build content profile
-        run: docker-compose --env-file ./.env --profile content up -d
+        run: docker-compose --env-file $ENV_FILE --profile content up -d
       - name: Build hades profile
-        run: docker-compose --env-file ./.env --profile hades up -d
+        run: docker-compose --env-file $ENV_FILE --profile hades up -d
       - name: Build atlas profile
-        run: docker-compose --env-file ./.env --profile atlas-from-image up -d
+        run: docker-compose --env-file $ENV_FILE --profile atlas-from-image up -d
       - name: Test atlasdb
         run: |
           sudo apt-get update
@@ -45,7 +44,7 @@ jobs:
           pg_isready -d postgres -h 127.0.0.1 -p 5432 -U postgres 
       - name: Build webapi profile
         run: |
-          docker-compose --env-file ./.env --profile webapi-from-image up -d
+          docker-compose --env-file $ENV_FILE --profile webapi-from-image up -d
           sleep 360
       - name: Test traefik container
         run: docker logs traefik
