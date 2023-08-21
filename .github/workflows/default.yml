@@ -22,18 +22,17 @@ jobs:
       - name: Build atlasdb profile
         run: |
           docker-compose --profile atlasdb up -d
-          sleep 360
-      - name: Test atlasdb
-        run: |
-          sudo apt-get update
-          sudo apt-get install --yes --no-install-recommends postgresql-client
-          pg_isready -d postgres -h 127.0.0.1 -p 5432 -U postgres 
       - name: Build content profile
         run: docker-compose --profile content up -d
       - name: Build hades profile
         run: docker-compose --profile hades up -d
       - name: Build atlas profile
         run: docker-compose --profile atlas-from-image up -d
+      - name: Test atlasdb
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends postgresql-client
+          pg_isready -d postgres -h 127.0.0.1 -p 5432 -U postgres 
       - name: Build webapi profile
         run: docker-compose --profile webapi-from-image up -d
       - name: Test traefik container
@@ -44,5 +43,9 @@ jobs:
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/hades/auth-sign-in
       - name: Test Atlas
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/atlas/#/home
+      - name: Test Public WebAPI
+        run: curl -s --retry 10 --retry-connrefused https://api.ohdsi.org/WebAPI/info
       - name: Test WebAPI
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info
+        run: |
+          sleep 180
+          curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info
