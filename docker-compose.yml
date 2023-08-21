@@ -37,7 +37,7 @@ services:
       - "443:443"
     volumes:
       - ./traefik/traefik_${HTTP_TYPE}.yml:/etc/traefik/traefik.yml:ro
-      - ./traefik/config.yml:/etc/traefik/config.yml:ro
+      - ./traefik/config_${HTTP_TYPE}.yml:/etc/traefik/config.yml:ro
       - ${BROADSEA_CERTS_FOLDER}:/etc/certs:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
