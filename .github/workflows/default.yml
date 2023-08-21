@@ -16,18 +16,8 @@ jobs:
         uses: douglascamata/setup-docker-macos-action@v1-alpha
       - name: Checkout
         uses: actions/checkout@v3
-      #- name: Create certs folder (Mac)
-      #  if: runner.os == 'macOS'
-      #  run: mkdir /Users/runner/work/Broadsea/Broadsea/certs
       - name: Create certs folder
         run: mkdir -p ./certs
-      #- name: Public IP
-      #  id: ip
-      #  uses: haythem/public-ip@v1.3
-      #- name: Edit .env file
-      #  run: sed -i 's/BROADSEA_HOST="127.0.0.1"/BROADSEA_HOST="${{ steps.ip.outputs.ipv4 }}"/g' ./env 
-      - name: Build traefik container
-        run: docker-compose --env-file $ENV_FILE up -d
       - name: Build atlasdb profile
         run: |
           docker-compose --env-file $ENV_FILE --profile atlasdb up -d
@@ -42,17 +32,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends postgresql-client
           pg_isready -d postgres -h 127.0.0.1 -p 5432 -U postgres 
-      - name: Build webapi profile
+      - name: Build webapi profile, sleep 3 mins
         run: |
           docker-compose --env-file $ENV_FILE --profile webapi-from-image up -d
-          sleep 360
+          sleep 180
+      - name: Build traefik container
+        run: docker-compose --env-file $ENV_FILE up -d
       - name: Test traefik container
         run: docker logs traefik
       - name: Test content container
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1
+        run: curl -s http://127.0.0.1
       - name: Test HADES
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/hades/auth-sign-in
+        run: curl -s http://127.0.0.1/hades/auth-sign-in
       - name: Test Atlas
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/atlas/#/home
+        run: curl -s http://127.0.0.1/atlas/#/home
       - name: Test WebAPI
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info
+        run: curl -s http://127.0.0.1/WebAPI/info
