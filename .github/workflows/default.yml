@@ -22,7 +22,12 @@ jobs:
       - name: Build atlasdb profile
         run: |
           docker-compose --profile atlasdb up -d
-          sleep 180
+          sleep 360
+      - name: Test atlasdb
+        run: |
+          apt-get update
+          apt-get install --yes --no-install-recommends postgresql-client
+          pg_isready -d postgres -h 127.0.0.1 -p 5432 -U postgres 
       - name: Build content profile
         run: docker-compose --profile content up -d
       - name: Build hades profile
