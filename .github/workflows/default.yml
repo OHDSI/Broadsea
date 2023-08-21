@@ -14,9 +14,19 @@ jobs:
         uses: douglascamata/setup-docker-macos-action@v1-alpha
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Create certs folder
+      - name: Create certs folder (Mac)
         if: runner.os == 'macOS'
         run: mkdir /Users/runner/work/Broadsea/Broadsea/certs
+      - name: Create certs folder (Linux)
+        if: runner.os == 'Linux'
+        run: mkdir -p ./certs
+      - name: Public IP
+        id: ip
+        uses: haythem/public-ip@v1.3
+      - name: Print Public IP
+        run: |
+          echo ${{ steps.ip.outputs.ipv4 }}
+          echo ${{ steps.ip.outputs.ipv6 }}
       - name: Build traefik container
         run: docker-compose --env-file ./.env up -d
       - name: Build atlasdb profile
