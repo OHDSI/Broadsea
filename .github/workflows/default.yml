@@ -16,35 +16,38 @@ jobs:
         uses: douglascamata/setup-docker-macos-action@v1-alpha
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Public IP
+        id: ip
+        uses: haythem/public-ip@v1.3
       - name: Create certs folder
         run: mkdir -p ./certs
+      - name: Build traefik container
+        run: BROADSEA_HOST=${{ steps.ip.outputs.ipv4 }} docker-compose --env-file $ENV_FILE up -d
       - name: Build atlasdb profile
         run: |
-          docker-compose --env-file $ENV_FILE --profile atlasdb up -d
+          BROADSEA_HOST=${{ steps.ip.outputs.ipv4 }} docker-compose --env-file $ENV_FILE --profile atlasdb up -d
       - name: Build content profile
-        run: docker-compose --env-file $ENV_FILE --profile content up -d
+        run: BROADSEA_HOST=${{ steps.ip.outputs.ipv4 }} docker-compose --env-file $ENV_FILE --profile content up -d
       - name: Build hades profile
-        run: docker-compose --env-file $ENV_FILE --profile hades up -d
+        run: BROADSEA_HOST=${{ steps.ip.outputs.ipv4 }} docker-compose --env-file $ENV_FILE --profile hades up -d
       - name: Build atlas profile
-        run: docker-compose --env-file $ENV_FILE --profile atlas-from-image up -d
+        run: BROADSEA_HOST=${{ steps.ip.outputs.ipv4 }} docker-compose --env-file $ENV_FILE --profile atlas-from-image up -d
       - name: Test atlasdb
         run: |
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends postgresql-client
-          pg_isready -d postgres -h 127.0.0.1 -p 5432 -U postgres 
+          pg_isready -d postgres -h ${{ steps.ip.outputs.ipv4 }} -p 5432 -U postgres 
       - name: Build webapi profile, sleep 3 mins
         run: |
-          docker-compose --env-file $ENV_FILE --profile webapi-from-image up -d
+          BROADSEA_HOST=${{ steps.ip.outputs.ipv4 }} docker-compose --env-file $ENV_FILE --profile webapi-from-image up -d
           sleep 180
-      - name: Build traefik container
-        run: docker-compose --env-file $ENV_FILE up -d
+      - name: Test content container
+        run: curl -s ${{ steps.ip.outputs.ipv4 }}
+      - name: Test HADES
+        run: curl -s ${{ steps.ip.outputs.ipv4 }}/hades/auth-sign-in
+      - name: Test Atlas
+        run: curl -s ${{ steps.ip.outputs.ipv4 }}/atlas/#/home
+      - name: Test WebAPI
+        run: curl -s ${{ steps.ip.outputs.ipv4 }}/WebAPI/info
       - name: Test traefik container
         run: docker logs traefik
-      - name: Test content container
-        run: curl -s http://127.0.0.1
-      - name: Test HADES
-        run: curl -s http://127.0.0.1/hades/auth-sign-in
-      - name: Test Atlas
-        run: curl -s http://127.0.0.1/atlas/#/home
-      - name: Test WebAPI
-        run: curl -s http://127.0.0.1/WebAPI/info
