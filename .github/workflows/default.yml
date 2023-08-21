@@ -36,7 +36,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends postgresql-client
-          pg_isready -d postgres -h ${{ steps.ip.outputs.ipv4 }} -p 5432 -U postgres 
+          pg_isready -d postgres -h 127.0.0.1 -p 5432 -U postgres 
       - name: Build webapi profile, sleep 3 mins
         run: |
           BROADSEA_HOST=${{ steps.ip.outputs.ipv4 }} docker-compose --env-file $ENV_FILE --profile webapi-from-image up -d
