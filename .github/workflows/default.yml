@@ -34,7 +34,9 @@ jobs:
           sudo apt-get install --yes --no-install-recommends postgresql-client
           pg_isready -d postgres -h 127.0.0.1 -p 5432 -U postgres 
       - name: Build webapi profile
-        run: docker-compose --profile webapi-from-image up -d
+        run: |
+          docker-compose --profile webapi-from-image up -d
+          sleep 360
       - name: Test traefik container
         run: docker logs traefik
       - name: Test content container
@@ -43,9 +45,5 @@ jobs:
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/hades/auth-sign-in
       - name: Test Atlas
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/atlas/#/home
-      - name: Test Public WebAPI
-        run: curl -s --retry 10 --retry-connrefused https://api.ohdsi.org/WebAPI/info
       - name: Test WebAPI
-        run: |
-          sleep 180
-          curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info
+        run: curl http://127.0.0.1/WebAPI/info
