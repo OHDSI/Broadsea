@@ -1,0 +1,7 @@
+
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /etc/certs/broadsea.crt
+        keyFile: /etc/certs/broadsea.key
