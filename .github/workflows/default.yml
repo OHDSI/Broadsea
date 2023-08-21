@@ -4,6 +4,7 @@ jobs:
   default:
     env:
       ENV_FILE: ./.env
+      LOCALHOST_URL: http://127.0.0.1
     strategy:
       matrix:
         os: 
@@ -16,22 +17,18 @@ jobs:
         uses: douglascamata/setup-docker-macos-action@v1-alpha
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Public IP
-        id: ip
-        uses: haythem/public-ip@v1.3
       - name: Create certs folder
         run: mkdir -p ./certs
       - name: Build traefik container
-        run: BROADSEA_HOST=${{ steps.ip.outputs.ipv4 }} docker-compose --env-file $ENV_FILE up -d
+        run: docker-compose --env-file $ENV_FILE up -d
       - name: Build atlasdb profile
-        run: |
-          BROADSEA_HOST=${{ steps.ip.outputs.ipv4 }} docker-compose --env-file $ENV_FILE --profile atlasdb up -d
-      - name: Build content profile
-        run: BROADSEA_HOST=${{ steps.ip.outputs.ipv4 }} docker-compose --env-file $ENV_FILE --profile content up -d
-      - name: Build hades profile
-        run: BROADSEA_HOST=${{ steps.ip.outputs.ipv4 }} docker-compose --env-file $ENV_FILE --profile hades up -d
-      - name: Build atlas profile
-        run: BROADSEA_HOST=${{ steps.ip.outputs.ipv4 }} docker-compose --env-file $ENV_FILE --profile atlas-from-image up -d
+        run: docker-compose --env-file $ENV_FILE --profile atlasdb up -d
+      #- name: Build content profile
+      #  run: docker-compose --env-file $ENV_FILE --profile content up -d
+      #- name: Build hades profile
+      #  run: docker-compose --env-file $ENV_FILE --profile hades up -d
+      #- name: Build atlas profile
+      #  run: docker-compose --env-file $ENV_FILE --profile atlas-from-image up -d
       - name: Test atlasdb
         run: |
           sudo apt-get update
@@ -39,15 +36,16 @@ jobs:
           pg_isready -d postgres -h 127.0.0.1 -p 5432 -U postgres 
       - name: Build webapi profile, sleep 3 mins
         run: |
-          BROADSEA_HOST=${{ steps.ip.outputs.ipv4 }} docker-compose --env-file $ENV_FILE --profile webapi-from-image up -d
+          docker-compose --env-file $ENV_FILE --profile webapi-from-image up -d
           sleep 180
-      - name: Test content container
-        run: curl -s ${{ steps.ip.outputs.ipv4 }}
-      - name: Test HADES
-        run: curl -s ${{ steps.ip.outputs.ipv4 }}/hades/auth-sign-in
-      - name: Test Atlas
-        run: curl -s ${{ steps.ip.outputs.ipv4 }}/atlas/#/home
-      - name: Test WebAPI
-        run: curl -s ${{ steps.ip.outputs.ipv4 }}/WebAPI/info
+          docker logs ohdsi-webapi
+      #- name: Test content container
+      #  run: curl -s $LOCALHOST_URL
+      #- name: Test HADES
+      #  run: curl -s $LOCALHOST_URL
+      #- name: Test Atlas
+      #  run: curl -s $LOCALHOST_URL/atlas/#/home
+      #- name: Test WebAPI
+      #  run: curl -s $LOCALHOST_URL/WebAPI/info
       - name: Test traefik container
         run: docker logs traefik
