@@ -36,8 +36,7 @@ jobs:
       #    pg_isready -d postgres -h 127.0.0.1 -p 5432 -U postgres 
       - name: Build webapi profile, sleep 3 mins
         run: |
-          cat ./README.md
-          cat ./secrets/webapi/WEBAPI_DATASOURCE_PASSWORD
+          echo "mypass" > ./secrets/webapi/WEBAPI_DATASOURCE_PASSWORD
           docker-compose --env-file $ENV_FILE --profile webapi-from-image up -d
           sleep 180
           docker logs ohdsi-webapi
