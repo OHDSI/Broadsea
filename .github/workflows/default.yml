@@ -23,29 +23,8 @@ jobs:
         run: docker-compose --env-file $ENV_FILE up -d
       - name: Build atlasdb profile
         run: docker-compose --env-file $ENV_FILE --profile atlasdb up -d
-      #- name: Build content profile
-      #  run: docker-compose --env-file $ENV_FILE --profile content up -d
-      #- name: Build hades profile
-      #  run: docker-compose --env-file $ENV_FILE --profile hades up -d
-      #- name: Build atlas profile
-      #  run: docker-compose --env-file $ENV_FILE --profile atlas-from-image up -d
-      #- name: Test atlasdb
-      #  run: |
-      #    sudo apt-get update
-      #    sudo apt-get install --yes --no-install-recommends postgresql-client
-      #    pg_isready -d postgres -h 127.0.0.1 -p 5432 -U postgres 
-      - name: Build webapi profile, sleep 3 mins
+      - name: Test atlasdb
         run: |
-          docker-compose --env-file $ENV_FILE --profile webapi-from-image up -d
-          sleep 180
-          docker logs ohdsi-webapi
-      #- name: Test content container
-      #  run: curl -s $LOCALHOST_URL
-      #- name: Test HADES
-      #  run: curl -s $LOCALHOST_URL
-      #- name: Test Atlas
-      #  run: curl -s $LOCALHOST_URL/atlas/#/home
-      #- name: Test WebAPI
-      #  run: curl -s $LOCALHOST_URL/WebAPI/info
-      - name: Test traefik container
-        run: docker logs traefik
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends postgresql-client
+          PGPASSWORD=mypass psql -h 127.0.0.1 -p 5432 -U postgres -c "select * from webapi.source limit 1"

@@ -112,7 +112,7 @@ services:
 
   broadsea-atlasdb:
     profiles: [ "default", "atlasdb" ]
-    image: ohdsi/broadsea-atlasdb:2.1.0
+    image: ohdsi/broadsea-atlasdb:2.1.0-secret
     container_name: broadsea-atlasdb
     platform: linux/amd64
     cpus: 2
