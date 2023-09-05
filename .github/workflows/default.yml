@@ -27,4 +27,4 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends postgresql-client
-          PGPASSWORD=$(<./secrets/webapi/WEBAPI_DATASOURCE_PASSWORD) psql -h 127.0.0.1 -p 5432 -U postgres -c "select * from webapi.source limit 1"  
+          psql -h 127.0.0.1 -p 5432 -U postgres -c "select * from webapi.source limit 1"  
