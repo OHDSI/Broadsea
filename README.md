@@ -304,6 +304,13 @@ Any files added to the home/rstudio or site-library sub-directories on the Docke
 
 The Broadsea Methods container RStudio /usr/lib/R/site-library originally contains the "littler" and "rgl" R packages. Volume mapping masks the original files in the directory so you will need to add those 2 packages to your Docker host site-library sub-directory if you need them.
 
+### Notes on Using Broadsea with Databricks
+There are a few custom configurations that need to be made to get Broadsea to work with Databricks. 
+These include configuring the JDBC URL that is written to the webapi.source table to include the parameter "UseNativeQuery=1;" 
+and the creation and deployment of a valid cacerts file for Databricks. 
+Details for configuring and using Broadsea with Databricks can be found at https://ohdsi.github.io/DatabaseOnSpark/developer-how-tos_broadsea.html. 
+Details for configuring the JDBC URL and SSL to use Broadsea with Databricks can be found at https://ohdsi.github.io/DatabaseOnSpark/developer-how-tos_ohdsi-on-databricks-url.html. 
+
 ## Other Information
 
 ### Licensing
