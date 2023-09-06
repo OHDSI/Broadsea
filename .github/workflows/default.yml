@@ -2,9 +2,9 @@ name: Broadsea Default Profile (Linux and Mac)
 on: push
 jobs:
   default:
-    env:
-      ENV_FILE: ./.env
-      LOCALHOST_URL: http://127.0.0.1
+    #env:
+      # ENV_FILE: ./.env
+      # LOCALHOST_URL: http://127.0.0.1
     strategy:
       matrix:
         os: 
@@ -20,11 +20,19 @@ jobs:
       - name: Create certs folder
         run: mkdir -p ./certs
       - name: Build traefik container
-        run: docker-compose --env-file $ENV_FILE up -d
+        run: docker-compose --env-file .env up -d
       - name: Build atlasdb profile
-        run: docker-compose --env-file $ENV_FILE --profile atlasdb up -d
+        run: docker-compose --env-file .env --profile atlasdb up -d
       - name: Test atlasdb
         run: |
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends postgresql-client
-          psql -h 127.0.0.1 -p 5432 -U postgres -c "select * from webapi.source limit 1"  
+          PGPASSWORD=$(<./secrets/webapi/WEBAPI_DATASOURCE_PASSWORD) psql -h 127.0.0.1 -p 5432 -U postgres -c "select * from webapi.source limit 1"
+      - name: Build webapi profile, sleep 3 mins
+        run: |
+          pwd
+          cd $GITHUB_WORKSPACE/Broadsea
+          pwd
+          docker-compose --env-file .env --profile webapi-from-image up -d
+          sleep 180
+          docker logs ohdsi-webapi
