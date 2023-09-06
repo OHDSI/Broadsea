@@ -30,9 +30,7 @@ jobs:
           PGPASSWORD=$(<./secrets/webapi/WEBAPI_DATASOURCE_PASSWORD) psql -h 127.0.0.1 -p 5432 -U postgres -c "select * from webapi.source limit 1"
       - name: Build webapi profile, sleep 3 mins
         run: |
-          pwd
-          cd $GITHUB_WORKSPACE/Broadsea
-          pwd
+          cd $GITHUB_WORKSPACE
           docker-compose --env-file .env --profile webapi-from-image up -d
           sleep 180
           docker logs ohdsi-webapi
