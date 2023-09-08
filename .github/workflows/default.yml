@@ -48,7 +48,7 @@ jobs:
       - name: Test traefik container
         run: docker logs traefik
       - name: Test content container
-        run: curl -s --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1
+        run: curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1
       # - name: Test HADES
       #   run: curl -s --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/hades/auth-sign-in
       # - name: Test Atlas
