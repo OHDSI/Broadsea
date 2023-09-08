@@ -21,17 +21,23 @@ jobs:
         run: mkdir -p ./certs
       - name: Build traefik container
         run: docker-compose --env-file .env up -d
-      - name: Build atlasdb profile
-        run: docker-compose --env-file .env --profile atlasdb up -d
+      - name: Build default profile
+        run: docker-compose --env-file .env --profile default up -d
+      - name: Setup postgres client on Linux
+        if: runner.os == 'Linux'
+        run: sudo apt-get install --yes --no-install-recommends postgresql-client
+      - name: Setup postgres client on MacOS
+        if: runner.os == 'macOS'
+        run: brew install libpq
       - name: Test atlasdb
-        run: |
-          sudo apt-get update
-          sudo apt-get install --yes --no-install-recommends postgresql-client
-          PGPASSWORD=$(cat ./secrets/webapi/WEBAPI_DATASOURCE_PASSWORD) psql -h 127.0.0.1 -p 5432 -U postgres -c "select * from webapi.source limit 1"
-      - name: Build webapi profile, sleep 3 mins
-        run: |
-          docker-compose --env-file .env --profile webapi-from-image up -d
-          sleep 180
-          docker logs ohdsi-webapi
+        run: PGPASSWORD=$(cat ./secrets/webapi/WEBAPI_DATASOURCE_PASSWORD) psql -h 127.0.0.1 -p 5432 -U postgres -c "select * from webapi.source limit 1"
+      - name: Test traefik container
+        run: docker logs traefik
+      - name: Test content container
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1
+      - name: Test HADES
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/hades/auth-sign-in
+      - name: Test Atlas
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/atlas
       - name: Test WebAPI info endpoint
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info
