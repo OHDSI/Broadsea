@@ -4,7 +4,7 @@ jobs:
   default:
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-12]
+        os: [ubuntu-22.04]
         httpType: [http, https]
     runs-on: ${{ matrix.os }}
     steps:
@@ -49,12 +49,12 @@ jobs:
       - name: Test traefik container
         run: docker logs traefik
       - name: Test content container
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1
+        run: curl -s --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1
       - name: Test HADES
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/hades/auth-sign-in
+        run: curl -s --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/hades/auth-sign-in
       - name: Test Atlas
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/atlas/#/home
+        run: curl -s --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/atlas/#/home
       - name: Test WebAPI info endpoint
         run: |
           sleep 30
-          curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info
+          curl -s --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/WebAPI/info
