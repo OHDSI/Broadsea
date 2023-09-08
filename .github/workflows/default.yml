@@ -1,4 +1,4 @@
-name: Broadsea Default Profile (Linux and Mac)
+name: Broadsea Non-Perseus (Linux and Mac)
 on: push
 jobs:
   default:
@@ -52,25 +52,9 @@ jobs:
         run: |
           sleep 30
           curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/WebAPI/info
-  solr-vocab:
-    needs: default
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        httpType: [http, https]
-    runs-on: ${{ matrix.os }}
-    steps:
-    - name: Build empty SOLR instance
-      run: docker-compose --env-file .env --profile solr-vocab-no-import up -d
-    - name: Test SOLR
-      run: curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/solr
-  openldap:
-    needs: default
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        httpType: [http, https]
-    runs-on: ${{ matrix.os }}
-    steps:
-    - name: Build OpenLDAP
-      run: docker-compose --env-file .env --profile openldap up -d
+      - name: Build empty SOLR instance
+        run: docker-compose --env-file .env --profile solr-vocab-no-import up -d
+      - name: Test SOLR
+        run: curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/solr
+      - name: Build OpenLDAP
+        run: docker-compose --env-file .env --profile openldap up -d
