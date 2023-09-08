@@ -33,6 +33,8 @@ jobs:
         run: |
           sudo openssl x509 -outform der -in hostcert.pem -out ./certs/broadsea.crt
           sudo mv hostkey.pem ./certs/broadsea.key
+          sudo cp ./certs/broadsea.crt /usr/local/share/ca-certificates/
+          sudo update-ca-certificates
       - name: Build traefik container
         run: docker-compose --env-file .env up -d
       - name: Build default profile
