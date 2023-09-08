@@ -149,10 +149,6 @@ services:
     entrypoint: ["/bin/sh", "/entrypoint.sh"]
     labels:
       - "traefik.enable=true"
-    # command:
-    #   - solr-precreate
-    #   - ${SOLR_VOCAB_VERSION}
-    #   - /tmp/solr_config
     healthcheck:
       test: curl --fail ${SOLR_VOCAB_ENDPOINT} || exit 1
       interval: 10s

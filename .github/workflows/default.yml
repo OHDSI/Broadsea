@@ -4,9 +4,8 @@ jobs:
   default:
     strategy:
       matrix:
-        os: 
-          - ubuntu-22.04
-          - macos-12
+        os: [ubuntu-22.04, macos-12]
+        httpType: [http, https]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup Docker on macOS
@@ -16,6 +15,18 @@ jobs:
         uses: actions/checkout@v3
       - name: Create certs folder
         run: mkdir -p ./certs
+      - name: Replace HTTP_TYPE if https (Linux)
+        if: matrix.httpType == 'https' && matrix.os == 'Linux'
+        run: sed -i 's/HTTP_TYPE=\"http\"/HTTP_TYPE=\"https\"/g' .env
+      - name: Replace HTTP_TYPE if https (Mac)
+        if: matrix.httpType == 'https' && matrix.os == 'macOS'
+        run: sed -i '' 's/HTTP_TYPE=\"http\"/HTTP_TYPE=\"https\"/g' .env
+      - name: Generate certificates for next step
+        if: matrix.httpType == 'https'
+        uses: kofemann/action-create-certificate@v0.0.4
+        with:
+          hostcert: './certs/broadsea.crt'
+          hostkey:  './certs/broadsea.key'
       - name: Build traefik container
         run: docker-compose --env-file .env up -d
       - name: Build default profile
