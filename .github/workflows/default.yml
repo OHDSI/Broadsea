@@ -31,10 +31,8 @@ jobs:
       - name: Use generated certificates
         if: matrix.httpType == 'https' && runner.os == 'Linux'
         run: |
-          cp hostcert.pem ./certs/hostcert.pem
-          cp hostkey.pem ./certs/hostkey.pem
-          openssl x509 -outform der -in ./certs/hostcert.pem -out ./certs/broadsea.crt
-          openssl x509 -in ./certs/hostkey.pem -out ./certs/broadsea.key
+          sudo openssl x509 -outform der -in hostcert.pem -out ./certs/broadsea.crt
+          sudo openssl x509 -in hostkey.pem -out ./certs/broadsea.key
       - name: Build traefik container
         run: docker-compose --env-file .env up -d
       - name: Build default profile
