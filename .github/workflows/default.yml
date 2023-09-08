@@ -16,20 +16,20 @@ jobs:
       - name: Create certs folder
         run: mkdir -p ./certs
       - name: Replace HTTP_TYPE if https (Linux)
-        if: matrix.httpType == 'https' && matrix.os == 'Linux'
+        if: matrix.httpType == 'https' && runner.os == 'Linux'
         run: sed -i 's/HTTP_TYPE=\"http\"/HTTP_TYPE=\"https\"/g' .env
       - name: Replace HTTP_TYPE if https (Mac)
-        if: matrix.httpType == 'https' && matrix.os == 'macOS'
+        if: matrix.httpType == 'https' && runner.os == 'macOS'
         run: sed -i '' 's/HTTP_TYPE=\"http\"/HTTP_TYPE=\"https\"/g' .env
       - name: Generate certificates for next step
-        if: matrix.httpType == 'https' && matrix.os == 'Linux'
+        if: matrix.httpType == 'https' && runner.os == 'Linux'
         uses: kofemann/action-create-certificate@v0.0.4
         with:
           hostcert: 'hostcert.pem'
           hostkey:  'hostkey.pem'
           cachain:  'ca-chain.pem'
       - name: Use generated certificates
-        if: matrix.httpType == 'https' && matrix.os == 'Linux'
+        if: matrix.httpType == 'https' && runner.os == 'Linux'
         run: |
           mv hostcert.pem ./certs/broadsea.crt
           mv hostkey.pem ./certs/broadsea.key
