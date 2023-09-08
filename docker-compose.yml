@@ -138,15 +138,15 @@ services:
     secrets:
       - SOLR_VOCAB_JDBC_PASSWORD
     environment: 
-      SOLR_OPTS: 
-        -DVOCAB_VERSION=${SOLR_VOCAB_VERSION}
-        -DVOCAB_JDBC_DRIVER_PATH=${SOLR_VOCAB_JDBC_DRIVER_PATH}
-        -DVOCAB_JDBC_URL=${SOLR_VOCAB_JDBC_URL}
-        -DVOCAB_JDBC_USER=${SOLR_VOCAB_JDBC_USER}
-        -DVOCAB_JDBC_PASSWORD="$$(</run/secrets/SOLR_VOCAB_JDBC_PASSWORD)"
+      SOLR_VOCAB_VERSION: ${SOLR_VOCAB_VERSION}
+      SOLR_VOCAB_JDBC_DRIVER_PATH: ${SOLR_VOCAB_JDBC_DRIVER_PATH}
+      SOLR_VOCAB_JDBC_URL: ${SOLR_VOCAB_JDBC_URL}
+      SOLR_VOCAB_JDBC_USER: ${SOLR_VOCAB_JDBC_USER}
     volumes:
       - ${SOLR_VOCAB_JDBC_FILE_PATH}:/opt/solr-8.11.1/server/lib/solr_jdbc_driver.jar:ro
       - ./solr:/tmp/solr_config:ro
+      - ./solr/docker-entrypoint.sh:/entrypoint.sh
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
     labels:
       - "traefik.enable=true"
     command:
