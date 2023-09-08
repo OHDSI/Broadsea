@@ -28,6 +28,9 @@ jobs:
             -newkey rsa:2048 -nodes -sha256 \
             -subj '/CN=127.0.0.1' -extensions EXT -config <( \
             printf "[dn]\nCN=127.0.0.1\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:127.0.0.1\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+          sudo apt-get install -y ca-certificates
+          sudo cp ./certs/broadsea.crt /usr/local/share/ca-certificates
+          sudo update-ca-certificates
       - name: Build traefik container
         run: docker-compose --env-file .env up -d
       - name: Build content container
