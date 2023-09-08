@@ -26,7 +26,8 @@ jobs:
         uses: kofemann/action-create-certificate@v0.0.4
         with:
           hostcert: './certs/broadsea.crt'
-          hostkey:  './certs/broadsea.key'
+          hostkey: './certs/broadsea.key'
+          cachain: './certs/ca-chain.pem'
       - name: Build traefik container
         run: docker-compose --env-file .env up -d
       - name: Build default profile
