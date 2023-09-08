@@ -25,9 +25,13 @@ jobs:
         if: matrix.httpType == 'https'
         uses: kofemann/action-create-certificate@v0.0.4
         with:
-          hostcert: './certs/broadsea.crt'
-          hostkey: './certs/broadsea.key'
-          cachain: './certs/ca-chain.pem'
+          hostcert: 'hostcert.pem'
+          hostkey:  'hostkey.pem'
+          cachain:  'ca-chain.pem'
+      - name: Use generated certificates
+        if: matrix.httpType == 'https'
+        run: |
+          openssl x509 -in hostcert.pem -noout -text
       - name: Build traefik container
         run: docker-compose --env-file .env up -d
       - name: Build default profile
