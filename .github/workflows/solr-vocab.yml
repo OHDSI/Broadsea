@@ -1,4 +1,4 @@
-name: default profile (Linux and Mac)
+name: solr-vocab-no-import profile (Linux and Mac)
 on: push
 jobs:
   default:
@@ -30,25 +30,13 @@ jobs:
             printf "[dn]\nCN=127.0.0.1\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:127.0.0.1\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
       - name: Build traefik container
         run: docker-compose --env-file .env up -d
-      - name: Build default profile
-        run: docker-compose --env-file .env --profile default up -d
-      - name: Setup postgres client on Linux
-        if: runner.os == 'Linux'
-        run: sudo apt-get install --yes --no-install-recommends postgresql-client
-      - name: Setup postgres client on MacOS
-        if: runner.os == 'macOS'
-        run: brew install libpq
-      - name: Test atlasdb
-        run: PGPASSWORD=$(cat ./secrets/webapi/WEBAPI_DATASOURCE_PASSWORD) psql -h 127.0.0.1 -p 5432 -U postgres -c "select source_name from webapi.source limit 1"
-      - name: Test traefik container
-        run: docker logs traefik
-      - name: Test content container
-        run: curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1
-      - name: Test HADES
-        run: curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/hades/auth-sign-in
-      - name: Test Atlas
-        run: curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/atlas/#/home
+      - name: Build empty SOLR instance
+        run: docker-compose --env-file .env --profile solr-vocab-no-import up -d
+      - name: Build webapi profile with SOLR_VOCAB enabled
+        run: SOLR_VOCAB_ENDPOINT=http://broadsea-solr-vocab:8983/solr docker-compose --env-file .env --profile webapi-from-image up -d
       - name: Test WebAPI info endpoint
         run: |
           sleep 30
           curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/WebAPI/info
+      - name: Test SOLR endpoint
+        run: curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/solr/
