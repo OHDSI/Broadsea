@@ -2,9 +2,6 @@ name: Broadsea Default Profile (Linux and Mac)
 on: push
 jobs:
   default:
-    env:
-      ENV_FILE: ./.env
-      LOCALHOST_URL: http://127.0.0.1
     strategy:
       matrix:
         os: 
@@ -30,7 +27,7 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install libpq
       - name: Test atlasdb
-        run: PGPASSWORD=$(cat ./secrets/webapi/WEBAPI_DATASOURCE_PASSWORD) psql -h 127.0.0.1 -p 5432 -U postgres -c "select * from webapi.source limit 1"
+        run: PGPASSWORD=$(cat ./secrets/webapi/WEBAPI_DATASOURCE_PASSWORD) psql -h 127.0.0.1 -p 5432 -U postgres -c "select source_name from webapi.source limit 1"
       - name: Test traefik container
         run: docker logs traefik
       - name: Test content container
@@ -38,6 +35,8 @@ jobs:
       - name: Test HADES
         run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/hades/auth-sign-in
       - name: Test Atlas
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/atlas
+        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/atlas/#/home
       - name: Test WebAPI info endpoint
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info
+        run: |
+          sleep 30
+          curl -s --retry 10 --retry-connrefused http://127.0.0.1/WebAPI/info
