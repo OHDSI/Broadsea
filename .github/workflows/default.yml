@@ -53,6 +53,7 @@ jobs:
           sleep 30
           curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/WebAPI/info
   solr-vocab:
+    needs: default
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
@@ -64,6 +65,7 @@ jobs:
     - name: Test SOLR
       run: curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/solr
   openldap:
+    needs: default
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
