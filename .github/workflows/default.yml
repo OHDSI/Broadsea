@@ -22,16 +22,18 @@ jobs:
         if: matrix.httpType == 'https' && matrix.os == 'macOS'
         run: sed -i '' 's/HTTP_TYPE=\"http\"/HTTP_TYPE=\"https\"/g' .env
       - name: Generate certificates for next step
-        if: matrix.httpType == 'https'
+        if: matrix.httpType == 'https' && matrix.os == 'Linux'
         uses: kofemann/action-create-certificate@v0.0.4
         with:
           hostcert: 'hostcert.pem'
           hostkey:  'hostkey.pem'
           cachain:  'ca-chain.pem'
       - name: Use generated certificates
-        if: matrix.httpType == 'https'
+        if: matrix.httpType == 'https' && matrix.os == 'Linux'
         run: |
-          openssl x509 -in hostcert.pem -noout -text
+          mv hostcert.pem ./certs/broadsea.crt
+          mv hostkey.pem ./certs/broadsea.key
+          openssl x509 -in ./certs/broadsea.crt -noout -text
       - name: Build traefik container
         run: docker-compose --env-file .env up -d
       - name: Build default profile
