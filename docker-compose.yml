@@ -425,8 +425,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://perseus-shareddb:5432/shared
-    depends_on:
-      - perseus-shareddb
+    #depends_on:
+    #  - perseus-shareddb
 
 
   perseus-web:
@@ -435,6 +435,8 @@ services:
     platform: linux/amd64
     container_name: perseus-web
     restart: always
+    volumes:
+      - ./perseus/web/server.docker.conf:/etc/nginx/server.docker.conf
     labels:
       - "traefik.enable=true"
 
@@ -444,11 +446,7 @@ services:
     image: perseushub/user:latest
     platform: linux/amd64
     container_name: perseus-user
-    #secrets:
-    #  - PERSEUS_TOKEN_SECRET_KEY
-    #  - PERSEUS_EMAIL_SECRET_KEY
     environment:
-      DB_HOST: perseus-shareddb
       SMTP_SERVER: ${PERSEUS_SMTP_SERVER}
       SMTP_PORT: ${PERSEUS_SMTP_PORT}
       SMTP_EMAIL: ${PERSEUS_SMTP_EMAIL}
@@ -461,8 +459,8 @@ services:
       - ./perseus/user/config.py:/app/config.py
     ports:
       - "5001:5001"
-    depends_on:
-      - perseus-shareddb
+    #depends_on:
+    #  - perseus-shareddb
 
   perseus-backend:
     profiles: [ "perseus-backend", "perseus" ]
@@ -475,9 +473,9 @@ services:
       - ./perseus/backend/config.py:/app/config.py
     ports:
       - "5000:5000"
-    depends_on:
-      - perseus-shareddb
-      - perseus-files-manager
+    #depends_on:
+    #  - perseus-shareddb
+    #  - perseus-files-manager
 
   perseus-frontend:
     profiles: [ "perseus-frontend", "perseus" ]
@@ -512,10 +510,10 @@ services:
       - "9000:9000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
-    depends_on:
-      - perseus-shareddb
-      - perseus-files-manager
-      - perseus-vocabularydb
+    #depends_on:
+    #  - perseus-shareddb
+    #  - perseus-files-manager
+    #  - perseus-vocabularydb
 
   perseus-solr:
     profiles: [ "perseus-solr", "perseus" ]
@@ -526,8 +524,8 @@ services:
       - "8983:8983"
     volumes:
       - perseus-solr:/var/solr
-    depends_on:
-      - perseus-vocabularydb
+    #depends_on:
+    #  - perseus-vocabularydb
   
   perseus-athena:
     profiles: [ "perseus-athena", "perseus" ]
@@ -540,8 +538,8 @@ services:
       - ./perseus/athena/config.py:/app/config.py
     ports:
       - "5002:5002"
-    depends_on:
-      - perseus-solr
+    #depends_on:
+    #  - perseus-solr
 
   perseus-usagi:
     profiles: [ "perseus-usagi", "perseus" ]
@@ -555,9 +553,9 @@ services:
       - ./perseus/usagi/config.py:/app/config.py
     ports:
       - "5003:5003"
-    depends_on:
-      - perseus-shareddb
-      - perseus-solr
+    #depends_on:
+    #  - perseus-shareddb
+    #  - perseus-solr
 
   perseus-r-serve:
     profiles: [ "perseus-r-serve", "perseus" ]
@@ -566,8 +564,8 @@ services:
     container_name: perseus-r-serve
     ports:
       - "6311:6311"
-    depends_on:
-      - perseus-shareddb
+    #depends_on:
+    #  - perseus-shareddb
   
   perseus-data-quality-dashboard:
     profiles: [ "perseus-dqd", "perseus" ]
@@ -580,10 +578,10 @@ services:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://perseus-shareddb:5432/shared
       FILES_MANAGER_URL: http://perseus-files-manager:10500/files-manager
-    depends_on:
-      - perseus-shareddb
-      - perseus-files-manager
-      - perseus-r-serve
+    #depends_on:
+    #  - perseus-shareddb
+    #  - perseus-files-manager
+    #  - perseus-r-serve
 
   perseus-swagger:
     profiles: [ "perseus-swagger", "perseus" ]
@@ -605,9 +603,9 @@ services:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://perseus-shareddb:5432/shared
       files-manager-url: "http://perseus-files-manager:10500/files-manager"
-    depends_on:
-      - perseus-shareddb
-      - perseus-files-manager
+    #depends_on:
+    #  - perseus-shareddb
+    #  - perseus-files-manager
 
 
 secrets:

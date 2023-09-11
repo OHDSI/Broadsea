@@ -30,6 +30,8 @@ jobs:
             printf "[dn]\nCN=127.0.0.1\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:127.0.0.1\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
       - name: Build traefik container
         run: docker-compose --env-file .env up -d
+      - name: Build atlasdb profile
+        run: docker-compose --env-file .env --profile atlasdb up -d
       - name: Build empty SOLR instance
         run: docker-compose --env-file .env --profile solr-vocab-no-import up -d
       - name: Build webapi profile with SOLR_VOCAB enabled
