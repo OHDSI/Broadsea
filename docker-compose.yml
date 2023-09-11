@@ -435,8 +435,6 @@ services:
     platform: linux/amd64
     container_name: perseus-web
     restart: always
-    volumes:
-      - ./perseus/web/server.docker.conf:/etc/nginx/server.docker.conf
     labels:
       - "traefik.enable=true"
 
@@ -472,7 +470,7 @@ services:
     volumes:
       - ./perseus/backend/config.py:/app/config.py
     ports:
-      - "5000:5000"
+      - "5004:5004"
     #depends_on:
     #  - perseus-shareddb
     #  - perseus-files-manager
