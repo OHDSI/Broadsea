@@ -506,6 +506,8 @@ services:
     container_name: perseus-cdm-builder
     ports:
       - "9000:9000"
+    volumes:
+      - ./perseus/cdm-builder/appsettings.Docker.json:/app/appsettings.Docker.json
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
     #depends_on:
