@@ -29,5 +29,4 @@ jobs:
         run: docker-compose --env-file .env --profile openldap up -d
       - name: Test openldap auth in WebAPI
         run: |
-          sleep 30
           curl -d "login=user1&password=$(<./secrets/openldap/OPENLDAP_ACCOUNT_PASSWORDS)" -H "Content-Type: application/x-www-form-urlencoded" -X POST ${{matrix.httpType}}://127.0.0.1/WebAPI/user/login/ldap

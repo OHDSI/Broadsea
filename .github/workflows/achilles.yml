@@ -1,0 +1,19 @@
+name: achilles profile (Linux and Mac)
+on: push
+jobs:
+  default:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        httpType: [http, https]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Setup Docker on macOS
+        if: runner.os == 'macOS'
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Create certs folder
+        run: mkdir -p ./certs
+      - name: Build achilles container
+        run: docker-compose --env-file .env --profile achilles up -d
