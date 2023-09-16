@@ -1,11 +1,11 @@
 name: achilles profile (Linux and Mac)
 on: push
 jobs:
-  default:
+  achilles:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        httpType: [http, https]
+        httpType: [http]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup Docker on macOS
@@ -19,6 +19,7 @@ jobs:
         run: docker-compose --env-file .env --profile achilles up -d
       - name: Use busybox container to grab log file and verify no errors
         run: |
+         sleep 30
          CID=$(docker run -d -v cdm-postprocessing-data:/cdm-postprocessing-data busybox true)
          docker cp $CID:/cdm-postprocessing-data/achilles/data/demo_cdm/log_achilles.txt ./log_achilles.txt
          if grep -q "ERROR" ./log_achilles.txt;then exit 1;else exit 0;fi

@@ -1,12 +1,11 @@
-name: Broadsea Perseus Profile (Linux and Mac)
+name: perseus profile (Linux and Mac)
 on: push
 jobs:
-  default:
+  perseus:
     strategy:
       matrix:
-        os: 
-          - ubuntu-22.04
-          - macos-12
+        os: [ubuntu-latest, macos-latest]
+        httpType: [http, https]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup Docker on macOS
@@ -15,8 +14,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Create certs folder
-        if: runner.os == 'macOS'
-        run: mkdir /Users/runner/work/Broadsea/Broadsea/certs
+        run: mkdir -p ./certs
+      - name: Replace HTTP_TYPE if https (Linux)
+        if: matrix.httpType == 'https' && runner.os == 'Linux'
+        run: sed -i 's/HTTP_TYPE=\"http\"/HTTP_TYPE=\"https\"/g' .env
+      - name: Replace HTTP_TYPE if https (Mac)
+        if: matrix.httpType == 'https' && runner.os == 'macOS'
+        run: sed -i '' 's/HTTP_TYPE=\"http\"/HTTP_TYPE=\"https\"/g' .env
+      - name: Create and trust self signed certs
+        if: matrix.httpType == 'https'
+        run: |
+          openssl req -x509 -out ./certs/broadsea.crt -keyout ./certs/broadsea.key \
+            -newkey rsa:2048 -nodes -sha256 \
+            -subj '/CN=127.0.0.1' -extensions EXT -config <( \
+            printf "[dn]\nCN=127.0.0.1\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:127.0.0.1\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
       - name: Build traefik container
         run: docker-compose up -d
       - name: Check traefik container
@@ -24,4 +35,4 @@ jobs:
       - name: Build perseus profile
         run: docker-compose --profile perseus up -d
       - name: Test perseus frontend
-        run: curl -s --retry 10 --retry-connrefused http://127.0.0.1/perseus/sign-in
+        run: curl -s --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/perseus/sign-in

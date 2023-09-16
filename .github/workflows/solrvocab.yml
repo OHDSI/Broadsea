@@ -1,7 +1,7 @@
 name: solr-vocab-no-import profile (Linux and Mac)
 on: push
 jobs:
-  default:
+  solrvocab:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
