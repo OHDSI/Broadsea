@@ -1,7 +1,7 @@
-name: openldap profile (Linux and Mac)
+name: WebAPI Authentication (Linux and Mac)
 on: push
 jobs:
-  default:
+  openldap:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
@@ -30,3 +30,30 @@ jobs:
       - name: Test openldap auth in WebAPI
         run: |
           curl -d "login=user1&password=$(<./secrets/openldap/OPENLDAP_ACCOUNT_PASSWORDS)" -H "Content-Type: application/x-www-form-urlencoded" -X POST ${{matrix.httpType}}://127.0.0.1/WebAPI/user/login/ldap
+  db:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        httpType: [http]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Setup Docker on macOS
+        if: runner.os == 'macOS'
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Create certs folder
+        run: mkdir -p ./certs
+      - name: Build traefik container
+        run: docker-compose --env-file .env up -d
+      - name: Build atlasdb profile
+        run: docker-compose --env-file .env --profile atlasdb up -d
+      - name: Build webapi profile with ldap enabled
+        run: SECURITY_AUTH_JDBC_ENABLED=true docker-compose --env-file .env --profile webapi-from-image up -d
+      - name: Test WebAPI info endpoint
+        run: |
+          sleep 30
+          curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/WebAPI/info
+      - name: Test db auth in WebAPI
+        run: |
+          curl -d "login=ohdsi&password=$(<./secrets/webapi/SECURITY_DB_DATASOURCE_PASSWORD)" -H "Content-Type: application/x-www-form-urlencoded" -X POST ${{matrix.httpType}}://127.0.0.1/WebAPI/user/login/db
