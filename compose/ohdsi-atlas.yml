@@ -38,8 +38,8 @@ services:
       ATLAS_ENABLE_TERMS_AND_CONDITIONS: ${ATLAS_ENABLE_TERMS_AND_CONDITIONS}
 
     volumes:
-      - ../atlas/config-local-template.js:/tmp/config-local.js:ro
-      - ../atlas/envsubst.sh:/tmp/envsubst.sh:ro
+      - ../atlas/config/config-local-template.js:/tmp/config-local.js:ro
+      - ../atlas/config/envsubst.sh:/tmp/envsubst.sh:ro
     entrypoint: ["sh", "/tmp/envsubst.sh" ]
     labels:
       - "traefik.enable=true"

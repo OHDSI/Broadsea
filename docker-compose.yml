@@ -53,6 +53,7 @@ services:
         CONTENT_ARES_DISPLAY: ${CONTENT_ARES_DISPLAY}
         CONTENT_ATLAS_DISPLAY: ${CONTENT_ATLAS_DISPLAY}
         CONTENT_HADES_DISPLAY: ${CONTENT_HADES_DISPLAY}
+        CONTENT_PERSEUS_DISPLAY: ${CONTENT_PERSEUS_DISPLAY}
         CONTENT_OPENSHINYSERVER_DISPLAY: ${CONTENT_OPENSHINYSERVER_DISPLAY}
         CONTENT_POSITCONNECT_DISPLAY: ${CONTENT_POSITCONNECT_DISPLAY}
     restart: unless-stopped
@@ -214,19 +215,19 @@ services:
     entrypoint: ["sh", "/tmp/load_phoebe.sh" ]
 
 
-  broadsea-arachne-execution-engine:
-    profiles: [ "arachne-execution-engine" ]
-    build: ./arachne
-    container_name: broadsea-arachne-execution-engine
-    restart: unless-stopped
-    ports:
-      - "8888:8888"
-    privileged: true
-    platform: "linux/amd64"
-    volumes:
-      - ./execution_engine:/dist
-    labels:
-     - "traefik.enable=true"
+  # broadsea-arachne-execution-engine:
+  #   profiles: [ "arachne-execution-engine" ]
+  #   build: ./arachne
+  #   container_name: broadsea-arachne-execution-engine
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8888:8888"
+  #   privileged: true
+  #   platform: "linux/amd64"
+  #   volumes:
+  #     - ./execution_engine:/dist
+  #   labels:
+  #    - "traefik.enable=true"
 
 
   # Security providers for testing purposes
@@ -398,10 +399,31 @@ services:
       - ${DBT_PROJECT_PATH}:/usr/app
       - ${DBT_PROFILE_PATH}:/root/.dbt/
 
-  #broadsea-init-cdm-atlas:
-  #  profiles: [ "cdm-postprocessing", "init-cdm-atlas" ]
-  #  build: ./
-
+  # broadsea-atlas-add-cdm:
+  #   profiles: [ "atlas-add-cdm" ]
+  #   build:
+  #     context: ./atlas/add_cdm
+  #   container_name: atlas-add-cdm
+  #   volumes:
+  #     - ./atlas/add_cdm/add_new_cdm.sh:/tmp/add_new_cdm.sh:ro
+  #     - ./atlas/add_cdm/new_cdm_template.json:/tmp/new_cdm_template.json:ro
+  #   entrypoint: ["sh", "/tmp/add_new_cdm.sh"]
+  #   secrets:
+  #     - ATLAS_NEW_CDMSOURCE_PASSWORD
+  #     - ATLAS_ADMIN_PASSWORD
+  #   environment:
+  #     NEW_CDMSOURCE_NAME: ${NEW_CDMSOURCE_NAME}
+  #     NEW_CDMSOURCE_KEY: ${NEW_CDMSOURCE_KEY}
+  #     NEW_CDMSOURCE_DIALECT: ${NEW_CDMSOURCE_DIALECT}
+  #     NEW_CDMSOURCE_CONNECTIONSTRING: ${NEW_CDMSOURCE_CONNECTIONSTRING}
+  #     NEW_CDMSOURCE_USERNAME: ${NEW_CDMSOURCE_USERNAME}
+  #     NEW_CDMSOURCE_CDMSCHEMA: ${NEW_CDMSOURCE_CDMSCHEMA}
+  #     NEW_CDMSOURCE_VOCABSCHEMA: ${NEW_CDMSOURCE_VOCABSCHEMA}
+  #     NEW_CDMSOURCE_RESULTSSCHEMA: ${NEW_CDMSOURCE_RESULTSSCHEMA}
+  #     HTTP_TYPE: ${HTTP_TYPE}
+  #     BROADSEA_HOST: ${BROADSEA_HOST}
+  #     ATLAS_ADMIN_USERNAME: ${ATLAS_ADMIN_USERNAME}
+  
   ### Perseus
 
   perseus-shareddb:
@@ -643,4 +665,8 @@ secrets:
     file: ${UMLS_API_KEY_FILE}
   CDM_CONNECTIONDETAILS_PASSWORD:
     file: ${CDM_CONNECTIONDETAILS_PASSWORD_FILE}
+  ATLAS_NEW_CDMSOURCE_PASSWORD:
+    file: ${ATLAS_NEW_CDMSOURCE_PASSWORD_FILE}
+  ATLAS_ADMIN_PASSWORD:
+    file: ${ATLAS_ADMIN_PASSWORD_FILE}
   
