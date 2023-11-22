@@ -12,8 +12,15 @@ export SECURITY_OAUTH_GITHUB_APISECRET="$(cat /run/secrets/SECURITY_OAUTH_GITHUB
 export SECURITY_SAML_KEYMANAGER_STOREPASSWORD="$(cat /run/secrets/SECURITY_SAML_KEYMANAGER_STOREPASSWORD)"
 export SECURITY_SAML_KEYMANAGER_PASSWORDS_ARACHNENETWORK="$(cat /run/secrets/SECURITY_SAML_KEYMANAGER_PASSWORDS_ARACHNENETWORK)"
 
+JAVA_KEYSTORE="/usr/local/openjdk-8/lib/security/cacerts"
+if [ -s "/tmp/cacerts" ]; then
+    JAVA_KEYSTORE=/tmp/cacerts
+    #cp -fr /tmp/cacerts /usr/local/openjdk-8/lib/security/cacerts
+fi
+
 cd /var/lib/ohdsi/webapi
-exec java ${DEFAULT_JAVA_OPTS} ${JAVA_OPTS} \
+exec java -Djavax.net.ssl.trustStore=${JAVA_KEYSTORE} \
+    ${DEFAULT_JAVA_OPTS} ${JAVA_OPTS} \
     -cp ".:WebAPI.jar:WEB-INF/lib/*.jar${CLASSPATH}" \
     org.springframework.boot.loader.WarLauncher
 

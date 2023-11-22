@@ -18,7 +18,7 @@ This repository contains the Docker Compose file used to launch the OHDSI Broads
     -   [Atlas Docker Hub container image](https://hub.docker.com/r/ohdsi/atlas "OHDSI Atlas Docker Image Repository")
     -   [WebAPI GitHub repository](https://github.com/OHDSI/WebAPI "OHDSI WebAPI GitHub Repository")
     -   [WebAPI Docker Hub container image](https://hub.docker.com/r/ohdsi/webapi "OHDSI WebAPI Docker Image Repository")
-    -   [Atlas application PostgreSQL database GitHub repository](https://github.com/OHDSI/Broadsea-Atlasdb "OHDSI Broadsea Atlas application PostgreSQL database GitHub Repository")
+    -   [Atlas application PostgreSQL database GitHub repository](https://github.com/OHDSI/Broadsea-Atlasdb "OHDSI Broadsea Atlas application PostgreSQL database GitHub Repository")cac
     -   [Atlas application PostgreSQL databbase Docker Hub container image](https://hub.docker.com/repository/docker/ohdsi/broadsea-atlasdb "OHDSI Broadsea Atlas application PostgreSQL database Docker Image Repository")
     -   SOLR based OMOP Vocab search
 -   OHDSI Ares
@@ -234,9 +234,13 @@ To enable the use of SOLR for fast OMOP Vocab search in Atlas, review and fill o
 
 To enable a security provider for authentication and identity management in Atlas/WebAPI, review and fill out Sections 4 and 5 in the .env file.
 
-#### LDAPS (LDAP over SSL or secure LDAP)
+#### Bring Your Own Cacerts (Java Keystore) for LDAP and Snowflake connections
 
-To use a secure LDAP instance, overwrite the blank ./cacerts within the Broadsea directory with your own cacerts file. WebAPI can then leverage it for LDAPS.
+Some deployments require a Java Keystore (cacerts) file that establishes trust with Root Certificate Authorities for LDAP or Snowflake connections.
+
+To allow this, overwrite the blank ./cacerts within the Broadsea directory with your own cacerts file. WebAPI can then leverage it for these external Java SSL connections.
+
+For Snowflake, you will need to also set the CDM_SNOWFLAKE_PRIVATE_KEY_FILE env variable in Section 3.
 
 #### Open LDAP
 

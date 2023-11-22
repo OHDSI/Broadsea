@@ -12,7 +12,7 @@ services:
       - /tmp
     privileged: false
     volumes:
-      - ../cacerts:/usr/local/openjdk-8/lib/security/cacerts:ro # add a cacerts file if using LDAPS
+      - ${WEBAPI_CACERTS_FILE}:/tmp/cacerts
       - ${WEBAPI_ADDITIONAL_JDBC_FILE_PATH}:/var/lib/ohdsi/webapi/lib/additional/broadsea_mounted.jar
       - ../webapi/docker-entrypoint.sh:/entrypoint.sh
     entrypoint: ["/bin/sh","/entrypoint.sh"]
@@ -26,6 +26,7 @@ services:
       - SECURITY_OAUTH_GITHUB_APISECRET
       - SECURITY_SAML_KEYMANAGER_STOREPASSWORD
       - SECURITY_SAML_KEYMANAGER_PASSWORDS_ARACHNENETWORK
+      - WEBAPI_CDM_SNOWFLAKE_PRIVATE_KEY
     environment:
       CLASSPATH: ":/var/lib/ohdsi/webapi/lib/additional/broadsea_mounted.jar"
       DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver

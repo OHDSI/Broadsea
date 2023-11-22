@@ -294,6 +294,7 @@ services:
     container_name: broadsea-run-achilles
     secrets:
       - CDM_CONNECTIONDETAILS_PASSWORD
+      - GITHUB_PAT
     volumes:
       - jdbc-drivers-data:/jdbc
       - cdm-postprocessing-data:/postprocessing
@@ -335,6 +336,7 @@ services:
     container_name: broadsea-run-dqd
     secrets:
       - CDM_CONNECTIONDETAILS_PASSWORD
+      - GITHUB_PAT
     volumes:
       - jdbc-drivers-data:/jdbc
       - cdm-postprocessing-data:/postprocessing
@@ -630,7 +632,28 @@ services:
     #  - perseus-files-manager
 
 
+  # broadsea-strategus:
+  #   profiles: [ "run-strategus" ]
+  #   build: 
+  #     context: ./strategus
+  #     args:
+  #       GITHUB_PAT: ${GITHUB_PAT}
+  #   platform: linux/arm64
+  #   container_name: broadsea-strategus
+  #   secrets:
+  #     - GITHUB_PAT
+  #     # - CDM_CONNECTIONDETAILS_PASSWORD
+  #     # - STRATEGUS_KEYRING_PASSWORD
+  #   environment:
+  #     RENV_PATHS_LIBRARY: /project/renv/library
+  #     INSTANTIATED_MODULES_FOLDER: /project/modules
+  #   volumes:
+  #     - ./strategus/execute.R:/project/execute.R
+  #   entrypoint: ["Rscript", "/project/execute.R" ]
+
 secrets:
+  GITHUB_PAT:
+    file: ${GITHUB_PAT_SECRET_FILE}
   WEBAPI_DATASOURCE_PASSWORD:
     file: ${WEBAPI_DATASOURCE_PASSWORD_FILE}
   SECURITY_LDAP_SYSTEM_PASSWORD:
@@ -665,8 +688,13 @@ secrets:
     file: ${UMLS_API_KEY_FILE}
   CDM_CONNECTIONDETAILS_PASSWORD:
     file: ${CDM_CONNECTIONDETAILS_PASSWORD_FILE}
+  WEBAPI_CDM_SNOWFLAKE_PRIVATE_KEY:
+    file: ${WEBAPI_CDM_SNOWFLAKE_PRIVATE_KEY_FILE}
+
   #ATLAS_NEW_CDMSOURCE_PASSWORD:
   #  file: ${ATLAS_NEW_CDMSOURCE_PASSWORD_FILE}
   #ATLAS_ADMIN_PASSWORD:
   #  file: ${ATLAS_ADMIN_PASSWORD_FILE}
+
+
   
