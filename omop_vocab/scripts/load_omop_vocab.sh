@@ -2,6 +2,7 @@
 
 set -e
 
+apk update
 apk add postgresql-client
 
 cd /tmp/files
