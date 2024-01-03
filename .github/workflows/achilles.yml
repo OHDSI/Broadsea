@@ -16,7 +16,7 @@ jobs:
       - name: Create certs folder
         run: mkdir -p ./certs
       - name: Build and run achilles container
-        run: docker-compose --env-file .env --profile achilles up -d
+        run: GITHUB_PAT=${{ secrets.GITHUB_TOKEN }} docker-compose --env-file .env --profile achilles up -d
       - name: Use busybox container to grab log file and verify no errors
         run: |
          sleep 30
