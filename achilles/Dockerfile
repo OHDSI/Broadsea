@@ -1,6 +1,8 @@
 FROM docker.io/rocker/r-ver:4.2.3
 ARG ACHILLES_GITHUB_REF=main
 
+RUN echo 'GITHUB_PAT=' /run/secrets/GITHUB_PAT >> /root/.Renviron
+
 RUN <<EOF
 apt-get update
 apt-get install -y --no-install-recommends openjdk-11-jre-headless
