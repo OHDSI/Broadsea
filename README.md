@@ -234,6 +234,10 @@ To enable the use of SOLR for fast OMOP Vocab search in Atlas, review and fill o
 
 To enable a security provider for authentication and identity management in Atlas/WebAPI, review and fill out Sections 4 and 5 in the .env file.
 
+#### Bring Your Own JDBC driver
+
+WebAPI does not come with all JDBC drivers supported by OHDSI (for example, Snowflake). To add a JDBC driver to the WebAPI build, refer to Section 3 of the .env file and edit the WEBAPI_ADDITIONAL_JDBC_FILE_PATH variable to point to your JDBC driver file.
+
 #### Bring Your Own Cacerts (Java Keystore) for LDAP and Snowflake connections
 
 Some deployments require a Java Keystore (cacerts) file that establishes trust with Root Certificate Authorities for LDAP or Snowflake connections.
