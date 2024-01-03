@@ -33,6 +33,10 @@ Additionally, Broadsea offers limited support for services not specifically need
 -   Posit Connect for sites with commercial Posit licenses, for deploying Shiny apps
 -   DBT for ETL design
 
+### A Note on Docker Compose Commands
+
+Throughout this README, we will show docker compose commands with the convention of `docker-compose`. However, on some systems such as Red Hat Linux, you will need to use `docker compose` (no hyphen).
+
 ### Broadsea Dependencies
 
 -   Linux, Mac, or Windows with WSL
@@ -53,7 +57,7 @@ If using Mac Silicon (M1, M2), you **may** need to set the DOCKER_ARCH variable 
 git clone https://github.com/OHDSI/Broadsea.git
 ```
 
--   In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers using the below command. On Linux you may need to use 'sudo' to run this command. Wait up to one minute for the Docker containers to start. The docker compose pull command ensures that the latest released versions of the OHDSI ATLAS and OHDSI WebAPI docker containers are downloaded.
+-   In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers using the below command. On Linux you may need to use 'sudo' to run this command. Wait up to one minute for the Docker containers to start. 
 
 ```         
 docker-compose --profile default up -d
@@ -70,9 +74,9 @@ docker-compose --profile default up -d
 
 The .env file that comes with Broadsea has default and sample values. For advanced use, modify the values as appropriate, as covered below.
 
-### Docker Secrets
+### Docker Secrets (New for 3.1)
 
-Broadsea now leverages [Docker Secrets](https://docs.docker.com/engine/swarm/secrets/ "Docker Secrets") to handle sensitive passwords and secret keys.
+Broadsea leverages [Docker Secrets](https://docs.docker.com/engine/swarm/secrets/ "Docker Secrets") to handle sensitive passwords and secret keys.
 
 *(In Broadsea 3.0, these were handled via plain-text environment variables, which is not best security practice)*
 
@@ -84,12 +88,12 @@ In Section 1 of the .env file, set BROADSEA_HOST as the IP address or host name 
 
 ### Docker profiles
 
-This docker compose file makes use of [Docker profiles](https://docs.docker.com/compose/profiles/ "Docker Profiles") to allow for either a full default deployment ("default"), or a more a-la-carte approach in which you can pick and choose which services you'd like to deploy.
+Broadsea makes use of [Docker profiles](https://docs.docker.com/compose/profiles/ "Docker Profiles") to allow for either a full default deployment ("default"), or a more a-la-carte approach in which you can pick and choose which services you'd like to deploy.
 
 You can use this syntax for this approach, substituting profile names in:
 
 ```         
-docker-compose --profile profile1 --profile profile2 .... up -d
+docker-compose --env-file .env --profile profile1 --profile profile2 .... up -d
 ```
 
 Here are the profiles available:
@@ -249,7 +253,7 @@ Atlas database based security is pre-configured by the [Broadsea-AtlasDB](https:
     - section 5:
         - WEBAPI_SECURITY_PROVIDER="AtlasRegularSecurity"
         - SECURITY_AUTH_JDBC_ENABLED="true"
-2. Start the broadsea docker containers  
+2. Start the Broadsea docker containers
 3. Login to ATLAS with a demo user defined 
     | Role      | Username  | Password  | 
     |-----------|-----------|-----------|
@@ -259,7 +263,7 @@ Atlas database based security is pre-configured by the [Broadsea-AtlasDB](https:
 
 #### Bring Your Own JDBC driver
 
-WebAPI does not come with all JDBC drivers supported by OHDSI (for example, Snowflake). To add a JDBC driver to the WebAPI build, refer to Section 3 of the .env file and edit the WEBAPI_ADDITIONAL_JDBC_FILE_PATH variable to point to your JDBC driver file.
+The Docker implementation of WebAPI does not come with all JDBC drivers supported by OHDSI (for example, Snowflake). To add a JDBC driver to the WebAPI build, refer to Section 3 of the .env file and edit the WEBAPI_ADDITIONAL_JDBC_FILE_PATH variable to point to your JDBC driver file.
 
 #### Bring Your Own Cacerts (Java Keystore) for LDAP and Snowflake connections
 
@@ -291,7 +295,7 @@ To mount files prepared for Ares (see [CDM Post Processing](#CDM-Post-Processing
 
 DBT provides a command-line tool for ETL design. See Section 16 for configuring DBT.
 
-#### Perseus (Experimental)
+#### Perseus (Experimental Only)
 
 Perseus offers a full suite of services for data profiling, vocabulary mapping, ETL design, and ETL execution. See Section 16 for configuring Perseus.
 
@@ -351,30 +355,14 @@ docker compose --profile profilename down
 
 Broadsea can deploy the OHDSI stack on any of the following infrastructure alternatives:
 
--   laptop / desktop - Note: The Broadsea-Hades Docker container (RStudio server with OHDSI HADES R packages)
+-   laptop / desktop
 -   internally hosted server
 -   cloud provider hosted server
 -   cluster of servers (internally or cloud provider hosted)
 
 It supports any database management system that the OHDSI stack supports, though some services are specific to Postgresql.
 
-It supports any OS where Docker containers can run, including Windows, Mac OS X, and Linux (including Ubuntu, CentOS & CoreOS)
-
-### Usage Scenarios:
-
-Broadsea deploys the OHDSI technology stack at your local site so you can use it with your own data in an OMOP CDM Version 5 database.
-
-it can be used for the following scenarios:
-
--   Try-out / demo the OHDSI R packages & web applications - Broadsea-Atlasdb contains the following artifacts for demos:
--   a tiny simulated patient demo dataset called 'Eunomia'
--   a simple concept set
--   a simple cohort definition\
--   Run observational studies on your data (including OHDSI Network studies)
--   Run the OHDSI Achilles R package for database profiling, database characterization, data quality assessment on your data & view the reports as tables/charts in the Atlas web application
--   Query OMOP vocabularies using the Atlas web application
--   Define and generate patient cohorts
--   Determine study feasibility based on defined criteria
+It supports any OS where Docker containers can run, including Windows, Mac OS X, and Linux (including Ubuntu, CentOS & CoreOS).
 
 ------------------------------------------------------------------------
 
@@ -402,10 +390,6 @@ Follow the instructions here - [Install Docker for Mac](https://www.docker.com/p
 *Docker for Mac* includes both Docker Engine & Docker Compose
 
 For Mac Silicon, you may need to enable "Use Rosetta for x86/amd64 emulation on Apple Silicon" in the "Features in Development" Settings menu.
-
-### Mac OS X Requirements
-
-Mac must be a 2010 or newer model, with Intel's hardware support for memory management unit (MMU) virtualization; i.e., Extended Page Tables (EPT) OS X 10.10.3 Yosemite or newer At least 4GB of RAM VirtualBox prior to version 4.3.30 must NOT be installed (it is incompatible with Docker for Mac). Docker for Mac will error out on install in this case. Uninstall the older version of VirtualBox and re-try the install.
 
 ### Windows
 
