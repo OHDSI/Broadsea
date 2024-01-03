@@ -234,6 +234,29 @@ To enable the use of SOLR for fast OMOP Vocab search in Atlas, review and fill o
 
 To enable a security provider for authentication and identity management in Atlas/WebAPI, review and fill out Sections 4 and 5 in the .env file.
 
+##### Broadsea-AtlasDB Security  
+
+Atlas database based security is pre-configured by the [Broadsea-AtlasDB](https://github.com/OHDSI/Broadsea-atlasdb) project and can be used as a demo. To enable this security:
+
+1. Update these environment variables in Sections 2, 4, and 5 in the .env file: 
+    - section 2:
+        - ATLAS_USER_AUTH_ENABLED="true" 
+    - section 4:
+        - ATLAS_SECURITY_PROVIDER_TYPE="db" 
+        - ATLAS_SECURITY_PROVIDER_NAME="DB Security"
+        - ATLAS_SECURITY_USE_FORM="true"
+        - ATLAS_SECURITY_USE_AJAX="true
+    - section 5:
+        - WEBAPI_SECURITY_PROVIDER="AtlasRegularSecurity"
+        - SECURITY_AUTH_JDBC_ENABLED="true"
+2. Start the broadsea docker containers  
+3. Login to ATLAS with a demo user defined 
+    | Role      | Username  | Password  | 
+    |-----------|-----------|-----------|
+    | Admin     | admin     | admin     |
+    | Atlas user| ohdsi     | ohdsi     |
+
+
 #### Bring Your Own JDBC driver
 
 WebAPI does not come with all JDBC drivers supported by OHDSI (for example, Snowflake). To add a JDBC driver to the WebAPI build, refer to Section 3 of the .env file and edit the WEBAPI_ADDITIONAL_JDBC_FILE_PATH variable to point to your JDBC driver file.
