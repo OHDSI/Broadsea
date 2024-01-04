@@ -289,12 +289,14 @@ services:
 
   broadsea-run-achilles:
     profiles: [ "cdm-postprocessing", "achilles" ]
-    build: ./achilles
+    build: 
+      context: ./achilles
+      secrets:
+        - GITHUB_PAT
     platform: "linux/amd64"
     container_name: broadsea-run-achilles
     secrets:
       - CDM_CONNECTIONDETAILS_PASSWORD
-      - GITHUB_PAT
     volumes:
       - jdbc-drivers-data:/jdbc
       - cdm-postprocessing-data:/postprocessing

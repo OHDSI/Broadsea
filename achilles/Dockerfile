@@ -1,7 +1,6 @@
 FROM docker.io/rocker/r-ver:4.2.3
 
-#RUN echo 'GITHUB_PAT=' /run/secrets/GITHUB_PAT >> /root/.Renviron
-
+RUN echo 'GITHUB_PAT=' /run/secrets/GITHUB_PAT >> /root/.Renviron
 RUN GITHUB_PAT=$(cat /run/secrets/GITHUB_PAT)
 
 RUN <<EOF
