@@ -1,7 +1,8 @@
 FROM docker.io/rocker/r-ver:4.2.3
-ARG ACHILLES_GITHUB_REF=main
 
-RUN echo 'GITHUB_PAT=' /run/secrets/GITHUB_PAT >> /root/.Renviron
+#RUN echo 'GITHUB_PAT=' /run/secrets/GITHUB_PAT >> /root/.Renviron
+
+RUN GITHUB_PAT=$(cat /run/secrets/GITHUB_PAT)
 
 RUN <<EOF
 apt-get update
@@ -19,4 +20,4 @@ install2.r --error --ncpus 2 \
 R CMD javareconf
 EOF
 
-RUN R -e "remotes::install_github(repo = 'OHDSI/Achilles', ref = '${ACHILLES_GITHUB_REF}')"
+RUN R -e "remotes::install_github(repo = 'OHDSI/Achilles')"
