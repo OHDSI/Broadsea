@@ -18,7 +18,7 @@ jobs:
       - name: Write Github PAT secret file
         run: echo ${{ secrets.GH_TOKEN }} > ./secrets/github_pat
       - name: Build and run achilles container
-        run: docker-compose --env-file .env --profile achilles up -d
+        run: docker compose --env-file .env --profile achilles up -d
       - name: Use busybox container to grab log file and verify no errors
         run: |
          sleep 30
