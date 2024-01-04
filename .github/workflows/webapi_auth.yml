@@ -16,17 +16,17 @@ jobs:
       - name: Create certs folder
         run: mkdir -p ./certs
       - name: Build traefik container
-        run: docker-compose --env-file .env up -d
+        run: docker compose --env-file .env up -d
       - name: Build atlasdb profile
-        run: docker-compose --env-file .env --profile atlasdb up -d
+        run: docker compose --env-file .env --profile atlasdb up -d
       - name: Build webapi profile with ldap enabled
-        run: SECURITY_AUTH_LDAP_ENABLED=true docker-compose --env-file .env --profile webapi-from-image up -d
+        run: SECURITY_AUTH_LDAP_ENABLED=true docker compose --env-file .env --profile webapi-from-image up -d
       - name: Test WebAPI info endpoint
         run: |
           sleep 30
           curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/WebAPI/info
       - name: Build OpenLDAP
-        run: docker-compose --env-file .env --profile openldap up -d
+        run: docker compose --env-file .env --profile openldap up -d
       - name: Test openldap auth in WebAPI
         run: |
           curl -d "login=user1&password=$(<./secrets/openldap/OPENLDAP_ACCOUNT_PASSWORDS)" -H "Content-Type: application/x-www-form-urlencoded" -X POST ${{matrix.httpType}}://127.0.0.1/WebAPI/user/login/ldap
@@ -45,11 +45,11 @@ jobs:
       - name: Create certs folder
         run: mkdir -p ./certs
       - name: Build traefik container
-        run: docker-compose --env-file .env up -d
+        run: docker compose --env-file .env up -d
       - name: Build atlasdb profile
-        run: docker-compose --env-file .env --profile atlasdb up -d
+        run: docker compose --env-file .env --profile atlasdb up -d
       - name: Build webapi profile with ldap enabled
-        run: SECURITY_AUTH_JDBC_ENABLED=true docker-compose --env-file .env --profile webapi-from-image up -d
+        run: SECURITY_AUTH_JDBC_ENABLED=true docker compose --env-file .env --profile webapi-from-image up -d
       - name: Test WebAPI info endpoint
         run: |
           sleep 30

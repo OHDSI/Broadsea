@@ -29,9 +29,9 @@ jobs:
             -subj '/CN=127.0.0.1' -extensions EXT -config <( \
             printf "[dn]\nCN=127.0.0.1\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:127.0.0.1\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
       - name: Build traefik container
-        run: docker-compose --env-file .env up -d
+        run: docker compose --env-file .env up -d
       - name: Build default profile
-        run: docker-compose --env-file .env --profile default up -d
+        run: docker compose --env-file .env --profile default up -d
       - name: Setup postgres client on Linux
         if: runner.os == 'Linux'
         run: sudo apt-get install --yes --no-install-recommends postgresql-client

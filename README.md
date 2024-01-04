@@ -33,14 +33,16 @@ Additionally, Broadsea offers limited support for services not specifically need
 -   Posit Connect for sites with commercial Posit licenses, for deploying Shiny apps
 -   DBT for ETL design
 
-### A Note on Docker Compose Commands
+### A Note on Docker Compose V2
 
-Throughout this README, we will show docker compose commands with the convention of `docker-compose`. However, on some systems such as Red Hat Linux, you will need to use `docker compose` (no hyphen).
+Throughout this README, we will show docker compose commands with the convention of `docker compose` (no hyphen), per the new Docker Compose V2 standard outlined by [Docker](https://docs.docker.com/compose/migrate/#docker-compose-vs-docker-compose). 
+
+**For Broadsea 3.1, you will need Docker version 1.27.0+.**
 
 ### Broadsea Dependencies
 
 -   Linux, Mac, or Windows with WSL
--   Docker
+-   Docker 1.27.0+
 -   Git
 -   Chromium-based web browser (Chrome, Edge, etc.)
 
@@ -60,7 +62,7 @@ git clone https://github.com/OHDSI/Broadsea.git
 -   In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers using the below command. On Linux you may need to use 'sudo' to run this command. Wait up to one minute for the Docker containers to start. 
 
 ```         
-docker-compose --profile default up -d
+docker compose --profile default up -d
 ```
 
 -   In your web browser open the URL: `"http://127.0.0.1"`
@@ -371,7 +373,7 @@ It supports any OS where Docker containers can run, including Windows, Mac OS X,
 ### View the status of the running Docker containers:
 
 ```         
-docker-compose ps
+docker compose ps
 ```
 
 ### Viewing Log Files
