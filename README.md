@@ -168,6 +168,10 @@ Here are the profiles available:
     -   Only run this if Achilles and DataQualityDashboard have been executed
 -   dbt
     -   Sets up the dbt command-line tool for ETL design
+
+
+We also offer profiles for Perseus, but please note, **these are EXPERIMENTAL and not guaranteed to work**:
+
 -   perseus
     -   Experimental in this version
     -   Deploys the entire Perseus stack of services, but in the Broadsea network
@@ -206,7 +210,7 @@ Here are the profiles available:
 
 ### Traefik Dashboard
 
-Broadsea uses Traefik as a proxy for all containers within. The traefik dashboard is enabled by default at `/dashboard`, and can be useful for debugging the proxy network.
+Broadsea uses Traefik as a proxy for all containers within. The traefik dashboard is enabled by default at `/dashboard/`, and can be useful for debugging the proxy network.
 
 ### SSL
 

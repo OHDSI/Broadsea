@@ -246,3 +246,8 @@ http:
       loadBalancer:
         servers:
           - url: http://perseus-user:5001
+
+    perseus-athena:
+      loadBalancer:
+        servers:
+          - url: http://perseus-athena:5002
