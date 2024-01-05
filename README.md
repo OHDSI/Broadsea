@@ -232,6 +232,8 @@ The Broadsea atlasdb Postgres instance is listed by default, but you can use an 
 
 #### Build SOLR Vocab for Atlas
 
+**Note: with WebAPI 2.14, you will need to use the webapi-from-git profile and set WEBAPI_MAVEN_PROFILE to webapi-docker,webapi-solr**
+
 To enable the use of SOLR for fast OMOP Vocab search in Atlas, review and fill out Section 7 of the .env file. You can either point to an existing SOLR instance, or have Broadsea build one. The JDBC jar file is needed in the Broadsea root folder in order for Solr to perform the dataimport step.
 
 ### OHDSI Web Applications

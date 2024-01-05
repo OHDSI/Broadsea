@@ -98,6 +98,7 @@ services:
       context: ${WEBAPI_GITHUB_URL}
       args:
         MAVEN_PARAMS: -DskipTests=true -DskipUnitTests=true
+        MAVEN_PROFILE: ${WEBAPI_MAVEN_PROFILE}
     extends: 
       file: "./compose/ohdsi-webapi.yml"
       service: ohdsi-webapi
@@ -214,22 +215,6 @@ services:
       - ./phoebe:/tmp
     entrypoint: ["sh", "/tmp/load_phoebe.sh" ]
 
-
-  # broadsea-arachne-execution-engine:
-  #   profiles: [ "arachne-execution-engine" ]
-  #   build: ./arachne
-  #   container_name: broadsea-arachne-execution-engine
-  #   restart: unless-stopped
-  #   ports:
-  #     - "8888:8888"
-  #   privileged: true
-  #   platform: "linux/amd64"
-  #   volumes:
-  #     - ./execution_engine:/dist
-  #   labels:
-  #    - "traefik.enable=true"
-
-
   # Security providers for testing purposes
 
   broadsea-openldap:
@@ -260,7 +245,7 @@ services:
     platform: "linux/amd64"
     container_name: broadsea-open-shiny-server
     restart: unless-stopped
-    ports:
+    expose:
       - "3838:3838"
     volumes:
       - ${OPEN_SHINY_SERVER_APP_ROOT}:/srv/shiny-server/apps:ro
@@ -273,7 +258,7 @@ services:
     platform: "linux/amd64"
     container_name: broadsea-posit-connect
     restart: unless-stopped
-    ports:
+    expose:
       - "3939:3939"
     privileged: true
     environment:
@@ -333,12 +318,14 @@ services:
 
   broadsea-run-dqd:
     profiles: [ "cdm-postprocessing", "dqd" ]
-    build: ./dqd
+    build: 
+      context: ./dqd
+      secrets:
+        - GITHUB_PAT
     platform: "linux/amd64"
     container_name: broadsea-run-dqd
     secrets:
       - CDM_CONNECTIONDETAILS_PASSWORD
-      - GITHUB_PAT
     volumes:
       - jdbc-drivers-data:/jdbc
       - cdm-postprocessing-data:/postprocessing
@@ -403,30 +390,7 @@ services:
       - ${DBT_PROJECT_PATH}:/usr/app
       - ${DBT_PROFILE_PATH}:/root/.dbt/
 
-  # broadsea-atlas-add-cdm:
-  #   profiles: [ "atlas-add-cdm" ]
-  #   build:
-  #     context: ./atlas/add_cdm
-  #   container_name: atlas-add-cdm
-  #   volumes:
-  #     - ./atlas/add_cdm/add_new_cdm.sh:/tmp/add_new_cdm.sh:ro
-  #     - ./atlas/add_cdm/new_cdm_template.json:/tmp/new_cdm_template.json:ro
-  #   entrypoint: ["sh", "/tmp/add_new_cdm.sh"]
-  #   secrets:
-  #     - ATLAS_NEW_CDMSOURCE_PASSWORD
-  #     - ATLAS_ADMIN_PASSWORD
-  #   environment:
-  #     NEW_CDMSOURCE_NAME: ${NEW_CDMSOURCE_NAME}
-  #     NEW_CDMSOURCE_KEY: ${NEW_CDMSOURCE_KEY}
-  #     NEW_CDMSOURCE_DIALECT: ${NEW_CDMSOURCE_DIALECT}
-  #     NEW_CDMSOURCE_CONNECTIONSTRING: ${NEW_CDMSOURCE_CONNECTIONSTRING}
-  #     NEW_CDMSOURCE_USERNAME: ${NEW_CDMSOURCE_USERNAME}
-  #     NEW_CDMSOURCE_CDMSCHEMA: ${NEW_CDMSOURCE_CDMSCHEMA}
-  #     NEW_CDMSOURCE_VOCABSCHEMA: ${NEW_CDMSOURCE_VOCABSCHEMA}
-  #     NEW_CDMSOURCE_RESULTSSCHEMA: ${NEW_CDMSOURCE_RESULTSSCHEMA}
-  #     HTTP_TYPE: ${HTTP_TYPE}
-  #     BROADSEA_HOST: ${BROADSEA_HOST}
-  #     ATLAS_ADMIN_USERNAME: ${ATLAS_ADMIN_USERNAME}
+
   
   ### Perseus
 
@@ -438,7 +402,6 @@ services:
     restart: unless-stopped
     volumes:
       - perseus-shareddb:/data/postgres
-      
 
   perseus-files-manager:
     profiles: [ "perseus-files-manager", "perseus" ]
@@ -446,24 +409,13 @@ services:
     platform: "linux/amd64"
     container_name: perseus-files-manager
     restart: unless-stopped
-    ports:
+    expose:
       - "10500:10500"
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://perseus-shareddb:5432/shared
-    #depends_on:
-    #  - perseus-shareddb
-
-
-  perseus-web:
-    profiles: [ "perseus-web", "perseus" ]
-    image: perseushub/web:latest
-    platform: linux/amd64
-    container_name: perseus-web
-    restart: always
-    labels:
-      - "traefik.enable=true"
-
+    depends_on:
+      - perseus-shareddb
 
   perseus-user:
     profiles: [ "perseus-user", "perseus" ]
@@ -479,12 +431,15 @@ services:
       USER_ENV: Docker
       TOKEN_SECRET_KEY: ${PERSEUS_TOKEN_SECRET_KEY}
       EMAIL_SECRET_KEY: ${PERSEUS_EMAIL_SECRET_KEY}
+      SERVER_ADDRESS: ${BROADSEA_HOST}
     volumes:
       - ./perseus/user/config.py:/app/config.py
-    ports:
+    expose:
       - "5001:5001"
-    #depends_on:
-    #  - perseus-shareddb
+    labels:
+      - "traefik.enable=true"
+    depends_on:
+      - perseus-shareddb
 
   perseus-backend:
     profiles: [ "perseus-backend", "perseus" ]
@@ -495,19 +450,21 @@ services:
       PERSEUS_ENV: Docker
     volumes:
       - ./perseus/backend/config.py:/app/config.py
-    ports:
+    expose:
       - "5004:5004"
-    #depends_on:
-    #  - perseus-shareddb
-    #  - perseus-files-manager
-
+    depends_on:
+      - perseus-shareddb
+      - perseus-files-manager
+  
   perseus-frontend:
     profiles: [ "perseus-frontend", "perseus" ]
     image: ohdsi/perseus-frontend:0.2.0
     platform: linux/amd64
     container_name: perseus-frontend
-    ports:
+    expose:
       - "4200:4200"
+    labels:
+      - "traefik.enable=true"
 
   perseus-vocabularydb:
     profiles: [ "perseus-vocabularydb", "perseus" ]
@@ -522,7 +479,7 @@ services:
     volumes:
       - perseus-vocabularydb:/data/postgres
       - ${PERSEUS_VOCAB_FILES_PATH}:/vocabulary
-    ports:
+    expose:
       - "5431:5432"
 
   perseus-cdm-builder:
@@ -530,28 +487,28 @@ services:
     image: perseushub/cdm-builder:latest
     platform: linux/amd64
     container_name: perseus-cdm-builder
-    ports:
+    expose:
       - "9000:9000"
     volumes:
       - ./perseus/cdm-builder/appsettings.Docker.json:/app/appsettings.Docker.json
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
-    #depends_on:
-    #  - perseus-shareddb
-    #  - perseus-files-manager
-    #  - perseus-vocabularydb
+    depends_on:
+      - perseus-shareddb
+      - perseus-files-manager
+      - perseus-vocabularydb
 
   perseus-solr:
     profiles: [ "perseus-solr", "perseus" ]
     image: perseushub/solr:latest
     platform: linux/amd64
     container_name: perseus-solr
-    ports:
+    expose:
       - "8983:8983"
     volumes:
       - perseus-solr:/var/solr
-    #depends_on:
-    #  - perseus-vocabularydb
+    depends_on:
+      - perseus-vocabularydb
   
   perseus-athena:
     profiles: [ "perseus-athena", "perseus" ]
@@ -562,10 +519,11 @@ services:
       ATHENA_ENV: Docker
     volumes:
       - ./perseus/athena/config.py:/app/config.py
-    ports:
+    expose:
       - "5002:5002"
-    #depends_on:
-    #  - perseus-solr
+    depends_on:
+      - perseus-solr
+
 
   perseus-usagi:
     profiles: [ "perseus-usagi", "perseus" ]
@@ -577,44 +535,44 @@ services:
       USAGI_ENV: Docker
     volumes:
       - ./perseus/usagi/config.py:/app/config.py
-    ports:
+    expose:
       - "5003:5003"
-    #depends_on:
-    #  - perseus-shareddb
-    #  - perseus-solr
+    depends_on:
+      - perseus-shareddb
+      - perseus-solr
 
   perseus-r-serve:
     profiles: [ "perseus-r-serve", "perseus" ]
     image: perseushub/r-serve:latest
     platform: linux/amd64
     container_name: perseus-r-serve
-    ports:
+    expose:
       - "6311:6311"
-    #depends_on:
-    #  - perseus-shareddb
+    depends_on:
+      - perseus-shareddb
   
   perseus-data-quality-dashboard:
     profiles: [ "perseus-dqd", "perseus" ]
     image: perseushub/data-quality-dashboard:latest
     platform: linux/amd64
     container_name: perseus-data-quality-dashboard
-    ports:
+    expose:
       - "8001:8001"
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://perseus-shareddb:5432/shared
       FILES_MANAGER_URL: http://perseus-files-manager:10500/files-manager
-    #depends_on:
-    #  - perseus-shareddb
-    #  - perseus-files-manager
-    #  - perseus-r-serve
+    depends_on:
+      - perseus-shareddb
+      - perseus-files-manager
+      - perseus-r-serve
 
   perseus-swagger:
     profiles: [ "perseus-swagger", "perseus" ]
     image: perseushub/swagger:latest
     platform: linux/amd64
     container_name: perseus-swagger
-    ports:
+    expose:
       - 8080:8080
 
   perseus-white-rabbit:
@@ -623,35 +581,15 @@ services:
     platform: "linux/amd64"
     container_name: perseus-white-rabbit
     restart: unless-stopped
-    ports:
+    expose:
       - "8000:8000"
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://perseus-shareddb:5432/shared
       files-manager-url: "http://perseus-files-manager:10500/files-manager"
-    #depends_on:
-    #  - perseus-shareddb
-    #  - perseus-files-manager
-
-
-  # broadsea-strategus:
-  #   profiles: [ "run-strategus" ]
-  #   build: 
-  #     context: ./strategus
-  #     args:
-  #       GITHUB_PAT: ${GITHUB_PAT}
-  #   platform: linux/arm64
-  #   container_name: broadsea-strategus
-  #   secrets:
-  #     - GITHUB_PAT
-  #     # - CDM_CONNECTIONDETAILS_PASSWORD
-  #     # - STRATEGUS_KEYRING_PASSWORD
-  #   environment:
-  #     RENV_PATHS_LIBRARY: /project/renv/library
-  #     INSTANTIATED_MODULES_FOLDER: /project/modules
-  #   volumes:
-  #     - ./strategus/execute.R:/project/execute.R
-  #   entrypoint: ["Rscript", "/project/execute.R" ]
+    depends_on:
+      - perseus-shareddb
+      - perseus-files-manager
 
 secrets:
   GITHUB_PAT:
@@ -693,10 +631,6 @@ secrets:
   WEBAPI_CDM_SNOWFLAKE_PRIVATE_KEY:
     file: ${WEBAPI_CDM_SNOWFLAKE_PRIVATE_KEY_FILE}
 
-  #ATLAS_NEW_CDMSOURCE_PASSWORD:
-  #  file: ${ATLAS_NEW_CDMSOURCE_PASSWORD_FILE}
-  #ATLAS_ADMIN_PASSWORD:
-  #  file: ${ATLAS_ADMIN_PASSWORD_FILE}
 
 
   

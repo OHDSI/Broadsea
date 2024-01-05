@@ -45,11 +45,6 @@ http:
       service: "broadsea-ares"
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/ares`)'
 
-    # broadsea-arachne-execution-engine:
-    #   entryPoints: '{{ env "HTTP_TYPE" }}'
-    #   service: "broadsea-arachne-execution-engine"
-    #   rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/execution-engine`)'
-
     broadsea-open-shiny-server:
       entryPoints: '{{ env "HTTP_TYPE" }}'
       service: "broadsea-open-shiny-server"
@@ -67,21 +62,82 @@ http:
       service: "broadsea-posit-connect"
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/__`)'
 
-
-    perseus-web:
+    perseus-user:
       entryPoints: '{{ env "HTTP_TYPE" }}'
-      service: "perseus-web"
+      service: "perseus-user"
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/perseus/user`)'
+      middlewares:
+        - "broadsea-perseus-strip-prefix"
+
+    perseus-backend:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: "perseus-backend"
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/perseus/backend`)'
+      middlewares:
+        - "broadsea-perseus-strip-prefix"
+        - "broadsea-backend-header"
+
+    perseus-white-rabbit:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: "perseus-white-rabbit"
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/perseus/white-rabbit`)'
+      middlewares:
+        - "broadsea-perseus-strip-prefix"
+
+    perseus-cdm-builder:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: "perseus-cdm-builder"
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/perseus/cdm-builder`)'
+      middlewares:
+        - "broadsea-perseus-strip-prefix"
+
+    perseus-data-quality-dashboard:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: "perseus-data-quality-dashboard"
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/perseus/cdm-builder`)'
+      middlewares:
+        - "broadsea-perseus-strip-prefix"
+
+    perseus-athena:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: "perseus-athena"
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/perseus/athena`)'
+      middlewares:
+        - "broadsea-perseus-strip-prefix"
+
+
+    perseus-solr:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: "perseus-solr"
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/perseus/solr`)'
+      middlewares:
+        - "broadsea-perseus-strip-prefix"
+
+    perseus-frontend:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: "perseus-frontend"
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/perseus`)'
       middlewares:
         - "broadsea-perseus-strip-prefix"
 
+
+
   middlewares:
+
+    broadsea-backend-header:
+      headers:
+        customRequestHeaders:
+          Username: "username"
 
     broadsea-hades-path-strip:
       stripPrefix:
         prefixes: 
           - "/hades"
         forceSlash: false
+
+    broadsea-perseus-add-prefix:
+      addPrefix:
+        prefix: "/perseus"
 
     broadsea-perseus-strip-prefix:
       stripPrefix:
@@ -136,11 +192,6 @@ http:
         servers:
           - url: http://broadsea-ares
 
-    # broadsea-arachne-execution-engine:
-    #   loadBalancer:
-    #     servers:
-    #       -url: http://broadsea-arachne-execution-engine:8888
-
     broadsea-open-shiny-server:
       loadBalancer:
         servers:
@@ -151,8 +202,47 @@ http:
         servers:
           - url: http://broadsea-posit-connect:3939
 
-
-    perseus-web:
+    perseus-backend:
       loadBalancer:
         servers:
-          - url: http://perseus-web:80
+          - url: http://perseus-backend:5004
+
+    perseus-cdm-builder:
+      loadBalancer:
+        servers:
+          - url: http://perseus-cdm-builder:9000
+
+    perseus-frontend:
+      loadBalancer:
+        servers:
+          - url: http://perseus-frontend:4200
+  
+    perseus-solr:
+      loadBalancer:
+        servers:
+          - url: http://perseus-solr:8983
+
+    perseus-usagi:
+      loadBalancer:
+        servers:
+          - url: http://perseus-usagi:5003
+
+    perseus-data-quality-dashboard:
+      loadBalancer:
+        servers:
+          - url: http://perseus-data-quality-dashboard:8001
+
+    perseus-white-rabbit:
+      loadBalancer:
+        servers:
+          - url: http://perseus-white-rabbit:8000
+
+    perseus-swagger:
+      loadBalancer:
+        servers:
+          - url: http://perseus-swagger:8080
+
+    perseus-user:
+      loadBalancer:
+        servers:
+          - url: http://perseus-user:5001

@@ -6,7 +6,7 @@ global:
   sendAnonymousUsage: false
 
 api:
-  dashboard: true
+  dashboard: false
 
 providers:
   docker:
