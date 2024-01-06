@@ -312,18 +312,51 @@ To configure an open-source Shiny Server, refer to Section 14 of the .env file. 
 
 The pattern for using Posit Connect deviates from the rest of Broadsea due to the many configuration options available. A sample .gcfg file is included, but you likely will need to make modifications to it. See [Posit Connect configuration guide](https://docs.posit.co/connect/admin/appendix/configuration "Posit Connect Configuration") for more information.
 
-## Shutdown Broadsea
+## Shutting Down Broadsea
 
-You can stop the running Docker containers & remove them (new container instances can be started again later) with this command:
+### Compose Stop vs. Compose Down
+
+If you want to keep a container for use later, you can use ```docker compose stop```. This may be useful when you plan to restart the services later and want to persist the container's state and networks. If you want to remove the containers and recreate them later, use ```docker compose down```. This will remove the containers and networks, but it will keep the volumes.
+
+### Stop Containers
+
+Use the following CLI commands to stop and start Broadsea's containers.
+
+```shell
+docker compose stop
+docker compose start
+```
+
+Or target a specific profile using ```--profile```
+
+```shell
+docker compose --profile profile1 stop
+docker compose --profile profile1 start
+```
+
+### Down Containers
+
+Use the following commands to down and then up Broadsea's containers.
 
 ```shell
 docker compose down
+docker compose start
 ```
 
-You can stop a profile specifically by using:
+Or target a specific profile using ```--profile```
 
 ```shell
 docker compose --profile profile1 down
+docker compose --profile profile1 up
+```
+
+## Down and Remove Volumes
+
+By default Docker will create volumes and persist them. Any saved files or custom configs made in the containers themselves will persist through these containers. However, if you want to remove these volumes you can pass ```-v``` with ```docker compose down``` and the next time you compose up new volumes will be created.
+
+```shell
+docker compose down -v
+docker compose up
 ```
 
 ## Broadsea Intended Uses
