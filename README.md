@@ -2,6 +2,41 @@
 
 [![default profile](https://github.com/OHDSI/Broadsea/actions/workflows/default.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/default.yml) [![perseus profile](https://github.com/OHDSI/Broadsea/actions/workflows/perseus.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/perseus.yml) [![openldap profile](https://github.com/OHDSI/Broadsea/actions/workflows/openldap.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/openldap.yml) [![solr-vocab Profile](https://github.com/OHDSI/Broadsea/actions/workflows/solr-vocab.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/solr-vocab.yml) [![achilles Profile](https://github.com/OHDSI/Broadsea/actions/workflows/achilles.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/achilles.yml)
 
+## Contents
+
+- [Introduction](#introduction)
+  - [A Note on Docker Compose V2](#a-note-on-docker-compose-v2)
+  - [Broadsea Dependencies](#broadsea-dependencies)
+  - [Mac Silicon](#mac-silicon)
+- [Broadsea - Quick start](#broadsea---quick-start)
+- [Broadsea - Advanced Usage](#broadsea---advanced-usage)
+  - [.env file](#env-file)
+  - [Docker Secrets (New for 3.1)](#docker-secrets-new-for-31)
+  - [Remote Servers](#remote-servers)
+  - [Docker Profiles](#docker-profiles)
+  - [Traefik Dashboard](#traefik-dashboard)
+  - [SSL](#ssl)
+  - [Broadsea Content Page](#broadsea-content-page)
+  - [Vocabulary Loading](#vocabulary-loading)
+  - [OHDSI Web Applications](#ohdsi-web-applications)
+  - [CDM ETL Design and Execution](#cdm-etl-design-and-execution)
+  - [CDM Post Processing {#cdm-post-processing}](#cdm-post-processing-cdm-post-processing)
+  - [Evidence Generation](#evidence-generation)
+  - [Evidence Dissemination](#evidence-dissemination)
+- [Shutdown Broadsea](#shutdown-broadsea)
+- [Broadsea Intended Uses](#broadsea-intended-uses)
+- [Troubleshooting](#troubleshooting)
+  - [View the status of the running Docker containers](#view-the-status-of-the-running-docker-containers)
+  - [Viewing Log Files](#viewing-log-files)
+- [Hardware/OS Requirements for Installing Docker](#hardwareos-requirements-for-installing-docker)
+  - [Mac OS X](#mac-os-x)
+  - [Windows](#windows)
+  - [Docker for Windows Requirements](#docker-for-windows-requirements)
+  - [Docker Toolbox Windows Requirements](#docker-toolbox-windows-requirements)
+  - [Linux](#linux)
+  - [Linux Requirements](#linux-requirements)
+- [License](#license)
+
 ## Introduction
 
 Broadsea runs the core OHDSI technology stack using cross-platform Docker container technology.
@@ -18,7 +53,7 @@ This repository contains the Docker Compose file used to launch the OHDSI Broads
   - [Atlas Docker Hub container image](https://hub.docker.com/r/ohdsi/atlas "OHDSI Atlas Docker Image Repository")
   - [WebAPI GitHub repository](https://github.com/OHDSI/WebAPI "OHDSI WebAPI GitHub Repository")
   - [WebAPI Docker Hub container image](https://hub.docker.com/r/ohdsi/webapi "OHDSI WebAPI Docker Image Repository")
-  - [Atlas application PostgreSQL database GitHub repository](https://github.com/OHDSI/Broadsea-Atlasdb "OHDSI Broadsea Atlas application PostgreSQL database GitHub Repository")cac
+  - [Atlas application PostgreSQL database GitHub repository](https://github.com/OHDSI/Broadsea-Atlasdb "OHDSI Broadsea Atlas application PostgreSQL database GitHub Repository")
   - [Atlas application PostgreSQL databbase Docker Hub container image](https://hub.docker.com/repository/docker/ohdsi/broadsea-atlasdb "OHDSI Broadsea Atlas application PostgreSQL database Docker Image Repository")
   - SOLR based OMOP Vocab search
 - OHDSI Ares
@@ -84,11 +119,11 @@ Broadsea leverages [Docker Secrets](https://docs.docker.com/engine/swarm/secrets
 
 Now in Broadsea 3.1, each sensitive password or secret key is to be stored in a file; the paths to these files is then set in the .env file per Section. Please refer to the default `./secrets` folder for examples on how to set up these files for your site.
 
-#### Run Broadsea on a remote server
+### Remote Servers
 
 In Section 1 of the .env file, set BROADSEA_HOST as the IP address or host name **(without http/https)** of the remote server.
 
-### Docker profiles
+### Docker Profiles
 
 Broadsea makes use of [Docker profiles](https://docs.docker.com/compose/profiles/ "Docker Profiles") to allow for either a full default deployment ("default"), or a more a-la-carte approach in which you can pick and choose which services you'd like to deploy.
 
@@ -360,9 +395,7 @@ Docker requires a 64-bit installation. Additionally, your kernel must be 3.10 at
 
 Kernels older than 3.10 lack some of the features required to run Docker containers.
 
-## Other Information
-
-### Licensing
+## License
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use the Broadsea software except in compliance with the License. You may obtain a copy of the License at
 
