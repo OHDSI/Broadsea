@@ -2,6 +2,41 @@
 
 [![default profile](https://github.com/OHDSI/Broadsea/actions/workflows/default.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/default.yml) [![perseus profile](https://github.com/OHDSI/Broadsea/actions/workflows/perseus.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/perseus.yml) [![openldap profile](https://github.com/OHDSI/Broadsea/actions/workflows/openldap.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/openldap.yml) [![solr-vocab Profile](https://github.com/OHDSI/Broadsea/actions/workflows/solr-vocab.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/solr-vocab.yml) [![achilles Profile](https://github.com/OHDSI/Broadsea/actions/workflows/achilles.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/achilles.yml)
 
+## Contents
+
+- [Introduction](#introduction)
+  - [A Note on Docker Compose V2](#a-note-on-docker-compose-v2)
+  - [Broadsea Dependencies](#broadsea-dependencies)
+  - [Mac Silicon](#mac-silicon)
+- [Broadsea - Quick start](#broadsea---quick-start)
+- [Broadsea - Advanced Usage](#broadsea---advanced-usage)
+  - [.env file](#env-file)
+  - [Docker Secrets (New for 3.1)](#docker-secrets-new-for-31)
+  - [Remote Servers](#remote-servers)
+  - [Docker Profiles](#docker-profiles)
+  - [Traefik Dashboard](#traefik-dashboard)
+  - [SSL](#ssl)
+  - [Broadsea Content Page](#broadsea-content-page)
+  - [Vocabulary Loading](#vocabulary-loading)
+  - [OHDSI Web Applications](#ohdsi-web-applications)
+  - [CDM ETL Design and Execution](#cdm-etl-design-and-execution)
+  - [CDM Post Processing {#cdm-post-processing}](#cdm-post-processing-cdm-post-processing)
+  - [Evidence Generation](#evidence-generation)
+  - [Evidence Dissemination](#evidence-dissemination)
+- [Shutdown Broadsea](#shutdown-broadsea)
+- [Broadsea Intended Uses](#broadsea-intended-uses)
+- [Troubleshooting](#troubleshooting)
+  - [View the status of the running Docker containers](#view-the-status-of-the-running-docker-containers)
+  - [Viewing Log Files](#viewing-log-files)
+- [Hardware/OS Requirements for Installing Docker](#hardwareos-requirements-for-installing-docker)
+  - [Mac OS X](#mac-os-x)
+  - [Windows](#windows)
+  - [Docker for Windows Requirements](#docker-for-windows-requirements)
+  - [Docker Toolbox Windows Requirements](#docker-toolbox-windows-requirements)
+  - [Linux](#linux)
+  - [Linux Requirements](#linux-requirements)
+- [License](#license)
+
 ## Introduction
 
 Broadsea runs the core OHDSI technology stack using cross-platform Docker container technology.
@@ -10,41 +45,41 @@ Broadsea runs the core OHDSI technology stack using cross-platform Docker contai
 
 This repository contains the Docker Compose file used to launch the OHDSI Broadsea Docker containers:
 
--   OHDSI R HADES - in RStudio Server
-    -   [OHDSI Broadsea R HADES GitHub repository](https://github.com/OHDSI/Broadsea-Hades/ "OHDSI Broadsea R HADES GitHub Repository")
-    -   [OHDSI Broadsea R HADES Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-hades "OHDSI Broadsea HADES Docker Image Repository")
--   OHDSI Atlas - including WebAPI REST services
-    -   [Atlas GitHub repository](https://github.com/OHDSI/Atlas "OHDSI Atlas GitHub Repository")
-    -   [Atlas Docker Hub container image](https://hub.docker.com/r/ohdsi/atlas "OHDSI Atlas Docker Image Repository")
-    -   [WebAPI GitHub repository](https://github.com/OHDSI/WebAPI "OHDSI WebAPI GitHub Repository")
-    -   [WebAPI Docker Hub container image](https://hub.docker.com/r/ohdsi/webapi "OHDSI WebAPI Docker Image Repository")
-    -   [Atlas application PostgreSQL database GitHub repository](https://github.com/OHDSI/Broadsea-Atlasdb "OHDSI Broadsea Atlas application PostgreSQL database GitHub Repository")cac
-    -   [Atlas application PostgreSQL databbase Docker Hub container image](https://hub.docker.com/repository/docker/ohdsi/broadsea-atlasdb "OHDSI Broadsea Atlas application PostgreSQL database Docker Image Repository")
-    -   SOLR based OMOP Vocab search
--   OHDSI Ares
-    -   [Ares GitHub repository](https://github.com/OHDSI/Ares "OHDSI Ares GitHub Repository")
--   OHDSI Perseus (Experimental)
-    -   [Perseus GitHub repository](https://github.com/OHDSI/Perseus "OHDSI Perseus GitHub Repository")
+- OHDSI R HADES - in RStudio Server
+  - [OHDSI Broadsea R HADES GitHub repository](https://github.com/OHDSI/Broadsea-Hades/ "OHDSI Broadsea R HADES GitHub Repository")
+  - [OHDSI Broadsea R HADES Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-hades "OHDSI Broadsea HADES Docker Image Repository")
+- OHDSI Atlas - including WebAPI REST services
+  - [Atlas GitHub repository](https://github.com/OHDSI/Atlas "OHDSI Atlas GitHub Repository")
+  - [Atlas Docker Hub container image](https://hub.docker.com/r/ohdsi/atlas "OHDSI Atlas Docker Image Repository")
+  - [WebAPI GitHub repository](https://github.com/OHDSI/WebAPI "OHDSI WebAPI GitHub Repository")
+  - [WebAPI Docker Hub container image](https://hub.docker.com/r/ohdsi/webapi "OHDSI WebAPI Docker Image Repository")
+  - [Atlas application PostgreSQL database GitHub repository](https://github.com/OHDSI/Broadsea-Atlasdb "OHDSI Broadsea Atlas application PostgreSQL database GitHub Repository")
+  - [Atlas application PostgreSQL databbase Docker Hub container image](https://hub.docker.com/repository/docker/ohdsi/broadsea-atlasdb "OHDSI Broadsea Atlas application PostgreSQL database Docker Image Repository")
+  - SOLR based OMOP Vocab search
+- OHDSI Ares
+  - [Ares GitHub repository](https://github.com/OHDSI/Ares "OHDSI Ares GitHub Repository")
+- OHDSI Perseus (Experimental)
+  - [Perseus GitHub repository](https://github.com/OHDSI/Perseus "OHDSI Perseus GitHub Repository")
 
 Additionally, Broadsea offers limited support for services not specifically needed for OHDSI applications that often are useful:
 
--   OpenLDAP for testing security in Atlas
--   Open Shiny Server for deploying Shiny apps without a commercial license
--   Posit Connect for sites with commercial Posit licenses, for deploying Shiny apps
--   DBT for ETL design
+- OpenLDAP for testing security in Atlas
+- Open Shiny Server for deploying Shiny apps without a commercial license
+- Posit Connect for sites with commercial Posit licenses, for deploying Shiny apps
+- DBT for ETL design
 
 ### A Note on Docker Compose V2
 
-Throughout this README, we will show docker compose commands with the convention of `docker compose` (no hyphen), per the new Docker Compose V2 standard outlined by [Docker](https://docs.docker.com/compose/migrate/#docker-compose-vs-docker-compose). 
+Throughout this README, we will show docker compose commands with the convention of `docker compose` (no hyphen), per the new Docker Compose V2 standard outlined by [Docker](https://docs.docker.com/compose/migrate/#docker-compose-vs-docker-compose).
 
 **For Broadsea 3.1, you will need Docker version 1.27.0+.**
 
 ### Broadsea Dependencies
 
--   Linux, Mac, or Windows with WSL
--   Docker 1.27.0+
--   Git
--   Chromium-based web browser (Chrome, Edge, etc.)
+- Linux, Mac, or Windows with WSL
+- Docker 1.27.0+
+- Git
+- Chromium-based web browser (Chrome, Edge, etc.)
 
 ### Mac Silicon
 
@@ -52,23 +87,23 @@ If using Mac Silicon (M1, M2), you **may** need to set the DOCKER_ARCH variable 
 
 ## Broadsea - Quick start
 
--   Download and install Docker. See the installation instructions at the [Docker Web Site](https://docs.docker.com/engine/installation/ "Install Docker")
--   git clone this GitHub repo:
+- Download and install Docker. See the installation instructions at the [Docker Web Site](https://docs.docker.com/engine/installation/ "Install Docker")
+- git clone this GitHub repo:
 
-```         
+```shell
 git clone https://github.com/OHDSI/Broadsea.git
 ```
 
--   In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers using the below command. On Linux you may need to use 'sudo' to run this command. Wait up to one minute for the Docker containers to start. 
+- In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers using the below command. On Linux you may need to use 'sudo' to run this command. Wait up to one minute for the Docker containers to start.
 
-```         
+```shell
 docker compose --profile default up -d
 ```
 
--   In your web browser open the URL: `"http://127.0.0.1"`
--   Click on the Atlas link to open Atlas in a new browser window
--   Click on the Hades link to open HADES (RStudio) in a new browser window.
-    -   The default RStudio userid is 'ohdsi' and the default password is located in the `./secrets/hades/HADES_PASSWORD` file.
+- In your web browser open the URL: `"http://127.0.0.1"`
+- Click on the Atlas link to open Atlas in a new browser window
+- Click on the Hades link to open HADES (RStudio) in a new browser window.
+  - The default RStudio userid is 'ohdsi' and the default password is located in the `./secrets/hades/HADES_PASSWORD` file.
 
 ## Broadsea - Advanced Usage
 
@@ -80,133 +115,66 @@ The .env file that comes with Broadsea has default and sample values. For advanc
 
 Broadsea leverages [Docker Secrets](https://docs.docker.com/engine/swarm/secrets/ "Docker Secrets") to handle sensitive passwords and secret keys.
 
-*(In Broadsea 3.0, these were handled via plain-text environment variables, which is not best security practice)*
+> In Broadsea 3.0, these were handled via plain-text environment variables, which is not best security practice
 
 Now in Broadsea 3.1, each sensitive password or secret key is to be stored in a file; the paths to these files is then set in the .env file per Section. Please refer to the default `./secrets` folder for examples on how to set up these files for your site.
 
-#### Run Broadsea on a remote server
+### Remote Servers
 
 In Section 1 of the .env file, set BROADSEA_HOST as the IP address or host name **(without http/https)** of the remote server.
 
-### Docker profiles
+### Docker Profiles
 
 Broadsea makes use of [Docker profiles](https://docs.docker.com/compose/profiles/ "Docker Profiles") to allow for either a full default deployment ("default"), or a more a-la-carte approach in which you can pick and choose which services you'd like to deploy.
 
 You can use this syntax for this approach, substituting profile names in:
 
-```         
-docker-compose --env-file .env --profile profile1 --profile profile2 .... up -d
+```shell
+docker compose --env-file .env --profile profile1 --profile profile2 ... up -d
 ```
 
-Here are the profiles available:
+#### Standard Profiles
 
--   default
-    -   atlas ("/atlas")
-    -   WebAPI ("/WebAPI")
-    -   AtlasDB (a Postgres instance for Atlas/WebAPI)
-    -   HADES ("/hades")
-    -   A splash page for Broadsea ("/")
--   atlas-from-image
-    -   Pulls the standard Atlas image from Docker Hub
--   atlas-from-git
-    -   Builds Atlas from a Git repo
-    -   Useful for testing new versions of Atlas that aren't in Docker Hub
--   webapi-from-image:
-    -   Pulls the standard WebAPI image from Docker Hub
-    -   Mac Silicon users, see "Mac Silicon" section above
--   webapi-from-git
-    -   Builds WebAPI from a Git repo
-    -   Useful for testing new versions of WebAPI that aren't in Docker Hub
-    -   Mac Silicon users, see "Mac Silicon" section above
--   atlasdb
-    -   Pulls the standard Atlas DB image, a Postgres instance for Atlas/WebAPI
-    -   Useful if you do not have an existing Postgres instance for Atlas/WebAPI
--   solr-vocab-no-import
-    -   Pulls the standard SOLR image from Docker Hub
-    -   Initializes a core for the OMOP Vocabulary specified in the .env file
-    -   No data is imported into the core, left to you to run through the SOLR Admin GUI at "/solr"
--   solr-vocab-with-import
-    -   Pulls the standard SOLR image from Docker Hub
-    -   Initializes a core for the OMOP Vocabulary specified in the .env file
-    -   Runs the data import for that core
-    -   Once complete, the solr-run-import container will finish with an exit status; you can remove this container
--   ares
-    -   Builds Ares web app from Ares GitHub repo
-    -   Exposes a volume mount point for adding Ares files (see [Ares GitHub IO page](https://ohdsi.github.io/Ares/ "Ares GitHub IO"))
--   content
-    -   A splash page for Broadsea ("/broadsea")
--   omop-vocab-pg-load
-    -   Using OMOP Vocab files downloaded from Athena, this can load them into a Postgres instance (can be Broadsea's atlasdb or an external one)
-    -   Rebuilds the CPTs using the CPT jar file from Athena, with UMLS API Key (see .env file Section 9)
-    -   Creates the schema if necessary
-    -   Runs copy command for each vocabulary CSV file
-    -   Creates all necessary Postgres indices
-    -   Once complete, the omop-vocab-load container will finish with an exit status; you can remove this container
--   phoebe-pg-load
-    -   For Atlas 2.12+, which offers Concept Recommendation options based on the [Phoebe project](https://forums.ohdsi.org/t/phoebe-2-0/17410 "Phoebe Project")
-    -   Loads Phoebe files into an existing OMOP Vocabulary hosted in a Postgres instance (can be Broadsea's atlasdb or an external one)
-    -   Note: your Atlas instance must use this OMOP Vocabulary as its default vocabulary source in order to use this feature
-    -   Once complete, the phoebe-load container will finish with an exit status; you can remove this container
--   openldap
-    -   For testing security in Atlas, this Open LDAP container can be used to assess security needs
-    -   You can specify a comma separated list of user ids and passwords
-    -   This is not recommended for any production level setup
--   open-shiny-server
-    -   An open source version of Shiny Server, where you can drop shiny apps into a mounted folder.
-    -   Recommended if your organization does not have a Posit Connect license.
--   posit-connect
-    -   For sites with commercial Posit Connect licenses, this can be useful for convenient publication of Shiny apps
--   cdm-postprocessing
-    -   For a specified CDM database, executes Achilles and DataQualityDashboard, then AresIndexer
-    -   Useful for Atlas Data Sources reports and populating the files needed for the Ares application
--   achilles
-    -   Executes only Achilles for a specified CDM database
--   dqd
-    -   Executes only DataQualityDashboard for a specified CDM database
--   aresindexer
-    -   Executes only AresIndexer for a specified CDM database
-    -   Only run this if Achilles and DataQualityDashboard have been executed
--   dbt
-    -   Sets up the dbt command-line tool for ETL design
+| Profile              | Description |
+|----------------------|-------------|
+| default              | <ul><li>Atlas ("/atlas")</li><li>WebAPI ("/WebAPI")</li><li>AtlasDB (a Postgres instance for Atlas/WebAPI)</li><li>HADES ("/hades")</li><li>A splash page for Broadsea ("/")</li></ul> |
+| atlas-from-image     | <ul><li>Pulls the standard Atlas image from Docker Hub</li></ul> |
+| atlas-from-git       | <ul><li>Builds Atlas from a Git repo</li><li>Useful for testing new versions of Atlas that aren't in Docker Hub</li></ul> |
+| webapi-from-image    | <ul><li>Pulls the standard WebAPI image from Docker Hub</li><li>Mac Silicon users, see "Mac Silicon" section above</li></ul> |
+| webapi-from-git      | <ul><li>Builds WebAPI from a Git repo</li><li>Useful for testing new versions of WebAPI that aren't in Docker Hub</li><li>Mac Silicon users, see "Mac Silicon" section above</li></ul> |
+| atlasdb              | <ul><li>Pulls the standard Atlas DB image, a Postgres instance for Atlas/WebAPI</li><li>Useful if you do not have an existing Postgres instance for Atlas/WebAPI</li></ul> |
+| solr-vocab-no-import | <ul><li>Pulls the standard SOLR image from Docker Hub</li><li>Initializes a core for the OMOP Vocabulary specified in the .env file</li><li>No data is imported into the core, left to you to run through the SOLR Admin GUI at "/solr"</li></ul> |
+| solr-vocab-with-import | <ul><li>Pulls the standard SOLR image from Docker Hub</li><li>Initializes a core for the OMOP Vocabulary specified in the .env file</li><li>Runs the data import for that core</li><li>Once complete, the solr-run-import container will finish with an exit status; you can remove this container</li></ul> |
+| ares                 | <ul><li>Builds Ares web app from Ares GitHub repo</li><li>Exposes a volume mount point for adding Ares files (see [Ares GitHub IO page](https://ohdsi.github.io/Ares/ "Ares GitHub IO"))</li></ul> |
+| content              | <ul><li>A splash page for Broadsea ("/broadsea")</li></ul> |
+| omop-vocab-pg-load   | <ul><li>Using OMOP Vocab files downloaded from Athena, this can load them into a Postgres instance (can be Broadsea's atlasdb or an external one)</li><li>Rebuilds the CPTs using the CPT jar file from Athena, with UMLS API Key (see .env file Section 9)</li><li>Creates the schema if necessary</li><li>Runs copy command for each vocabulary CSV file</li><li>Creates all necessary Postgres indices</li><li>Once complete, the omop-vocab-load container will finish with an exit status; you can remove this container</li></ul> |
+| phoebe-pg-load       | <ul><li>For Atlas 2.12+, which offers Concept Recommendation options based on the [Phoebe project](https://forums.ohdsi.org/t/phoebe-2-0/17410 "Phoebe Project")</li><li>Loads Phoebe files into an existing OMOP Vocabulary hosted in a Postgres instance (can be Broadsea's atlasdb or an external one)</li><li>Note: your Atlas instance must use this OMOP Vocabulary as its default vocabulary source in order to use this feature</li><li>Once complete, the phoebe-load container will finish with an exit status; you can remove this container</li></ul> |
+| openldap             | <ul><li>For testing security in Atlas, this Open LDAP container can be used to assess security needs</li><li>You can specify a comma separated list of user ids and passwords</li><li>This is not recommended for any production level setup</li></ul> |
+| open-shiny-server    | <ul><li>An open source version of Shiny Server, where you can drop shiny apps into a mounted folder.</li><li>Recommended if your organization does not have a Posit Connect license.</li></ul> |
+| posit-connect        | <ul><li>For sites with commercial Posit Connect licenses,
 
+#### Perseus Profiles
 
 We also offer profiles for Perseus, but please note, **these are EXPERIMENTAL and not guaranteed to work**:
 
--   perseus
-    -   Experimental in this version
-    -   Deploys the entire Perseus stack of services, but in the Broadsea network
-    -   Services include:
-    -   Currently, does have overlapping capabilities (e.g. Solr, OMOP Vocab on Postgres)
--   perseus-shareddb
-    -   Deploys only the shareddb Postgres backend for Perseus
--   perseus-files-manager
-    -   Deploys only the files-manager backend for Perseus
--   perseus-web
-    -   Deploys only the web server for Perseus
--   perseus-user
-    -   Deploys only the user management system for Perseus
--   perseus-backend
-    -   Deploys only the API backend for Perseus
--   perseus-frontend
-    -   Deploys only the Perseus web application
--   perseus-vocabularydb
-    -   Deploys only the Vocabulary Postgres for Perseus
--   perseus-cdm-builder
-    -   Deploys only the CDM Builder tool for Perseus
--   perseus-solr
-    -   Deploys only the Solr instance for Perseus
--   perseus-athena
-    -   Deploys only the Athena instance for Perseus
--   perseus-usagi
-    -   Deploys only the Usagi instance for Perseus
--   perseus-r-serve
-    -   Deploys the R Server instance for Perseus
--   perseus-dqd
-    -   Deploys the DataQualityDashboard instance for Perseus
--   perseus-swagger
-    -   Deploys the Swagger instance for Perseus
--   perseus-white-rabbit
-    -   Deploys the White Rabbit instance for Perseus
+| Profile                 | Description |
+|-------------------------|-------------|
+| perseus                 | <ul><li>Experimental in this version</li><li>Deploys the entire Perseus stack of services, but in the Broadsea network</li><li>Services include:</li><li>Currently, does have overlapping capabilities (e.g. Solr, OMOP Vocab on Postgres)</li></ul> |
+| perseus-shareddb        | <ul><li>Deploys only the shareddb Postgres backend for Perseus</li></ul> |
+| perseus-files-manager   | <ul><li>Deploys only the files-manager backend for Perseus</li></ul> |
+| perseus-web             | <ul><li>Deploys only the web server for Perseus</li></ul> |
+| perseus-user            | <ul><li>Deploys only the user management system for Perseus</li></ul> |
+| perseus-backend         | <ul><li>Deploys only the API backend for Perseus</li></ul> |
+| perseus-frontend        | <ul><li>Deploys only the Perseus web application</li></ul> |
+| perseus-vocabularydb    | <ul><li>Deploys only the Vocabulary Postgres for Perseus</li></ul> |
+| perseus-cdm-builder     | <ul><li>Deploys only the CDM Builder tool for Perseus</li></ul> |
+| perseus-solr            | <ul><li>Deploys only the Solr instance for Perseus</li></ul> |
+| perseus-athena          | <ul><li>Deploys only the Athena instance for Perseus</li></ul> |
+| perseus-usagi           | <ul><li>Deploys only the Usagi instance for Perseus</li></ul> |
+| perseus-r-serve         | <ul><li>Deploys the R Server instance for Perseus</li></ul> |
+| perseus-dqd             | <ul><li>Deploys the DataQualityDashboard instance for Perseus</li></ul> |
+| perseus-swagger         | <ul><li>Deploys the Swagger instance for Perseus</li></ul> |
+| perseus-white-rabbit    | <ul><li>Deploys the White Rabbit instance for Perseus</li></ul> |
 
 ### Traefik Dashboard
 
@@ -216,11 +184,11 @@ Broadsea uses Traefik as a proxy for all containers within. The traefik dashboar
 
 Traefik can be set up with SSL to enable HTTPS:
 
-1.  Obtain a crt and key file. Rename them to "broadsea.crt" and "broadsea.key", respectively.
-2.  In Section 1 of the .env file:
+1. Obtain a crt and key file. Rename them to "broadsea.crt" and "broadsea.key", respectively.
+2. In Section 1 of the .env file:
 
--   Update the BROADSEA_CERTS_FOLDER to the folder that holds these cert files.
--   Update the HTTP_TYPE to "https"
+- Update the BROADSEA_CERTS_FOLDER to the folder that holds these cert files.
+- Update the HTTP_TYPE to "https"
 
 ### Broadsea Content Page
 
@@ -230,13 +198,13 @@ To adjust which app links to display on the Broadsea content page ("/"), refer t
 
 #### OMOP Vocabulary in Postgres
 
-To load a new OMOP Vocabulary into a Postgres schema, review and fill out Section 9 of the .env file. Please note: this service will attempt to run the CPT4 import process for the CONCEPT table, so you will need a UMLS API Key from https://uts.nlm.nih.gov/uts/profile; store this in a file and set the path to the file as UMLS_API_KEY_FILE.
+To load a new OMOP Vocabulary into a Postgres schema, review and fill out Section 9 of the .env file. Please note: this service will attempt to run the CPT4 import process for the CONCEPT table, so you will need a UMLS API Key from <https://uts.nlm.nih.gov/uts/profile>; store this in a file and set the path to the file as UMLS_API_KEY_FILE.
 
 The Broadsea atlasdb Postgres instance is listed by default, but you can use an external Postgres instance. You need to copy your Athena downloaded files into ./omop_vocab/files.
 
 #### Build SOLR Vocab for Atlas
 
-**Note: with WebAPI 2.14, you will need to use the webapi-from-git profile and set WEBAPI_MAVEN_PROFILE to webapi-docker,webapi-solr**
+>Note: with WebAPI 2.14, you will need to use the webapi-from-git profile and set WEBAPI_MAVEN_PROFILE to webapi-docker,webapi-solr
 
 To enable the use of SOLR for fast OMOP Vocab search in Atlas, review and fill out Section 7 of the .env file. You can either point to an existing SOLR instance, or have Broadsea build one. The JDBC jar file is needed in the Broadsea root folder in order for Solr to perform the dataimport step.
 
@@ -250,11 +218,11 @@ To enable a security provider for authentication and identity management in Atla
 
 Atlas database based security is pre-configured by the [Broadsea-AtlasDB](https://github.com/OHDSI/Broadsea-atlasdb) project and can be used as a demo. To enable this security:
 
-1. Update these environment variables in Sections 2, 4, and 5 in the .env file: 
+1. Update these environment variables in Sections 2, 4, and 5 in the .env file:
     - section 2:
-        - ATLAS_USER_AUTH_ENABLED="true" 
+        - ATLAS_USER_AUTH_ENABLED="true"
     - section 4:
-        - ATLAS_SECURITY_PROVIDER_TYPE="db" 
+        - ATLAS_SECURITY_PROVIDER_TYPE="db"
         - ATLAS_SECURITY_PROVIDER_NAME="DB Security"
         - ATLAS_SECURITY_USE_FORM="true"
         - ATLAS_SECURITY_USE_AJAX="true
@@ -262,12 +230,11 @@ Atlas database based security is pre-configured by the [Broadsea-AtlasDB](https:
         - WEBAPI_SECURITY_PROVIDER="AtlasRegularSecurity"
         - SECURITY_AUTH_JDBC_ENABLED="true"
 2. Start the Broadsea docker containers
-3. Login to ATLAS with a demo user defined 
-    | Role      | Username  | Password  | 
+3. Login to ATLAS with a demo user defined
+    | Role      | Username  | Password  |
     |-----------|-----------|-----------|
     | Admin     | admin     | admin     |
     | Atlas user| ohdsi     | ohdsi     |
-
 
 #### Bring Your Own JDBC driver
 
@@ -295,7 +262,7 @@ With Atlas 2.12.0 and above, a new concept recommendation feature is available, 
 
 #### Ares Web Application
 
-To mount files prepared for Ares (see [CDM Post Processing](#CDM-Post-Processing)), add your Ares data folder path to ARES_DATA_FOLDER in Section 11. By default, it will use the Broadsea shared volume `cdm-postprocessing-data/ares` used by the aresindexer service.
+To mount files prepared for Ares (see [CDM Post Processing](#cdm-post-processing)), add your Ares data folder path to ARES_DATA_FOLDER in Section 11. By default, it will use the Broadsea shared volume `cdm-postprocessing-data/ares` used by the aresindexer service.
 
 ### CDM ETL Design and Execution
 
@@ -321,11 +288,11 @@ The credentials for the RStudio user can be established in Section 8 of the .env
 
 To permanently retain the "rstudio" user files in the "rstudio" user home directory, and make local R packages available to RStudio in the Broadsea Methods container the following steps are required:
 
--   In the same directory where the docker-compose.yml is stored create a sub-directory tree called "home/rstudio" and a sub-directory called "site-library"
--   **Set the file permissions for the "home/rstudio" sub-directory tree and the "site-library" sub-directory to public read, write and execute.**
--   Add the below volume mapping statements to the end of the broadsea-methods-library section of the docker-compose.yml file.
+- In the same directory where the docker-compose.yml is stored create a sub-directory tree called "home/rstudio" and a sub-directory called "site-library"
+- **Set the file permissions for the "home/rstudio" sub-directory tree and the "site-library" sub-directory to public read, write and execute.**
+- Add the below volume mapping statements to the end of the broadsea-methods-library section of the docker-compose.yml file.
 
-```         
+```yaml
 volumes:
       - ./home/rstudio:/home/rstudio
       - ./site-library:/usr/local/lib/R/site-library
@@ -345,28 +312,61 @@ To configure an open-source Shiny Server, refer to Section 14 of the .env file. 
 
 The pattern for using Posit Connect deviates from the rest of Broadsea due to the many configuration options available. A sample .gcfg file is included, but you likely will need to make modifications to it. See [Posit Connect configuration guide](https://docs.posit.co/connect/admin/appendix/configuration "Posit Connect Configuration") for more information.
 
-## Shutdown Broadsea
+## Shutting Down Broadsea
 
-You can stop the running Docker containers & remove them (new container instances can be started again later) with this command:
+### Compose Stop vs. Compose Down
 
-```         
-docker compose down
+If you want to keep a container for use later, you can use ```docker compose stop```. This may be useful when you plan to restart the services later and want to persist the container's state and networks. If you want to remove the containers and recreate them later, use ```docker compose down```. This will remove the containers and networks, but it will keep the volumes.
+
+### Stop Containers
+
+Use the following CLI commands to stop and start Broadsea's containers.
+
+```shell
+docker compose stop
+docker compose start
 ```
 
-You can stop a profile specifically by using:
+Or target a specific profile using ```--profile```
 
-```         
-docker compose --profile profilename down
+```shell
+docker compose --profile profile1 stop
+docker compose --profile profile1 start
+```
+
+### Down Containers
+
+Use the following commands to down and then up Broadsea's containers.
+
+```shell
+docker compose down
+docker compose start
+```
+
+Or target a specific profile using ```--profile```
+
+```shell
+docker compose --profile profile1 down
+docker compose --profile profile1 up
+```
+
+## Down and Remove Volumes
+
+By default Docker will create volumes and persist them. Any saved files or custom configs made in the containers themselves will persist through these containers. However, if you want to remove these volumes you can pass ```-v``` with ```docker compose down``` and the next time you compose up new volumes will be created.
+
+```shell
+docker compose down -v
+docker compose up
 ```
 
 ## Broadsea Intended Uses
 
 Broadsea can deploy the OHDSI stack on any of the following infrastructure alternatives:
 
--   laptop / desktop
--   internally hosted server
--   cloud provider hosted server
--   cluster of servers (internally or cloud provider hosted)
+- laptop / desktop
+- internally hosted server
+- cloud provider hosted server
+- cluster of servers (internally or cloud provider hosted)
 
 It supports any database management system that the OHDSI stack supports, though some services are specific to Postgresql.
 
@@ -376,9 +376,9 @@ It supports any OS where Docker containers can run, including Windows, Mac OS X,
 
 ## Troubleshooting
 
-### View the status of the running Docker containers:
+### View the status of the running Docker containers
 
-```         
+```shell
 docker compose ps
 ```
 
@@ -386,7 +386,7 @@ docker compose ps
 
 Logs per container are available using this syntax:
 
-```         
+```shell
 docker logs containername
 ```
 
@@ -428,14 +428,10 @@ Docker requires a 64-bit installation. Additionally, your kernel must be 3.10 at
 
 Kernels older than 3.10 lack some of the features required to run Docker containers.
 
-## Other Information
-
-### Licensing
+## License
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use the Broadsea software except in compliance with the License. You may obtain a copy of the License at
 
-```         
-http://www.apache.org/licenses/LICENSE-2.0
-```
+<http://www.apache.org/licenses/LICENSE-2.0>
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
