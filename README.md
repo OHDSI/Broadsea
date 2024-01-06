@@ -61,7 +61,7 @@ git clone https://github.com/OHDSI/Broadsea.git
 
 -   In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers using the below command. On Linux you may need to use 'sudo' to run this command. Wait up to one minute for the Docker containers to start. 
 
-```         
+```shell         
 docker compose --profile default up -d
 ```
 
@@ -325,7 +325,7 @@ To permanently retain the "rstudio" user files in the "rstudio" user home direct
 -   **Set the file permissions for the "home/rstudio" sub-directory tree and the "site-library" sub-directory to public read, write and execute.**
 -   Add the below volume mapping statements to the end of the broadsea-methods-library section of the docker-compose.yml file.
 
-```         
+```yaml
 volumes:
       - ./home/rstudio:/home/rstudio
       - ./site-library:/usr/local/lib/R/site-library
@@ -349,14 +349,14 @@ The pattern for using Posit Connect deviates from the rest of Broadsea due to th
 
 You can stop the running Docker containers & remove them (new container instances can be started again later) with this command:
 
-```         
+```shell
 docker compose down
 ```
 
 You can stop a profile specifically by using:
 
-```         
-docker compose --profile profilename down
+```shell       
+docker compose --profile profile1 down
 ```
 
 ## Broadsea Intended Uses
@@ -378,7 +378,7 @@ It supports any OS where Docker containers can run, including Windows, Mac OS X,
 
 ### View the status of the running Docker containers:
 
-```         
+```shell    
 docker compose ps
 ```
 
@@ -386,7 +386,7 @@ docker compose ps
 
 Logs per container are available using this syntax:
 
-```         
+```shell
 docker logs containername
 ```
 
