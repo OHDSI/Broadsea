@@ -94,8 +94,8 @@ Broadsea makes use of [Docker profiles](https://docs.docker.com/compose/profiles
 
 You can use this syntax for this approach, substituting profile names in:
 
-```         
-docker-compose --env-file .env --profile profile1 --profile profile2 .... up -d
+```shell
+docker compose --env-file .env --profile profile1 --profile profile2 ... up -d
 ```
 
 Here are the profiles available:
