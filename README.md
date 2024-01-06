@@ -98,114 +98,48 @@ You can use this syntax for this approach, substituting profile names in:
 docker compose --env-file .env --profile profile1 --profile profile2 ... up -d
 ```
 
-Here are the profiles available:
+#### Standard Profiles
 
-- default
-  - atlas ("/atlas")
-  - WebAPI ("/WebAPI")
-  - AtlasDB (a Postgres instance for Atlas/WebAPI)
-  - HADES ("/hades")
-  - A splash page for Broadsea ("/")
-- atlas-from-image
-  - Pulls the standard Atlas image from Docker Hub
-- atlas-from-git
-  - Builds Atlas from a Git repo
-  - Useful for testing new versions of Atlas that aren't in Docker Hub
-- webapi-from-image:
-  - Pulls the standard WebAPI image from Docker Hub
-  - Mac Silicon users, see "Mac Silicon" section above
-- webapi-from-git
-  - Builds WebAPI from a Git repo
-  - Useful for testing new versions of WebAPI that aren't in Docker Hub
-  - Mac Silicon users, see "Mac Silicon" section above
-- atlasdb
-  - Pulls the standard Atlas DB image, a Postgres instance for Atlas/WebAPI
-  - Useful if you do not have an existing Postgres instance for Atlas/WebAPI
-- solr-vocab-no-import
-  - Pulls the standard SOLR image from Docker Hub
-  - Initializes a core for the OMOP Vocabulary specified in the .env file
-  - No data is imported into the core, left to you to run through the SOLR Admin GUI at "/solr"
-- solr-vocab-with-import
-  - Pulls the standard SOLR image from Docker Hub
-  - Initializes a core for the OMOP Vocabulary specified in the .env file
-  - Runs the data import for that core
-  - Once complete, the solr-run-import container will finish with an exit status; you can remove this container
-- ares
-  - Builds Ares web app from Ares GitHub repo
-  - Exposes a volume mount point for adding Ares files (see [Ares GitHub IO page](https://ohdsi.github.io/Ares/ "Ares GitHub IO"))
-- content
-  - A splash page for Broadsea ("/broadsea")
-- omop-vocab-pg-load
-  - Using OMOP Vocab files downloaded from Athena, this can load them into a Postgres instance (can be Broadsea's atlasdb or an external one)
-  - Rebuilds the CPTs using the CPT jar file from Athena, with UMLS API Key (see .env file Section 9)
-  - Creates the schema if necessary
-  - Runs copy command for each vocabulary CSV file
-  - Creates all necessary Postgres indices
-  - Once complete, the omop-vocab-load container will finish with an exit status; you can remove this container
-- phoebe-pg-load
-  - For Atlas 2.12+, which offers Concept Recommendation options based on the [Phoebe project](https://forums.ohdsi.org/t/phoebe-2-0/17410 "Phoebe Project")
-  - Loads Phoebe files into an existing OMOP Vocabulary hosted in a Postgres instance (can be Broadsea's atlasdb or an external one)
-  - Note: your Atlas instance must use this OMOP Vocabulary as its default vocabulary source in order to use this feature
-  - Once complete, the phoebe-load container will finish with an exit status; you can remove this container
-- openldap
-  - For testing security in Atlas, this Open LDAP container can be used to assess security needs
-  - You can specify a comma separated list of user ids and passwords
-  - This is not recommended for any production level setup
-- open-shiny-server
-  - An open source version of Shiny Server, where you can drop shiny apps into a mounted folder.
-  - Recommended if your organization does not have a Posit Connect license.
-- posit-connect
-  - For sites with commercial Posit Connect licenses, this can be useful for convenient publication of Shiny apps
-- cdm-postprocessing
-  - For a specified CDM database, executes Achilles and DataQualityDashboard, then AresIndexer
-  - Useful for Atlas Data Sources reports and populating the files needed for the Ares application
-- achilles
-  - Executes only Achilles for a specified CDM database
-- dqd
-  - Executes only DataQualityDashboard for a specified CDM database
-- aresindexer
-  - Executes only AresIndexer for a specified CDM database
-  - Only run this if Achilles and DataQualityDashboard have been executed
-- dbt
-  - Sets up the dbt command-line tool for ETL design
+| Profile              | Description |
+|----------------------|-------------|
+| default              | <ul><li>Atlas ("/atlas")</li><li>WebAPI ("/WebAPI")</li><li>AtlasDB (a Postgres instance for Atlas/WebAPI)</li><li>HADES ("/hades")</li><li>A splash page for Broadsea ("/")</li></ul> |
+| atlas-from-image     | <ul><li>Pulls the standard Atlas image from Docker Hub</li></ul> |
+| atlas-from-git       | <ul><li>Builds Atlas from a Git repo</li><li>Useful for testing new versions of Atlas that aren't in Docker Hub</li></ul> |
+| webapi-from-image    | <ul><li>Pulls the standard WebAPI image from Docker Hub</li><li>Mac Silicon users, see "Mac Silicon" section above</li></ul> |
+| webapi-from-git      | <ul><li>Builds WebAPI from a Git repo</li><li>Useful for testing new versions of WebAPI that aren't in Docker Hub</li><li>Mac Silicon users, see "Mac Silicon" section above</li></ul> |
+| atlasdb              | <ul><li>Pulls the standard Atlas DB image, a Postgres instance for Atlas/WebAPI</li><li>Useful if you do not have an existing Postgres instance for Atlas/WebAPI</li></ul> |
+| solr-vocab-no-import | <ul><li>Pulls the standard SOLR image from Docker Hub</li><li>Initializes a core for the OMOP Vocabulary specified in the .env file</li><li>No data is imported into the core, left to you to run through the SOLR Admin GUI at "/solr"</li></ul> |
+| solr-vocab-with-import | <ul><li>Pulls the standard SOLR image from Docker Hub</li><li>Initializes a core for the OMOP Vocabulary specified in the .env file</li><li>Runs the data import for that core</li><li>Once complete, the solr-run-import container will finish with an exit status; you can remove this container</li></ul> |
+| ares                 | <ul><li>Builds Ares web app from Ares GitHub repo</li><li>Exposes a volume mount point for adding Ares files (see [Ares GitHub IO page](https://ohdsi.github.io/Ares/ "Ares GitHub IO"))</li></ul> |
+| content              | <ul><li>A splash page for Broadsea ("/broadsea")</li></ul> |
+| omop-vocab-pg-load   | <ul><li>Using OMOP Vocab files downloaded from Athena, this can load them into a Postgres instance (can be Broadsea's atlasdb or an external one)</li><li>Rebuilds the CPTs using the CPT jar file from Athena, with UMLS API Key (see .env file Section 9)</li><li>Creates the schema if necessary</li><li>Runs copy command for each vocabulary CSV file</li><li>Creates all necessary Postgres indices</li><li>Once complete, the omop-vocab-load container will finish with an exit status; you can remove this container</li></ul> |
+| phoebe-pg-load       | <ul><li>For Atlas 2.12+, which offers Concept Recommendation options based on the [Phoebe project](https://forums.ohdsi.org/t/phoebe-2-0/17410 "Phoebe Project")</li><li>Loads Phoebe files into an existing OMOP Vocabulary hosted in a Postgres instance (can be Broadsea's atlasdb or an external one)</li><li>Note: your Atlas instance must use this OMOP Vocabulary as its default vocabulary source in order to use this feature</li><li>Once complete, the phoebe-load container will finish with an exit status; you can remove this container</li></ul> |
+| openldap             | <ul><li>For testing security in Atlas, this Open LDAP container can be used to assess security needs</li><li>You can specify a comma separated list of user ids and passwords</li><li>This is not recommended for any production level setup</li></ul> |
+| open-shiny-server    | <ul><li>An open source version of Shiny Server, where you can drop shiny apps into a mounted folder.</li><li>Recommended if your organization does not have a Posit Connect license.</li></ul> |
+| posit-connect        | <ul><li>For sites with commercial Posit Connect licenses,
+
+#### Perseus Profiles
 
 We also offer profiles for Perseus, but please note, **these are EXPERIMENTAL and not guaranteed to work**:
 
-- perseus
-  - Experimental in this version
-  - Deploys the entire Perseus stack of services, but in the Broadsea network
-  - Services include:
-  - Currently, does have overlapping capabilities (e.g. Solr, OMOP Vocab on Postgres)
-- perseus-shareddb
-  - Deploys only the shareddb Postgres backend for Perseus
-- perseus-files-manager
-  - Deploys only the files-manager backend for Perseus
-- perseus-web
-  - Deploys only the web server for Perseus
-- perseus-user
-  - Deploys only the user management system for Perseus
-- perseus-backend
-  - Deploys only the API backend for Perseus
-- perseus-frontend
-  - Deploys only the Perseus web application
-- perseus-vocabularydb
-  - Deploys only the Vocabulary Postgres for Perseus
-- perseus-cdm-builder
-  - Deploys only the CDM Builder tool for Perseus
-- perseus-solr
-  - Deploys only the Solr instance for Perseus
-- perseus-athena
-  - Deploys only the Athena instance for Perseus
-- perseus-usagi
-  - Deploys only the Usagi instance for Perseus
-- perseus-r-serve
-  - Deploys the R Server instance for Perseus
-- perseus-dqd
-  - Deploys the DataQualityDashboard instance for Perseus
-- perseus-swagger
-  - Deploys the Swagger instance for Perseus
-- perseus-white-rabbit
-  - Deploys the White Rabbit instance for Perseus
+| Profile                 | Description |
+|-------------------------|-------------|
+| perseus                 | <ul><li>Experimental in this version</li><li>Deploys the entire Perseus stack of services, but in the Broadsea network</li><li>Services include:</li><li>Currently, does have overlapping capabilities (e.g. Solr, OMOP Vocab on Postgres)</li></ul> |
+| perseus-shareddb        | <ul><li>Deploys only the shareddb Postgres backend for Perseus</li></ul> |
+| perseus-files-manager   | <ul><li>Deploys only the files-manager backend for Perseus</li></ul> |
+| perseus-web             | <ul><li>Deploys only the web server for Perseus</li></ul> |
+| perseus-user            | <ul><li>Deploys only the user management system for Perseus</li></ul> |
+| perseus-backend         | <ul><li>Deploys only the API backend for Perseus</li></ul> |
+| perseus-frontend        | <ul><li>Deploys only the Perseus web application</li></ul> |
+| perseus-vocabularydb    | <ul><li>Deploys only the Vocabulary Postgres for Perseus</li></ul> |
+| perseus-cdm-builder     | <ul><li>Deploys only the CDM Builder tool for Perseus</li></ul> |
+| perseus-solr            | <ul><li>Deploys only the Solr instance for Perseus</li></ul> |
+| perseus-athena          | <ul><li>Deploys only the Athena instance for Perseus</li></ul> |
+| perseus-usagi           | <ul><li>Deploys only the Usagi instance for Perseus</li></ul> |
+| perseus-r-serve         | <ul><li>Deploys the R Server instance for Perseus</li></ul> |
+| perseus-dqd             | <ul><li>Deploys the DataQualityDashboard instance for Perseus</li></ul> |
+| perseus-swagger         | <ul><li>Deploys the Swagger instance for Perseus</li></ul> |
+| perseus-white-rabbit    | <ul><li>Deploys the White Rabbit instance for Perseus</li></ul> |
 
 ### Traefik Dashboard
 
