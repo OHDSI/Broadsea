@@ -13,6 +13,8 @@ jobs:
         uses: douglascamata/setup-docker-macos-action@v1-alpha
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Create certs folder
+        run: mkdir -p ./certs
       - name: Build traefik container
         run: docker compose up -d
       - name: Check traefik container
@@ -22,4 +24,4 @@ jobs:
       - name: Test perseus frontend
         run: |
           sleep 30
-          curl -s --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/perseus
+          curl -s --retry 10 --retry-connrefused http://127.0.0.1/perseus

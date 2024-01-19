@@ -15,7 +15,6 @@ export SECURITY_SAML_KEYMANAGER_PASSWORDS_ARACHNENETWORK="$(cat /run/secrets/SEC
 JAVA_KEYSTORE="/usr/local/openjdk-8/lib/security/cacerts"
 if [ -s "/tmp/cacerts" ]; then
     JAVA_KEYSTORE=/tmp/cacerts
-    #cp -fr /tmp/cacerts /usr/local/openjdk-8/lib/security/cacerts
 fi
 
 cd /var/lib/ohdsi/webapi

@@ -20,7 +20,7 @@
   - [Vocabulary Loading](#vocabulary-loading)
   - [OHDSI Web Applications](#ohdsi-web-applications)
   - [CDM ETL Design and Execution](#cdm-etl-design-and-execution)
-  - [CDM Post Processing {#cdm-post-processing}](#cdm-post-processing-cdm-post-processing)
+  - [CDM Post Processing](#cdm-post-processing-cdm-post-processing)
   - [Evidence Generation](#evidence-generation)
   - [Evidence Dissemination](#evidence-dissemination)
 - [Shutdown Broadsea](#shutdown-broadsea)
@@ -162,7 +162,6 @@ We also offer profiles for Perseus, but please note, **these are EXPERIMENTAL an
 | perseus                 | <ul><li>Experimental in this version</li><li>Deploys the entire Perseus stack of services, but in the Broadsea network</li><li>Services include:</li><li>Currently, does have overlapping capabilities (e.g. Solr, OMOP Vocab on Postgres)</li></ul> |
 | perseus-shareddb        | <ul><li>Deploys only the shareddb Postgres backend for Perseus</li></ul> |
 | perseus-files-manager   | <ul><li>Deploys only the files-manager backend for Perseus</li></ul> |
-| perseus-web             | <ul><li>Deploys only the web server for Perseus</li></ul> |
 | perseus-user            | <ul><li>Deploys only the user management system for Perseus</li></ul> |
 | perseus-backend         | <ul><li>Deploys only the API backend for Perseus</li></ul> |
 | perseus-frontend        | <ul><li>Deploys only the Perseus web application</li></ul> |
@@ -244,7 +243,7 @@ The Docker implementation of WebAPI does not come with all JDBC drivers supporte
 
 Some deployments require a Java Keystore (cacerts) file that establishes trust with Root Certificate Authorities for LDAP or Snowflake connections.
 
-To allow this, overwrite the blank ./cacerts within the Broadsea directory with your own cacerts file. WebAPI can then leverage it for these external Java SSL connections.
+To allow this, alter the env variable WEBAPI_CACERTS_FILE to point to your cacerts file. WebAPI can then leverage it for these external Java SSL connections.
 
 For Snowflake, you will need to also set the CDM_SNOWFLAKE_PRIVATE_KEY_FILE env variable in Section 3.
 
@@ -274,7 +273,7 @@ DBT provides a command-line tool for ETL design. See Section 16 for configuring 
 
 Perseus offers a full suite of services for data profiling, vocabulary mapping, ETL design, and ETL execution. See Section 16 for configuring Perseus.
 
-### CDM Post Processing {#cdm-post-processing}
+### CDM Post Processing
 
 Once you have a CDM database available, it is important to run summary level statistics and data quality analyses prior to publishing the source to users. Broadsea provides services for running Achilles, DataQualityDashboard, and AresIndexer. See Section 17 for setting up the CDM connection details and the various application settings needed.
 
