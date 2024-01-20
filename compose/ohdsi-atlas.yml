@@ -40,6 +40,7 @@ services:
     volumes:
       - ../atlas/config/config-local-template.js:/tmp/config-local.js:ro
       - ../atlas/config/envsubst.sh:/tmp/envsubst.sh:ro
+      - ../atlas/config/config-gis.js:/usr/share/nginx/html/atlas/js/config-gis.js:ro
     entrypoint: ["sh", "/tmp/envsubst.sh" ]
     labels:
       - "traefik.enable=true"
