@@ -43,7 +43,7 @@ git clone https://github.com/OHDSI/Broadsea.git
 ```
 * In a command line / terminal window - navigate to the directory where this README.md file is located and start the Broadsea Docker Containers using the below command. On Linux you may need to use 'sudo' to run this command. Wait up to one minute for the Docker containers to start. The docker compose pull command ensures that the latest released versions of the OHDSI ATLAS and OHDSI WebAPI docker containers are downloaded.
 ```
-docker compose pull && docker-compose --profile default up -d
+docker compose pull && docker compose --profile default up -d
 ```
 * In your web browser open the URL: ```"http://127.0.0.1"```
 * Click on the Atlas link to open Atlas in a new browser window
@@ -67,7 +67,7 @@ This docker compose file makes use of [Docker profiles](https://docs.docker.com/
 You can use this syntax for this approach, substituting profile names in:
 
 ```
-docker compose pull && docker-compose --profile profile1 --profile profile2 .... up -d
+docker compose pull && docker compose --profile profile1 --profile profile2 .... up -d
 ```
 
 Here are the profiles available:
@@ -218,7 +218,7 @@ it can be used for the following scenarios:
 
 ### View the status of the running Docker containers:
 ```
-docker-compose ps
+docker compose ps
 ```
 
 ### Viewing Atlas/WebAPI and RStudio HADES Log Files
@@ -281,7 +281,7 @@ Kernels older than 3.10 lack some of the features required to run Docker contain
 
 The PostgreSQL jdbc database driver is open source and may be freely distributed. A PostgreSQL jdbc database driver is already included within the OHDSI Broadsea webapi-web-apps container.
 
-If you are using a proprietary database server (e.g. Oracle or Microsoft SQL Server) download your own copy of the database jdbc driver jar file and copy it to the same host directory where the docker-compose.yml file is located.
+If you are using a proprietary database server (e.g. Oracle or Microsoft SQL Server) download your own copy of the database jdbc driver jar file and copy it to the same host directory where the docker compose.yml file is located.
 
 When the OHDSI Web Tools container runs it will automatically load the jdbc database driver, if it exists in the host directory.
 
@@ -291,9 +291,9 @@ When the OHDSI Web Tools container runs it will automatically load the jdbc data
 
 To permanently retain the "rstudio" user files in the "rstudio" user home directory, and make local R packages available to RStudio in the Broadsea Methods container the following steps are required:
 
-* In the same directory where the docker-compose.yml is stored create a sub-directory tree called "home/rstudio" and a sub-directory called "site-library"
+* In the same directory where the docker compose.yml is stored create a sub-directory tree called "home/rstudio" and a sub-directory called "site-library"
 * **Set the file permissions for the "home/rstudio" sub-directory tree and the "site-library" sub-directory to public read, write and execute.**
-* Add the below volume mapping statements to the end of the broadsea-methods-library section of the docker-compose.yml file.
+* Add the below volume mapping statements to the end of the broadsea-methods-library section of the docker compose.yml file.
 ```
 volumes:
       - ./home/rstudio:/home/rstudio
