@@ -10,7 +10,7 @@ apt-get clean
 rm -rf /var/lib/apt/lists/*
 
 # The default GitHub Actions runner has 2 vCPUs (https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners)
-install2.r --error --ncpus 2 \
+install2.r --error --ncpus 2  --skipinstalled --repos "https://packagemanager.posit.co/cran/latest" \
     rJava \
     remotes \ 
     ParallelLogger \

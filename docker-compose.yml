@@ -19,11 +19,13 @@ volumes:
     name: perseus-vocabularydb
   perseus-solr:
     name: perseus-solr
+  jupyter-notebook:
+    name: jupyter-notebook
 
 services:
   
   traefik:
-    image: docker.io/library/traefik:v2.10.4
+    image: docker.io/library/traefik:v2.11.2
     container_name: traefik
     restart: unless-stopped
     ipc: none
@@ -117,6 +119,7 @@ services:
     image: ohdsi/broadsea-atlasdb:2.1.0-secret
     container_name: broadsea-atlasdb
     platform: linux/amd64
+    restart: unless-stopped
     cpus: 2
     mem_limit: "2G"
     environment:
@@ -590,6 +593,27 @@ services:
     depends_on:
       - perseus-shareddb
       - perseus-files-manager
+
+  broadsea-jupyter-notebook:
+    profiles: [ "jupyter-notebook" ]
+    image: quay.io/jupyter/datascience-notebook:latest
+    platform: ${DOCKER_ARCH}
+    restart: unless-stopped
+    container_name: broadsea-jupyter-notebook
+    environment:
+      JUPYTERHUB_SERVICE_PREFIX: /jupyter/
+      JUPYTERHUB_BASE_URL: ${HTTP_TYPE}://${BROADSEA_HOST}
+    volumes:
+      - jupyter-notebook:/home/jovyan/work:rw
+    command:
+      - jupyter-lab
+      - --ip=*
+      - --NotebookApp.token=
+      - --NotebookApp.password=
+      - --NotebookApp.base_url=/jupyter
+    labels:
+      - "traefik.enable=true"
+
 
 secrets:
   GITHUB_PAT:

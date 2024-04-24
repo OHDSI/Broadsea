@@ -150,16 +150,14 @@ docker compose --env-file .env --profile profile1 --profile profile2 ... up -d
 | omop-vocab-pg-load   | <ul><li>Using OMOP Vocab files downloaded from Athena, this can load them into a Postgres instance (can be Broadsea's atlasdb or an external one)</li><li>Rebuilds the CPTs using the CPT jar file from Athena, with UMLS API Key (see .env file Section 9)</li><li>Creates the schema if necessary</li><li>Runs copy command for each vocabulary CSV file</li><li>Creates all necessary Postgres indices</li><li>Once complete, the omop-vocab-load container will finish with an exit status; you can remove this container</li></ul> |
 | phoebe-pg-load       | <ul><li>For Atlas 2.12+, which offers Concept Recommendation options based on the [Phoebe project](https://forums.ohdsi.org/t/phoebe-2-0/17410 "Phoebe Project")</li><li>Loads Phoebe files into an existing OMOP Vocabulary hosted in a Postgres instance (can be Broadsea's atlasdb or an external one)</li><li>Note: your Atlas instance must use this OMOP Vocabulary as its default vocabulary source in order to use this feature</li><li>Once complete, the phoebe-load container will finish with an exit status; you can remove this container</li></ul> |
 | openldap             | <ul><li>For testing security in Atlas, this Open LDAP container can be used to assess security needs</li><li>You can specify a comma separated list of user ids and passwords</li><li>This is not recommended for any production level setup</li></ul> |
-| open-shiny-server    | <ul><li>An open source version of Shiny Server, where you can drop shiny apps into a mounted folder.</li><li>Recommended if your organization does not have a Posit Connect license.</li></ul> |
-| posit-connect        | <ul><li>For sites with commercial Posit Connect licenses,
 
-#### Perseus Profiles
+#### Experimental Profiles
 
-We also offer profiles for Perseus, but please note, **these are EXPERIMENTAL and not guaranteed to work**:
+We also offer profiles for Perseus and other useful services, but please note, **these are EXPERIMENTAL and not guaranteed to work**:
 
 | Profile                 | Description |
 |-------------------------|-------------|
-| perseus                 | <ul><li>Experimental in this version</li><li>Deploys the entire Perseus stack of services, but in the Broadsea network</li><li>Services include:</li><li>Currently, does have overlapping capabilities (e.g. Solr, OMOP Vocab on Postgres)</li></ul> |
+| perseus                 | <ul><li>Deploys the entire Perseus stack of services, but in the Broadsea network</li><li>Currently, does have overlapping capabilities (e.g. Solr, OMOP Vocab on Postgres</li></ul> |
 | perseus-shareddb        | <ul><li>Deploys only the shareddb Postgres backend for Perseus</li></ul> |
 | perseus-files-manager   | <ul><li>Deploys only the files-manager backend for Perseus</li></ul> |
 | perseus-user            | <ul><li>Deploys only the user management system for Perseus</li></ul> |
@@ -174,6 +172,9 @@ We also offer profiles for Perseus, but please note, **these are EXPERIMENTAL an
 | perseus-dqd             | <ul><li>Deploys the DataQualityDashboard instance for Perseus</li></ul> |
 | perseus-swagger         | <ul><li>Deploys the Swagger instance for Perseus</li></ul> |
 | perseus-white-rabbit    | <ul><li>Deploys the White Rabbit instance for Perseus</li></ul> |
+| open-shiny-server    | <ul><li>An open source version of Shiny Server, where you can drop shiny apps into a mounted folder.</li><li>Recommended if your organization does not have a Posit Connect license.</li></ul> |
+| posit-connect        | <ul><li>For sites with commercial Posit Connect licenses
+| jupyter-notebook        | <ul><li>Deploys a simple Jupyter Data Science Notebook with no authentication.</li></ul>
 
 ### Traefik Dashboard
 

@@ -121,6 +121,10 @@ http:
         - "broadsea-perseus-strip-prefix"
 
 
+    broadsea-jupyter-notebook:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: "broadsea-jupyter-notebook"
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/jupyter`)'
 
   middlewares:
 
@@ -134,10 +138,6 @@ http:
         prefixes: 
           - "/hades"
         forceSlash: false
-
-    broadsea-perseus-add-prefix:
-      addPrefix:
-        prefix: "/perseus"
 
     broadsea-perseus-strip-prefix:
       stripPrefix:
@@ -251,3 +251,9 @@ http:
       loadBalancer:
         servers:
           - url: http://perseus-athena:5002
+
+
+    broadsea-jupyter-notebook:
+      loadBalancer:
+        servers:
+          - url: http://broadsea-jupyter-notebook:8888
