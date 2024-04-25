@@ -7,6 +7,8 @@ volumes:
     name: rstudio-home-data
   rstudio-tmp-data:
     name: rstudio-tmp-data
+  pgadmin4-data:
+    name: pgadmin4-data
 
 services:
   
@@ -204,3 +206,20 @@ services:
       - ./phoebe:/tmp
     entrypoint: ["sh", "/tmp/load_phoebe.sh" ]
     
+  broadsea-pgadmin4:
+    profiles: [ "pgadmin4" ]
+    container_name: broadsea-pgadmin4
+    user: "5050:5050"
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN4_ADMIN_USER}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN4_ADMIN_PASSWORD}
+      PGADMIN_LISTEN_PORT: 5050
+      SCRIPT_NAME: /pgadmin4
+    volumes:
+      - pgadmin4-data:/var/lib/pgadmin
+    labels:
+      - "traefik.enable=true"
+    ports:
+      - "5050:5050"

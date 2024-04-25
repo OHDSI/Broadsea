@@ -13,6 +13,11 @@ http:
       service: "traefik"
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`)'
 
+    pgadmin4:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: "broadsea-pgadmin4"
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/pgadmin4`)'
+
     broadsea-content:
       entryPoints: '{{ env "HTTP_TYPE" }}'
       service: "broadsea-content"
@@ -93,3 +98,8 @@ http:
       loadBalancer:
         servers:
           - url: http://broadsea-ares
+
+    broadsea-pgadmin4:
+      loadBalancer:
+        servers:
+          - url: http://broadsea-pgadmin4:5050

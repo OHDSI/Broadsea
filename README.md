@@ -129,6 +129,10 @@ Here are the profiles available:
   - Note: your Atlas instance must use this OMOP Vocabulary as its default vocabulary source in order to use this feature
   - Once complete, the phoebe-load container will finish with an exit status; you can remove this container
 
+- pgadmin4
+  - A PostgreSQL database web client, which can be used to administer the Atlas application PostgreSQL database
+
+
 ### SSL
 
 Broadsea uses Traefik as a proxy for all containers within. Traefik can be set up with SSL to enable HTTPS:
