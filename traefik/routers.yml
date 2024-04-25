@@ -126,6 +126,13 @@ http:
       service: "broadsea-jupyter-notebook"
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/jupyter`)'
 
+
+    broadsea-pgadmin4:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: "broadsea-pgadmin4"
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/pgadmin4`)'
+
+
   middlewares:
 
     broadsea-backend-header:
@@ -252,8 +259,12 @@ http:
         servers:
           - url: http://perseus-athena:5002
 
-
     broadsea-jupyter-notebook:
       loadBalancer:
         servers:
           - url: http://broadsea-jupyter-notebook:8888
+
+    broadsea-pgadmin4:
+      loadBalancer:
+        servers:
+          - url: http://broadsea-pgadmin4

@@ -21,6 +21,8 @@ volumes:
     name: perseus-solr
   jupyter-notebook:
     name: jupyter-notebook
+  pgadmin-data:
+    name: pgadmin-data
 
 services:
   
@@ -615,6 +617,25 @@ services:
       - "traefik.enable=true"
 
 
+  broadsea-pgadmin4:
+    profiles: [ "pgadmin4" ]
+    user: "5050:5050"
+    image: dpage/pgadmin4:8.5
+    platform: ${DOCKER_ARCH}
+    secrets:
+      - PGADMIN_DEFAULT_PASSWORD
+    restart: unless-stopped
+    container_name: broadsea-pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_ADMIN_USER}
+      PGADMIN_DEFAULT_PASSWORD_FILE: /run/secrets/PGADMIN_DEFAULT_PASSWORD
+      SCRIPT_NAME: /pgadmin4
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    labels:
+      - "traefik.enable=true"
+
+
 secrets:
   GITHUB_PAT:
     file: ${GITHUB_PAT_SECRET_FILE}
@@ -654,7 +675,8 @@ secrets:
     file: ${CDM_CONNECTIONDETAILS_PASSWORD_FILE}
   WEBAPI_CDM_SNOWFLAKE_PRIVATE_KEY:
     file: ${WEBAPI_CDM_SNOWFLAKE_PRIVATE_KEY_FILE}
-
+  PGADMIN_DEFAULT_PASSWORD:
+    file: ${PGADMIN_DEFAULT_PASSWORD_FILE}
 
 
   

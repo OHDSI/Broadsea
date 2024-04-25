@@ -174,6 +174,7 @@ We also offer profiles for Perseus and other useful services, but please note, *
 | perseus-white-rabbit    | <ul><li>Deploys the White Rabbit instance for Perseus</li></ul> |
 | open-shiny-server    | <ul><li>An open source version of Shiny Server, where you can drop shiny apps into a mounted folder.</li><li>Recommended if your organization does not have a Posit Connect license.</li></ul> |
 | posit-connect        | <ul><li>For sites with commercial Posit Connect licenses
+| pgadmin4                | <ul><li>Deploys the pgAdmin4 web application with a single admin user.</li></ul>
 | jupyter-notebook        | <ul><li>Deploys a simple Jupyter Data Science Notebook with no authentication.</li></ul>
 
 ### Traefik Dashboard
@@ -270,9 +271,13 @@ To mount files prepared for Ares (see [CDM Post Processing](#cdm-post-processing
 
 DBT provides a command-line tool for ETL design. See Section 16 for configuring DBT.
 
-#### Perseus (Experimental Only)
+#### Perseus (Experimental)
 
 Perseus offers a full suite of services for data profiling, vocabulary mapping, ETL design, and ETL execution. See Section 16 for configuring Perseus.
+
+#### pgAdmin4 (Experimental) 
+
+New to Broadsea, there's now a profile for deploying the pgAdmin4 web application for database management of Postgres. See Section 18 for setting up the initial default admin username and the password secret file.
 
 ### CDM Post Processing
 
@@ -284,7 +289,7 @@ Once you have a CDM database available, it is important to run summary level sta
 
 The credentials for the RStudio user can be established in Section 8 of the .env file (with a password stored in a secrets file).
 
-#### Sharing/Saving files between RStudio and Docker host machine
+##### Sharing/Saving files between RStudio and Docker host machine
 
 To permanently retain the "rstudio" user files in the "rstudio" user home directory, and make local R packages available to RStudio in the Broadsea Methods container the following steps are required:
 
@@ -301,6 +306,10 @@ volumes:
 Any files added to the home/rstudio or site-library sub-directories on the Docker host can be accessed by RStudio in the container.
 
 The Broadsea Methods container RStudio /usr/lib/R/site-library originally contains the "littler" and "rgl" R packages. Volume mapping masks the original files in the directory so you will need to add those 2 packages to your Docker host site-library sub-directory if you need them.
+
+#### Jupyter Data Science Notebook (Experimental)
+
+New to Broadsea, there's now a profile for launching a simple, single user instance of Jupyter Data Science Notebook.
 
 ### Evidence Dissemination
 
