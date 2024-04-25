@@ -14,7 +14,7 @@ format:
         toc-title: Applications
         back-to-top-navigation: true
 params:
-    CONTENT_TITLE: "Broadsea 3.1 Applications"
+    CONTENT_TITLE: "Broadsea 3.5 Applications"
     CONTENT_ARES_DISPLAY: "show"
     CONTENT_ATLAS_DISPLAY: "show"
     CONTENT_HADES_DISPLAY: "show"

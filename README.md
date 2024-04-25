@@ -1,4 +1,4 @@
-# OHDSI Broadsea 3.1
+# OHDSI Broadsea 3.5
 
 [![default profile](https://github.com/OHDSI/Broadsea/actions/workflows/default.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/default.yml) [![perseus profile](https://github.com/OHDSI/Broadsea/actions/workflows/perseus.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/perseus.yml) [![openldap profile](https://github.com/OHDSI/Broadsea/actions/workflows/openldap.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/openldap.yml) [![solr-vocab Profile](https://github.com/OHDSI/Broadsea/actions/workflows/solr-vocab.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/solr-vocab.yml) [![achilles Profile](https://github.com/OHDSI/Broadsea/actions/workflows/achilles.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/achilles.yml)
 
@@ -11,7 +11,7 @@
 - [Broadsea - Quick start](#broadsea---quick-start)
 - [Broadsea - Advanced Usage](#broadsea---advanced-usage)
   - [.env file](#env-file)
-  - [Docker Secrets (New for 3.1)](#docker-secrets-new-for-31)
+  - [Docker Secrets (New for 3.5)](#docker-secrets-new-for-35)
   - [Remote Servers](#remote-servers)
   - [Docker Profiles](#docker-profiles)
   - [Traefik Dashboard](#traefik-dashboard)
@@ -72,7 +72,7 @@ Additionally, Broadsea offers limited support for services not specifically need
 
 Throughout this README, we will show docker compose commands with the convention of `docker compose` (no hyphen), per the new Docker Compose V2 standard outlined by [Docker](https://docs.docker.com/compose/migrate/#docker-compose-vs-docker-compose).
 
-**For Broadsea 3.1, you will need Docker version 1.27.0+.**
+**For Broadsea 3.5, you will need Docker version 1.27.0+.**
 
 ### Broadsea Dependencies
 
@@ -111,13 +111,13 @@ docker compose --profile default up -d
 
 The .env file that comes with Broadsea has default and sample values. For advanced use, modify the values as appropriate, as covered below.
 
-### Docker Secrets (New for 3.1)
+### Docker Secrets (New for 3.5)
 
 Broadsea leverages [Docker Secrets](https://docs.docker.com/engine/swarm/secrets/ "Docker Secrets") to handle sensitive passwords and secret keys.
 
 > In Broadsea 3.0, these were handled via plain-text environment variables, which is not best security practice
 
-Now in Broadsea 3.1, each sensitive password or secret key is to be stored in a file; the paths to these files is then set in the .env file per Section. Please refer to the default `./secrets` folder for examples on how to set up these files for your site.
+Now in Broadsea 3.5, each sensitive password or secret key is to be stored in a file; the paths to these files is then set in the .env file per Section. Please refer to the default `./secrets` folder for examples on how to set up these files for your site.
 
 ### Remote Servers
 
