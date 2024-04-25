@@ -129,6 +129,9 @@ Here are the profiles available:
   - Note: your Atlas instance must use this OMOP Vocabulary as its default vocabulary source in order to use this feature
   - Once complete, the phoebe-load container will finish with an exit status; you can remove this container
 
+- jupyter-notebook
+  - A simple Jupyter Data Science Notebook with no authentication
+
 - pgadmin4
   - A PostgreSQL database web client, which can be used to administer the Atlas application PostgreSQL database
 

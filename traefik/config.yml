@@ -13,6 +13,11 @@ http:
       service: "traefik"
       rule: 'Host(`{{ env "BROADSEA_HOST" }}`)'
 
+    broadsea-jupyter-notebook:
+      entryPoints: '{{ env "HTTP_TYPE" }}'
+      service: "broadsea-jupyter-notebook"
+      rule: 'Host(`{{ env "BROADSEA_HOST" }}`) && PathPrefix(`/jupyter`)'
+
     pgadmin4:
       entryPoints: '{{ env "HTTP_TYPE" }}'
       service: "broadsea-pgadmin4"
@@ -98,6 +103,11 @@ http:
       loadBalancer:
         servers:
           - url: http://broadsea-ares
+
+    broadsea-jupyter-notebook:
+      loadBalancer:
+        servers:
+          - url: http://broadsea-jupyter-notebook:8888
 
     broadsea-pgadmin4:
       loadBalancer:

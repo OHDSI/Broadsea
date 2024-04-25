@@ -9,6 +9,8 @@ volumes:
     name: rstudio-tmp-data
   pgadmin4-data:
     name: pgadmin4-data
+  jupyter-notebook:
+    name: jupyter-notebook
 
 services:
   
@@ -206,12 +208,33 @@ services:
       - ./phoebe:/tmp
     entrypoint: ["sh", "/tmp/load_phoebe.sh" ]
     
+  broadsea-jupyter-notebook:
+    profiles: [ "jupyter-notebook" ]
+    image: quay.io/jupyter/datascience-notebook:latest
+    platform: ${DOCKER_ARCH}
+    restart: unless-stopped
+    container_name: broadsea-jupyter-notebook
+    environment:
+      JUPYTERHUB_SERVICE_PREFIX: /jupyter/
+      JUPYTERHUB_BASE_URL: ${HTTP_TYPE}://${BROADSEA_HOST}
+    volumes:
+      - jupyter-notebook:/home/jovyan/work:rw
+    command:
+      - jupyter-lab
+      - --ip=*
+      - --NotebookApp.token=
+      - --NotebookApp.password=
+      - --NotebookApp.base_url=/jupyter
+    labels:
+      - "traefik.enable=true"
+
   broadsea-pgadmin4:
     profiles: [ "pgadmin4" ]
+    platform: ${DOCKER_ARCH}
+    restart: unless-stopped
     container_name: broadsea-pgadmin4
     user: "5050:5050"
     image: dpage/pgadmin4
-    restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN4_ADMIN_USER}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN4_ADMIN_PASSWORD}
