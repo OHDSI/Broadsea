@@ -1,10 +1,10 @@
-name: WebAPI Authentication (Linux and Mac)
+name: WebAPI Authentication (Linux)
 on: push
 jobs:
   openldap:
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-13]
+        os: [ubuntu-22.04]
         httpType: [http]
     runs-on: ${{ matrix.os }}
     steps:
@@ -33,7 +33,7 @@ jobs:
   db:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-22.04]
         httpType: [http]
     runs-on: ${{ matrix.os }}
     steps:

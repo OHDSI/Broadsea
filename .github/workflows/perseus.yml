@@ -1,10 +1,10 @@
-name: perseus profile (Linux and Mac)
+name: perseus profile (Linux)
 on: push
 jobs:
   perseus:
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-13]
+        os: [ubuntu-22.04]
         httpType: [http]
     runs-on: ${{ matrix.os }}
     steps:

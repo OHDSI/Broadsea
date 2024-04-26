@@ -1,10 +1,10 @@
-name: solr-vocab-no-import profile (Linux and Mac)
+name: solr-vocab-no-import profile (Linux)
 on: push
 jobs:
   solrvocab:
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-13]
+        os: [ubuntu-22.04]
         httpType: [http, https]
     runs-on: ${{ matrix.os }}
     steps:
