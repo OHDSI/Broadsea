@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+
+  ohdsi-atlas:
+    container_name: ohdsi-atlas
+    platform: ${DOCKER_ARCH}
+    restart: unless-stopped
+    ipc: none
+    privileged: false
+    environment:
+      WEBAPI_URL: ${BROADSEA_HOST}/WebAPI
+      ATLAS_INSTANCE_NAME: ${ATLAS_INSTANCE_NAME}
+      ATLAS_COHORT_COMPARISON_RESULTS_ENABLED: ${ATLAS_COHORT_COMPARISON_RESULTS_ENABLED}
+      ATLAS_USER_AUTH_ENABLED: ${ATLAS_USER_AUTH_ENABLED}
+      ATLAS_PLP_RESULTS_ENABLED: ${ATLAS_PLP_RESULTS_ENABLED}
+      ATLAS_SECURITY_PROVIDER_NAME: ${ATLAS_SECURITY_PROVIDER_NAME}
+      ATLAS_SECURITY_PROVIDER_TYPE: ${ATLAS_SECURITY_PROVIDER_TYPE}
+      ATLAS_SECURITY_ICON: ${ATLAS_SECURITY_ICON}
+      ATLAS_SECURITY_USE_FORM: ${ATLAS_SECURITY_USE_FORM}
+      ATLAS_SECURITY_USE_AJAX: ${ATLAS_SECURITY_USE_AJAX}
+    volumes:
+      - ./atlas/config-local-template.js:/tmp/config-local.js:ro
+      - ./atlas/envsubst.sh:/tmp/envsubst.sh:ro
+    entrypoint: ["sh", "/tmp/envsubst.sh" ]
+    labels:
+      - "traefik.enable=true"
