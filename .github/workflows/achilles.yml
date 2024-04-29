@@ -1,0 +1,27 @@
+name: achilles profile (Linux)
+on: push
+jobs:
+  achilles:
+    strategy:
+      matrix:
+        os: [ubuntu-22.04]
+        httpType: [http]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Setup Docker on macOS
+        if: runner.os == 'macOS'
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Create certs folder
+        run: mkdir -p ./certs
+      - name: Write Github PAT secret file
+        run: echo ${{ secrets.GH_TOKEN }} > ./secrets/github_pat
+      - name: Build and run achilles container
+        run: docker compose --env-file .env --profile achilles up -d
+      - name: Use busybox container to grab log file and verify no errors
+        run: |
+         sleep 30
+         CID=$(docker run -d -v cdm-postprocessing-data:/cdm-postprocessing-data busybox true)
+         docker cp $CID:/cdm-postprocessing-data/achilles/data/demo_cdm/log_achilles.txt ./log_achilles.txt
+         if grep -q "ERROR" ./log_achilles.txt;then exit 1;else exit 0;fi

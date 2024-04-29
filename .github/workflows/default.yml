@@ -1,0 +1,54 @@
+name: default profile (Linux)
+on: push
+jobs:
+  default:
+    strategy:
+      matrix:
+        os: [ubuntu-22.04]
+        httpType: [http, https]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Setup Docker on macOS
+        if: runner.os == 'macOS'
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Create certs folder
+        run: mkdir -p ./certs
+      - name: Replace HTTP_TYPE if https (Linux)
+        if: matrix.httpType == 'https' && runner.os == 'Linux'
+        run: sed -i 's/HTTP_TYPE=\"http\"/HTTP_TYPE=\"https\"/g' .env
+      - name: Replace HTTP_TYPE if https (Mac)
+        if: matrix.httpType == 'https' && runner.os == 'macOS'
+        run: sed -i '' 's/HTTP_TYPE=\"http\"/HTTP_TYPE=\"https\"/g' .env
+      - name: Create and trust self signed certs
+        if: matrix.httpType == 'https'
+        run: |
+          openssl req -x509 -out ./certs/broadsea.crt -keyout ./certs/broadsea.key \
+            -newkey rsa:2048 -nodes -sha256 \
+            -subj '/CN=127.0.0.1' -extensions EXT -config <( \
+            printf "[dn]\nCN=127.0.0.1\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:127.0.0.1\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+      - name: Build traefik container
+        run: docker compose --env-file .env up -d
+      - name: Build default profile
+        run: docker compose --env-file .env --profile default up -d
+      - name: Setup postgres client on Linux
+        if: runner.os == 'Linux'
+        run: sudo apt-get install --yes --no-install-recommends postgresql-client
+      - name: Setup postgres client on MacOS
+        if: runner.os == 'macOS'
+        run: brew install libpq
+      - name: Test atlasdb
+        run: PGPASSWORD=$(cat ./secrets/webapi/WEBAPI_DATASOURCE_PASSWORD) psql -h 127.0.0.1 -p 5432 -U postgres -c "select source_name from webapi.source limit 1"
+      - name: Test traefik container
+        run: docker logs traefik
+      - name: Test content container
+        run: curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1
+      - name: Test HADES
+        run: curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/hades/auth-sign-in
+      - name: Test Atlas
+        run: curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/atlas/#/home
+      - name: Test WebAPI info endpoint
+        run: |
+          sleep 30
+          curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/WebAPI/info

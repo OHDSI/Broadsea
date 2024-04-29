@@ -1,0 +1,45 @@
+---
+title: "`r Sys.getenv('CONTENT_TITLE')`"
+title-block-banner: true
+theme:
+    dark: darkly
+    light: cosmo
+format: 
+    html:
+        include-in-header:
+        - text: |
+            <link rel="shortcut icon" type="image/x-icon" href="./images/favicon.ico">
+        toc: true
+        toc-location: left
+        toc-title: Applications
+        back-to-top-navigation: true
+params:
+    CONTENT_TITLE: "Broadsea 3.5 Applications"
+    CONTENT_ARES_DISPLAY: "show"
+    CONTENT_ATLAS_DISPLAY: "show"
+    CONTENT_HADES_DISPLAY: "show"
+    CONTENT_PERSEUS_DISPLAY: "show"
+    CONTENT_OPENSHINYSERVER_DISPLAY: "none"
+    CONTENT_POSITCONNECT_DISPLAY: "none"
+---
+
+```{r echo = FALSE, results = "asis"}
+apps <- read.csv(file = "apps.csv", header = TRUE, as.is = TRUE)
+
+for (i in 1:nrow(apps)) {
+    if (Sys.getenv(apps[i,]$ENV_VAR) != "none") {
+        header <- sprintf("[![%s](/images/%s '%s'){width=50}](%s){target='_blank'} %s", 
+                            apps[i,]$APP_NAME,
+                            apps[i,]$LOGO_FILE,
+                            apps[i,]$APP_NAME,
+                            apps[i,]$APP_URL,
+                            apps[i,]$APP_NAME)
+
+        cat("##", header, "\n")
+        cat("<p>", apps[i,]$TEXT, "</p>")
+    }
+
+}
+```
+
+## Powered by <a href="https://github.com/OHDSI/Broadsea" target="_blank">OHDSI Broadsea</a> {.appendix}

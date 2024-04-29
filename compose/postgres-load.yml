@@ -1,0 +1,10 @@
+version: '3.9'
+
+services:
+
+  broadsea-postgres-load:
+    image: alpine:3.18.2
+    platform: ${DOCKER_ARCH}
+    ipc: none
+    privileged: false
+    

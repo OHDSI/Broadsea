@@ -7,11 +7,27 @@ volumes:
     name: rstudio-home-data
   rstudio-tmp-data:
     name: rstudio-tmp-data
+  openldap-data:
+    name: openldap-data
+  jdbc-drivers-data:
+    name: jdbc-drivers-data
+  cdm-postprocessing-data:
+    name: cdm-postprocessing-data
+  perseus-shareddb:
+    name: perseus-shareddb
+  perseus-vocabularydb:
+    name: perseus-vocabularydb
+  perseus-solr:
+    name: perseus-solr
+  jupyter-notebook:
+    name: jupyter-notebook
+  pgadmin-data:
+    name: pgadmin-data
 
 services:
   
   traefik:
-    image: docker.io/library/traefik:v2.9.4@sha256:4c388f477f5b7aa48420694d90db0ecb96b4ecede60b9b7589c87858abf87b60
+    image: docker.io/library/traefik:v2.11.2
     container_name: traefik
     restart: unless-stopped
     ipc: none
@@ -24,26 +40,27 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./traefik/traefik-${HTTP_TYPE}.yml:/etc/traefik/traefik.yml:ro
-      - ./traefik/config.yml:/etc/traefik/config.yml:ro
+      - ./traefik/traefik_${HTTP_TYPE}.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/tls_${HTTP_TYPE}.yml:/etc/traefik/dynamic/tls.yml:ro
+      - ./traefik/routers.yml:/etc/traefik/dynamic/routers.yml:ro
       - ${BROADSEA_CERTS_FOLDER}:/etc/certs:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
   broadsea-content:
     profiles: [ "default", "content" ]
     container_name: broadsea-content
-    image: nginx
+    platform: "linux/amd64"
+    build:
+      context: ./content
+      args:
+        CONTENT_TITLE: ${CONTENT_TITLE}
+        CONTENT_ARES_DISPLAY: ${CONTENT_ARES_DISPLAY}
+        CONTENT_ATLAS_DISPLAY: ${CONTENT_ATLAS_DISPLAY}
+        CONTENT_HADES_DISPLAY: ${CONTENT_HADES_DISPLAY}
+        CONTENT_PERSEUS_DISPLAY: ${CONTENT_PERSEUS_DISPLAY}
+        CONTENT_OPENSHINYSERVER_DISPLAY: ${CONTENT_OPENSHINYSERVER_DISPLAY}
+        CONTENT_POSITCONNECT_DISPLAY: ${CONTENT_POSITCONNECT_DISPLAY}
     restart: unless-stopped
-    environment:
-      CONTENT_ARES_DISPLAY: ${CONTENT_ARES_DISPLAY}
-      CONTENT_ATLAS_DISPLAY: ${CONTENT_ATLAS_DISPLAY}
-      CONTENT_HADES_DISPLAY: ${CONTENT_HADES_DISPLAY}
-    volumes:
-      - ./broadsea-content/images:/usr/share/nginx/html/images
-      - ./broadsea-content/style.css:/usr/share/nginx/html/style.css
-      - ./broadsea-content/index.html:/tmp/index.html
-      - ./broadsea-content/envsubst.sh:/tmp/envsubst.sh:ro
-    entrypoint: ["sh", "/tmp/envsubst.sh" ]
     labels:
       - "traefik.enable=true"
 
@@ -52,31 +69,30 @@ services:
     container_name: broadsea-hades
     image: ohdsi/broadsea-hades:4.2.1
     platform: "linux/amd64"
+    secrets:
+      - HADES_PASSWORD
     environment:
-      - USER=${HADES_USER}
-      - PASSWORD=${HADES_PASSWORD}
+      USER: ${HADES_USER}
     volumes:
       - rstudio-home-data:/home
       - rstudio-tmp-data:/tmp
+      - ./hades/00_set_secrets:/etc/cont-init.d/00_set_secrets
     labels:
       - "traefik.enable=true"
-    ports:
-      - "8787:8787"
-      - "6311:6311"
 
   # WebAPI and Atlas services based on the standard Docker Hub images -------------
   ohdsi-webapi-from-image:
     profiles: [ "default", "webapi-from-image" ]
     image: docker.io/ohdsi/webapi:latest
     extends: 
-      file: "ohdsi-webapi.yml"
+      file: "./compose/ohdsi-webapi.yml"
       service: ohdsi-webapi
 
   ohdsi-atlas-from-image:
     profiles: [ "default", "atlas-from-image" ]
     image: docker.io/ohdsi/atlas:latest
     extends: 
-      file: "ohdsi-atlas.yml"
+      file: "./compose/ohdsi-atlas.yml"
       service: ohdsi-atlas
 
   # WebAPI and Atlas services based on git repo (for developers) -------------
@@ -85,34 +101,36 @@ services:
     build: 
       context: ${WEBAPI_GITHUB_URL}
       args:
-        MAVEN_PARAMS: "-DskipTests=true -DskipUnitTests=true"
+        MAVEN_PARAMS: -DskipTests=true -DskipUnitTests=true
+        MAVEN_PROFILE: ${WEBAPI_MAVEN_PROFILE}
     extends: 
-      file: "ohdsi-webapi.yml"
+      file: "./compose/ohdsi-webapi.yml"
       service: ohdsi-webapi
 
   ohdsi-atlas-from-git:
     profiles: [ "atlas-from-git" ]
     build: ${ATLAS_GITHUB_URL}
     extends: 
-      file: "ohdsi-atlas.yml"
+      file: "./compose/ohdsi-atlas.yml"
       service: ohdsi-atlas
 
   # -----------------------------------------------------------------
 
   broadsea-atlasdb:
     profiles: [ "default", "atlasdb" ]
-    image: ohdsi/broadsea-atlasdb:2.0.0
+    image: ohdsi/broadsea-atlasdb:2.1.0-secret
     container_name: broadsea-atlasdb
-    platform: "linux/amd64"
+    platform: linux/amd64
+    restart: unless-stopped
     cpus: 2
     mem_limit: "2G"
     environment:
-      - POSTGRES_PASSWORD=mypass
+      POSTGRES_PASSWORD: mypass
     ports:
       - "5432:5432"
     volumes:
-     - atlasdb-postgres-data:/var/lib/postgresql/data
-     - ./100_populate_source_source_daimon.sql:/docker-entrypoint-initdb.d/100_populate_source_source_daimon.sql:ro
+      - atlasdb-postgres-data:/var/lib/postgresql/data
+      - ./atlasdb/100_populate_source_source_daimon.sql:/docker-entrypoint-initdb.d/100_populate_source_source_daimon.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -124,24 +142,20 @@ services:
     container_name: solr-vocab
     restart: unless-stopped
     image: solr:8.11.1
+    secrets:
+      - SOLR_VOCAB_JDBC_PASSWORD
     environment: 
-      SOLR_OPTS: 
-        -DVOCAB_VERSION=${VOCAB_VERSION}
-        -DVOCAB_JDBC_DRIVER_PATH=${VOCAB_JDBC_DRIVER_PATH}
-        -DVOCAB_JDBC_URL=${VOCAB_JDBC_URL}
-        -DVOCAB_JDBC_USER=${VOCAB_JDBC_USER}
-        -DVOCAB_JDBC_PASSWORD=${VOCAB_JDBC_PASSWORD}
+      SOLR_VOCAB_VERSION: ${SOLR_VOCAB_VERSION}
+      SOLR_VOCAB_JDBC_DRIVER_PATH: ${SOLR_VOCAB_JDBC_DRIVER_PATH}
+      SOLR_VOCAB_JDBC_URL: ${SOLR_VOCAB_JDBC_URL}
+      SOLR_VOCAB_JDBC_USER: ${SOLR_VOCAB_JDBC_USER}
     volumes:
-      - ./${VOCAB_JDBC_FILE_NAME}:/opt/solr-8.11.1/server/lib/${VOCAB_JDBC_FILE_NAME}:ro
+      - ${SOLR_VOCAB_JDBC_FILE_PATH}:/opt/solr-8.11.1/server/lib/solr_jdbc_driver.jar:ro
       - ./solr:/tmp/solr_config:ro
-    ports:
-      - "8983:8983"
+      - ./solr/docker-entrypoint.sh:/entrypoint.sh
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
     labels:
       - "traefik.enable=true"
-    command:
-      - solr-precreate
-      - ${VOCAB_VERSION}
-      - /tmp/solr_config
     healthcheck:
       test: curl --fail ${SOLR_VOCAB_ENDPOINT} || exit 1
       interval: 10s
@@ -155,15 +169,14 @@ services:
     depends_on:
       broadsea-solr-vocab:
         condition: service_healthy
-    command: curl -d "vocab_database_schema=${VOCAB_DATABASE_SCHEMA}" \ 
-             -X POST ${SOLR_VOCAB_ENDPOINT}/${VOCAB_VERSION}/dataimport?command=full-import&entity=concept
+    command: curl -d "vocab_database_schema=${SOLR_VOCAB_DATABASE_SCHEMA}" -X POST ${SOLR_VOCAB_ENDPOINT}/${SOLR_VOCAB_VERSION}/dataimport?command=full-import&entity=concept
 
   broadsea-ares:
     profiles: [ "ares" ]
     container_name: broadsea-ares
     restart: unless-stopped
     build:
-      context: https://github.com/alondhe/Ares.git#docker  # hack until Dockerfile is added to OHDSI/Ares
+      context: https://github.com/OHDSI/Ares.git
     volumes:
       - ${ARES_DATA_FOLDER}:/usr/share/nginx/html/ares/data:ro
     labels:
@@ -174,17 +187,19 @@ services:
     profiles: [ "omop-vocab-pg-load" ]
     container_name: omop-vocab-load
     extends:
-      file: "postgres-load.yml"
+      file: "./compose/postgres-load.yml"
       service: broadsea-postgres-load
+    secrets:
+      - VOCAB_PG_PASSWORD
+      - UMLS_API_KEY
     environment:
       VOCAB_PG_HOST: ${VOCAB_PG_HOST}
       VOCAB_PG_DATABASE: ${VOCAB_PG_DATABASE}
       VOCAB_PG_SCHEMA: ${VOCAB_PG_SCHEMA}
       VOCAB_PG_USER: ${VOCAB_PG_USER}
-      VOCAB_PG_PASSWORD: ${VOCAB_PG_PASSWORD}
-      UMLS_API_KEY: ${UMLS_API_KEY}
     volumes:
-      - ./omop_vocab:/tmp
+      - ./omop_vocab/scripts:/tmp/scripts
+      - ${VOCAB_PG_FILES_PATH}:/tmp/files
     entrypoint: ["sh", "/tmp/scripts/load_omop_vocab.sh" ]
 
 
@@ -192,15 +207,476 @@ services:
     profiles: [ "phoebe-pg-load" ]
     container_name: broadsea-phoebe-load
     extends:
-      file: "postgres-load.yml"
+      file: "./compose/postgres-load.yml"
       service: broadsea-postgres-load
+    secrets:
+      - PHOEBE_PG_PASSWORD
     environment:
       PHOEBE_PG_HOST: ${PHOEBE_PG_HOST}
       PHOEBE_PG_DATABASE: ${PHOEBE_PG_DATABASE}
       PHOEBE_PG_SCHEMA: ${PHOEBE_PG_SCHEMA}
       PHOEBE_PG_USER: ${PHOEBE_PG_USER}
-      PHOEBE_PG_PASSWORD: ${PHOEBE_PG_PASSWORD}
     volumes:
       - ./phoebe:/tmp
     entrypoint: ["sh", "/tmp/load_phoebe.sh" ]
-    
+
+  # Security providers for testing purposes
+
+  broadsea-openldap:
+    profiles: [ "openldap" ]
+    image: docker.io/bitnami/openldap:2.6
+    container_name: broadsea-openldap
+    restart: unless-stopped
+    secrets:
+      - OPENLDAP_ADMIN_PASSWORD
+      - OPENLDAP_ACCOUNT_PASSWORDS
+    volumes:
+      - ./openldap/entrypoint.sh:/tmp/entrypoint.sh
+    environment:
+      LDAP_ADMIN_USERNAME: ${SECURITY_LDAP_SYSTEM_USERNAME}
+      LDAP_ADMIN_PASSWORD_FILE: /run/secrets/OPENLDAP_ADMIN_PASSWORD
+      LDAP_USERS: ${OPENLDAP_USERS}
+    ports:
+      - '1389:1389'
+      - '1636:1636'
+    entrypoint: ["/bin/bash", "/tmp/entrypoint.sh"]
+    command: [ "/opt/bitnami/scripts/openldap/run.sh" ]
+
+  # shiny server options (open-source and commercial)
+
+  broadsea-open-shiny-server:
+    profiles: [ "open-shiny-server" ]
+    image: rocker/shiny:4.3.0
+    platform: "linux/amd64"
+    container_name: broadsea-open-shiny-server
+    restart: unless-stopped
+    expose:
+      - "3838:3838"
+    volumes:
+      - ${OPEN_SHINY_SERVER_APP_ROOT}:/srv/shiny-server/apps:ro
+    labels:
+      - "traefik.enable=true" 
+
+  broadsea-posit-connect:
+    profiles: [ "posit-connect" ]
+    image: rstudio/rstudio-connect
+    platform: "linux/amd64"
+    container_name: broadsea-posit-connect
+    restart: unless-stopped
+    expose:
+      - "3939:3939"
+    privileged: true
+    environment:
+      RSC_LICENSE_SERVER: ${POSIT_CONNECT_LICENSE_SERVER}
+      R_VERSION: ${POSIT_CONNECT_R_VERSION}
+    volumes:
+      - ${POSIT_CONNECT_LICENSE_FILE}:/etc/rstudio-connect/license.lic:ro
+      - ${POSIT_CONNECT_GCFG_FILE}:/etc/rstudio-connect/rstudio-connect.gcfg:ro
+    labels:
+      - "traefik.enable=true"
+
+# CDM Post-Processing ---------------
+
+  broadsea-run-achilles:
+    profiles: [ "cdm-postprocessing", "achilles" ]
+    build: 
+      context: ./achilles
+      secrets:
+        - GITHUB_PAT
+    platform: "linux/amd64"
+    container_name: broadsea-run-achilles
+    secrets:
+      - CDM_CONNECTIONDETAILS_PASSWORD
+    volumes:
+      - jdbc-drivers-data:/jdbc
+      - cdm-postprocessing-data:/postprocessing
+      - ./postprocessing/init.R:/postprocessing/init.R
+      - ./achilles/run_achilles.R:/postprocessing/achilles/scripts/${CDM_DATABASE_SCHEMA}.R
+    environment:
+      CDM_CONNECTIONDETAILS_DBMS: ${CDM_CONNECTIONDETAILS_DBMS}
+      CDM_CONNECTIONDETAILS_USER: ${CDM_CONNECTIONDETAILS_USER}
+      CDM_CONNECTIONDETAILS_SERVER: ${CDM_CONNECTIONDETAILS_SERVER}
+      CDM_CONNECTIONDETAILS_PORT: ${CDM_CONNECTIONDETAILS_PORT}
+      CDM_CONNECTIONDETAILS_EXTRA_SETTINGS: ${CDM_CONNECTIONDETAILS_EXTRA_SETTINGS}
+      CDM_VERSION: ${CDM_VERSION}
+      CDM_SOURCE_NAME: ${CDM_SOURCE_NAME}
+      CDM_DATABASE_SCHEMA: ${CDM_DATABASE_SCHEMA}
+      RESULTS_DATABASE_SCHEMA: ${RESULTS_DATABASE_SCHEMA}
+      SCRATCH_DATABASE_SCHEMA: ${SCRATCH_DATABASE_SCHEMA}
+      VOCAB_DATABASE_SCHEMA: ${VOCAB_DATABASE_SCHEMA}
+      TEMP_EMULATION_SCHEMA: ${TEMP_EMULATION_SCHEMA}
+
+      ACHILLES_ANALYSIS_IDS: ${ACHILLES_ANALYSIS_IDS}
+      ACHILLES_CREATE_TABLE: ${ACHILLES_CREATE_TABLE}
+      ACHILLES_SMALL_CELL_COUNT: ${ACHILLES_SMALL_CELL_COUNT}
+      ACHILLES_CREATE_INDICES: ${ACHILLES_CREATE_INDICES}
+      ACHILLES_NUM_THREADS: ${ACHILLES_NUM_THREADS}
+      ACHILLES_TEMP_ACHILLES_PREFIX: ${ACHILLES_TEMP_ACHILLES_PREFIX}
+      ACHILLES_DROP_SCRATCH_TABLES: ${ACHILLES_DROP_SCRATCH_TABLES}
+      ACHILLES_VERBOSE_MODE: ${ACHILLES_VERBOSE_MODE}
+      ACHILLES_OPTIMIZE_ATLAS_CACHE: ${ACHILLES_OPTIMIZE_ATLAS_CACHE}
+      ACHILLES_DEFAULT_ANALYSES_ONLY: ${ACHILLES_DEFAULT_ANALYSES_ONLY}
+      ACHILLES_UPDATE_GIVEN_ANALYSES_ONLY: ${ACHILLES_UPDATE_GIVEN_ANALYSES_ONLY}
+      ACHILLES_EXCLUDE_ANALYSIS_IDS: ${ACHILLES_EXCLUDE_ANALYSIS_IDS}
+      ACHILLES_SQL_ONLY: ${ACHILLES_SQL_ONLY}
+    entrypoint: ["Rscript", "/postprocessing/achilles/scripts/${CDM_DATABASE_SCHEMA}.R" ]
+
+  broadsea-run-dqd:
+    profiles: [ "cdm-postprocessing", "dqd" ]
+    build: 
+      context: ./dqd
+      secrets:
+        - GITHUB_PAT
+    platform: "linux/amd64"
+    container_name: broadsea-run-dqd
+    secrets:
+      - CDM_CONNECTIONDETAILS_PASSWORD
+    volumes:
+      - jdbc-drivers-data:/jdbc
+      - cdm-postprocessing-data:/postprocessing
+      - ./postprocessing/init.R:/postprocessing/init.R
+      - ./dqd/run_dqd.R:/postprocessing/dqd/scripts/${CDM_DATABASE_SCHEMA}.R
+    environment:
+      CDM_CONNECTIONDETAILS_DBMS: ${CDM_CONNECTIONDETAILS_DBMS}
+      CDM_CONNECTIONDETAILS_USER: ${CDM_CONNECTIONDETAILS_USER}
+      CDM_CONNECTIONDETAILS_SERVER: ${CDM_CONNECTIONDETAILS_SERVER}
+      CDM_CONNECTIONDETAILS_PORT: ${CDM_CONNECTIONDETAILS_PORT}
+      CDM_CONNECTIONDETAILS_EXTRA_SETTINGS: ${CDM_CONNECTIONDETAILS_EXTRA_SETTINGS}
+      CDM_VERSION: ${CDM_VERSION}
+      CDM_SOURCE_NAME: ${CDM_SOURCE_NAME}
+      CDM_DATABASE_SCHEMA: ${CDM_DATABASE_SCHEMA}
+      RESULTS_DATABASE_SCHEMA: ${RESULTS_DATABASE_SCHEMA}
+      VOCAB_DATABASE_SCHEMA: ${VOCAB_DATABASE_SCHEMA}
+
+      DQD_NUM_THREADS: ${DQD_NUM_THREADS}
+      DQD_SQL_ONLY: ${DQD_SQL_ONLY}
+      DQD_SQL_ONLY_UNION_COUNT: ${DQD_SQL_ONLY_UNION_COUNT}
+      DQD_SQL_ONLY_INCREMENTAL_INSERT: ${DQD_SQL_ONLY_INCREMENTAL_INSERT}
+      DQD_VERBOSE_MODE: ${DQD_VERBOSE_MODE}
+      DQD_WRITE_TO_TABLE: ${DQD_WRITE_TO_TABLE}
+      DQD_WRITE_TABLE_NAME: ${DQD_WRITE_TABLE_NAME}
+      DQD_WRITE_TO_CSV: ${DQD_WRITE_TO_CSV}
+      DQD_CSV_FILE: ${DQD_CSV_FILE}
+      DQD_CHECK_LEVELS: ${DQD_CHECK_LEVELS}
+      DQD_CHECK_NAMES: ${DQD_CHECK_NAMES}
+      DQD_COHORT_DEFINITION_ID: ${DQD_COHORT_DEFINITION_ID}
+      DQD_COHORT_DATABASE_SCHEMA: ${DQD_COHORT_DATABASE_SCHEMA}
+      DQD_COHORT_TABLE_NAME: ${DQD_COHORT_TABLE_NAME}
+      DQD_TABLES_TO_EXCLUDE: ${DQD_TABLES_TO_EXCLUDE}
+      DQD_TABLE_CHECK_THRESHOLD_LOC: ${DQD_TABLE_CHECK_THRESHOLD_LOC}
+      DQD_FIELD_CHECK_THRESHOLD_LOC: ${DQD_FIELD_CHECK_THRESHOLD_LOC}
+      DQD_CONCEPT_CHECK_THRESHOLD_LOC: ${DQD_CONCEPT_CHECK_THRESHOLD_LOC}
+    entrypoint: ["Rscript", "/postprocessing/dqd/scripts/${CDM_DATABASE_SCHEMA}.R" ]
+
+  broadsea-run-aresindexer-only:
+    profiles: [ "aresindexer" ]
+    extends: 
+      file: "./compose/aresindexer.yml"
+      service: broadsea-run-aresindexer
+
+  broadsea-run-aresindexer-after:
+    profiles: [ "cdm-postprocessing" ]
+    extends: 
+      file: "./compose/aresindexer.yml"
+      service: broadsea-run-aresindexer
+    depends_on:
+      broadsea-run-achilles:
+        condition: service_completed_successfully
+      broadsea-run-dqd:
+        condition: service_completed_successfully
+
+  broadsea-dbt:
+    profiles: [ "dbt" ]
+    image: ohdsi/broadsea-dbt
+    container_name: broadsea-dbt
+    platform: "linux/amd64"
+    restart: unless-stopped
+    volumes:
+      - ${DBT_PROJECT_PATH}:/usr/app
+      - ${DBT_PROFILE_PATH}:/root/.dbt/
+
+
+  
+  ### Perseus
+
+  perseus-shareddb:
+    profiles: [ "perseus-shareddb", "perseus" ]
+    image: perseushub/shareddb:latest
+    platform: "linux/amd64"
+    container_name: perseus-shareddb
+    restart: unless-stopped
+    volumes:
+      - perseus-shareddb:/data/postgres
+
+  perseus-files-manager:
+    profiles: [ "perseus-files-manager", "perseus" ]
+    image: perseushub/files-manager:latest
+    platform: "linux/amd64"
+    container_name: perseus-files-manager
+    restart: unless-stopped
+    expose:
+      - "10500:10500"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://perseus-shareddb:5432/shared
+    depends_on:
+      - perseus-shareddb
+
+  perseus-user:
+    profiles: [ "perseus-user", "perseus" ]
+    image: perseushub/user:latest
+    platform: linux/amd64
+    container_name: perseus-user
+    environment:
+      SMTP_SERVER: ${PERSEUS_SMTP_SERVER}
+      SMTP_PORT: ${PERSEUS_SMTP_PORT}
+      SMTP_EMAIL: ${PERSEUS_SMTP_EMAIL}
+      SMTP_USER: ${PERSEUS_SMTP_USER}
+      SMTP_PWD: ${PERSEUS_SMTP_PWD}
+      USER_ENV: Docker
+      TOKEN_SECRET_KEY: ${PERSEUS_TOKEN_SECRET_KEY}
+      EMAIL_SECRET_KEY: ${PERSEUS_EMAIL_SECRET_KEY}
+      SERVER_ADDRESS: ${BROADSEA_HOST}
+    volumes:
+      - ./perseus/user/config.py:/app/config.py
+    expose:
+      - "5001:5001"
+    labels:
+      - "traefik.enable=true"
+    depends_on:
+      - perseus-shareddb
+
+  perseus-backend:
+    profiles: [ "perseus-backend", "perseus" ]
+    image: perseushub/backend:latest
+    platform: linux/amd64
+    container_name: perseus-backend
+    environment:
+      PERSEUS_ENV: Docker
+    volumes:
+      - ./perseus/backend/config.py:/app/config.py
+    expose:
+      - "5004:5004"
+    depends_on:
+      - perseus-shareddb
+      - perseus-files-manager
+  
+  perseus-frontend:
+    profiles: [ "perseus-frontend", "perseus" ]
+    image: ohdsi/perseus-frontend:0.2.0
+    platform: linux/amd64
+    container_name: perseus-frontend
+    expose:
+      - "4200:4200"
+    labels:
+      - "traefik.enable=true"
+
+  perseus-vocabularydb:
+    profiles: [ "perseus-vocabularydb", "perseus" ]
+    image: perseushub/vocabularydb:latest
+    platform: linux/amd64
+    container_name: perseus-vocabularydb
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "vocabulary", "-U", "admin" ]
+      timeout: 60s
+      interval: 30s
+      retries: 10
+    volumes:
+      - perseus-vocabularydb:/data/postgres
+      - ${PERSEUS_VOCAB_FILES_PATH}:/vocabulary
+    expose:
+      - "5431:5432"
+
+  perseus-cdm-builder:
+    profiles: [ "perseus-cdm-builder", "perseus" ]
+    image: perseushub/cdm-builder:latest
+    platform: linux/amd64
+    container_name: perseus-cdm-builder
+    expose:
+      - "9000:9000"
+    volumes:
+      - ./perseus/cdm-builder/appsettings.Docker.json:/app/appsettings.Docker.json
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    depends_on:
+      - perseus-shareddb
+      - perseus-files-manager
+      - perseus-vocabularydb
+
+  perseus-solr:
+    profiles: [ "perseus-solr", "perseus" ]
+    image: perseushub/solr:latest
+    platform: linux/amd64
+    container_name: perseus-solr
+    expose:
+      - "8983:8983"
+    volumes:
+      - perseus-solr:/var/solr
+    depends_on:
+      - perseus-vocabularydb
+  
+  perseus-athena:
+    profiles: [ "perseus-athena", "perseus" ]
+    image: perseushub/athena:latest
+    platform: linux/amd64
+    container_name: perseus-athena
+    environment:
+      ATHENA_ENV: Docker
+    volumes:
+      - ./perseus/athena/config.py:/app/config.py
+    expose:
+      - "5002:5002"
+    depends_on:
+      - perseus-solr
+
+
+  perseus-usagi:
+    profiles: [ "perseus-usagi", "perseus" ]
+    image: perseushub/usagi:latest
+    platform: linux/amd64
+    command: python /app/main.py
+    container_name: perseus-usagi
+    environment:
+      USAGI_ENV: Docker
+    volumes:
+      - ./perseus/usagi/config.py:/app/config.py
+    expose:
+      - "5003:5003"
+    depends_on:
+      - perseus-shareddb
+      - perseus-solr
+
+  perseus-r-serve:
+    profiles: [ "perseus-r-serve", "perseus" ]
+    image: perseushub/r-serve:latest
+    platform: linux/amd64
+    container_name: perseus-r-serve
+    expose:
+      - "6311:6311"
+    depends_on:
+      - perseus-shareddb
+  
+  perseus-data-quality-dashboard:
+    profiles: [ "perseus-dqd", "perseus" ]
+    image: perseushub/data-quality-dashboard:latest
+    platform: linux/amd64
+    container_name: perseus-data-quality-dashboard
+    expose:
+      - "8001:8001"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://perseus-shareddb:5432/shared
+      FILES_MANAGER_URL: http://perseus-files-manager:10500/files-manager
+    depends_on:
+      - perseus-shareddb
+      - perseus-files-manager
+      - perseus-r-serve
+
+  perseus-swagger:
+    profiles: [ "perseus-swagger", "perseus" ]
+    image: perseushub/swagger:latest
+    platform: linux/amd64
+    container_name: perseus-swagger
+    expose:
+      - 8080:8080
+
+  perseus-white-rabbit:
+    profiles: [ "perseus-white-rabbit", "perseus" ]
+    image: ohdsi/perseus-white-rabbit:latest
+    platform: "linux/amd64"
+    container_name: perseus-white-rabbit
+    restart: unless-stopped
+    expose:
+      - "8000:8000"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://perseus-shareddb:5432/shared
+      files-manager-url: "http://perseus-files-manager:10500/files-manager"
+    depends_on:
+      - perseus-shareddb
+      - perseus-files-manager
+
+  broadsea-jupyter-notebook:
+    profiles: [ "jupyter-notebook" ]
+    image: quay.io/jupyter/datascience-notebook:latest
+    platform: ${DOCKER_ARCH}
+    restart: unless-stopped
+    container_name: broadsea-jupyter-notebook
+    environment:
+      JUPYTERHUB_SERVICE_PREFIX: /jupyter/
+      JUPYTERHUB_BASE_URL: ${HTTP_TYPE}://${BROADSEA_HOST}
+    volumes:
+      - jupyter-notebook:/home/jovyan/work:rw
+    command:
+      - jupyter-lab
+      - --ip=*
+      - --NotebookApp.token=
+      - --NotebookApp.password=
+      - --NotebookApp.base_url=/jupyter
+    labels:
+      - "traefik.enable=true"
+
+
+  broadsea-pgadmin4:
+    profiles: [ "pgadmin4" ]
+    user: "5050:5050"
+    image: dpage/pgadmin4:8.5
+    platform: ${DOCKER_ARCH}
+    secrets:
+      - PGADMIN_DEFAULT_PASSWORD
+    restart: unless-stopped
+    container_name: broadsea-pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_ADMIN_USER}
+      PGADMIN_DEFAULT_PASSWORD_FILE: /run/secrets/PGADMIN_DEFAULT_PASSWORD
+      SCRIPT_NAME: /pgadmin4
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    labels:
+      - "traefik.enable=true"
+
+
+secrets:
+  GITHUB_PAT:
+    file: ${GITHUB_PAT_SECRET_FILE}
+  WEBAPI_DATASOURCE_PASSWORD:
+    file: ${WEBAPI_DATASOURCE_PASSWORD_FILE}
+  SECURITY_LDAP_SYSTEM_PASSWORD:
+    file: ${SECURITY_LDAP_SYSTEM_PASSWORD_FILE}
+  SECURITY_DB_DATASOURCE_PASSWORD:
+    file: ${SECURITY_DB_DATASOURCE_PASSWORD_FILE}
+  SECURITY_AD_SYSTEM_PASSWORD:
+    file: ${SECURITY_AD_SYSTEM_PASSWORD_FILE}
+  SECURITY_OAUTH_GOOGLE_APISECRET:
+    file: ${SECURITY_OAUTH_GOOGLE_APISECRET_FILE}
+  SECURITY_OAUTH_FACEBOOK_APISECRET:
+    file: ${SECURITY_OAUTH_FACEBOOK_APISECRET_FILE}
+  SECURITY_OAUTH_GITHUB_APISECRET:
+    file: ${SECURITY_OAUTH_GITHUB_APISECRET_FILE}
+  SECURITY_SAML_KEYMANAGER_STOREPASSWORD:
+    file: ${SECURITY_SAML_KEYMANAGER_STOREPASSWORD_FILE}
+  SECURITY_SAML_KEYMANAGER_PASSWORDS_ARACHNENETWORK:
+    file: ${SECURITY_SAML_KEYMANAGER_PASSWORDS_ARACHNENETWORK_FILE}
+  HADES_PASSWORD:
+    file: ${HADES_PASSWORD_FILE}
+  SOLR_VOCAB_JDBC_PASSWORD:
+    file: ${SOLR_VOCAB_JDBC_PASSWORD_FILE}
+  VOCAB_PG_PASSWORD:
+    file: ${VOCAB_PG_PASSWORD_FILE}
+  OPENLDAP_ADMIN_PASSWORD:
+    file: ${OPENLDAP_ADMIN_PASSWORD_FILE}
+  OPENLDAP_ACCOUNT_PASSWORDS:
+    file: ${OPENLDAP_ACCOUNT_PASSWORDS_FILE}
+  PHOEBE_PG_PASSWORD:
+    file: ${PHOEBE_PG_PASSWORD_FILE}
+  UMLS_API_KEY:
+    file: ${UMLS_API_KEY_FILE}
+  CDM_CONNECTIONDETAILS_PASSWORD:
+    file: ${CDM_CONNECTIONDETAILS_PASSWORD_FILE}
+  WEBAPI_CDM_SNOWFLAKE_PRIVATE_KEY:
+    file: ${WEBAPI_CDM_SNOWFLAKE_PRIVATE_KEY_FILE}
+  PGADMIN_DEFAULT_PASSWORD:
+    file: ${PGADMIN_DEFAULT_PASSWORD_FILE}
+
+
+  

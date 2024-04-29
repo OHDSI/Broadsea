@@ -1,0 +1,27 @@
+name: perseus profile (Linux)
+on: push
+jobs:
+  perseus:
+    strategy:
+      matrix:
+        os: [ubuntu-22.04]
+        httpType: [http]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Setup Docker on macOS
+        if: runner.os == 'macOS'
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Create certs folder
+        run: mkdir -p ./certs
+      - name: Build traefik container
+        run: docker compose up -d
+      - name: Check traefik container
+        run: docker logs traefik
+      - name: Build perseus profile
+        run: docker compose --profile perseus up -d
+      - name: Test perseus frontend
+        run: |
+          sleep 30
+          curl -s --retry 10 --retry-connrefused http://127.0.0.1/perseus

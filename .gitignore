@@ -1,4 +1,9 @@
 .DS_Store
 omop_vocab/files
 .env_local
-*.jar
+*.lic
+phoebe/concept_recommended.csv
+phoebe/__MACOSX
+atlas/add_cdm
+.Rproj.user
+strategus/

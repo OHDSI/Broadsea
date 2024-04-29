@@ -1,0 +1,47 @@
+version: 2
+
+sources:
+  - name: omop_person
+    schema: demo_cdm
+    database: postgres
+    description: "example omop person table"
+    tables:
+      - name: person
+        description: "This table serves as the central identity management for all Persons in the database. "
+        columns:
+        - name: person_id
+          description: "It is assumed that every person with a different unique identifier is in fact a different person and should be treated independently"
+        - name: gender_concept_id
+          description: "This field is meant to capture the biological sex at birth of the Person. This field should not be used to study gender identity issues."
+        - name: year_of_birth
+          description: "Compute age using year_of_birth."
+        - name: month_of_birth
+          description: " "
+        - name: day_of_birth
+          description: " "
+        - name: birth_datetime
+          description: " "
+        - name: race_concept_id
+          description: "This field captures race or ethnic background of the person."
+        - name: ethnicity_concept_id
+          description: "This field captures Ethnicity as defined by the Office of Management and Budget (OMB) of the US Government: it distinguishes only between “Hispanic” and “Not Hispanic”. Races and ethnic backgrounds are not stored here."
+        - name: location_id
+          description: "The location refers to the physical address of the person. This field should capture the last known location of the person."
+        - name: provider_id
+          description: "The Provider refers to the last known primary care provider (General Practitioner)."
+        - name: care_site_id
+          description: "The Care Site refers to where the Provider typically provides the primary care."
+        - name: person_source_value
+          description: "Use this field to link back to persons in the source data. This is typically used for error checking of ETL logic."
+        - name: gender_source_value
+          description: "This field is used to store the biological sex of the person from the source data. It is not intended for use in standard analytics but for reference only."
+        - name: gender_source_concept_id
+          description: "Due to the small number of options, this tends to be zero."
+        - name: race_source_value
+          description: "This field is used to store the race of the person from the source data. It is not intended for use in standard analytics but for reference only."
+        - name: race_source_concept_id
+          description: "Due to the small number of options, this tends to be zero."
+        - name: ethnicity_source_value
+          description: "This field is used to store the ethnicity of the person from the source data. It is not intended for use in standard analytics but for reference only."
+        - name: ethnicity_source_concept_id
+          description: "Due to the small number of options, this tends to be zero"

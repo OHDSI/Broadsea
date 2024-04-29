@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+
+  broadsea-run-aresindexer:
+    build: ../ares
+    platform: "linux/amd64"
+    container_name: broadsea-run-aresindexer
+    secrets:
+      - CDM_CONNECTIONDETAILS_PASSWORD
+      - GITHUB_PAT
+    environment:
+      CDM_CONNECTIONDETAILS_DBMS: ${CDM_CONNECTIONDETAILS_DBMS}
+      CDM_CONNECTIONDETAILS_USER: ${CDM_CONNECTIONDETAILS_USER}
+      CDM_CONNECTIONDETAILS_SERVER: ${CDM_CONNECTIONDETAILS_SERVER}
+      CDM_CONNECTIONDETAILS_PORT: ${CDM_CONNECTIONDETAILS_PORT}
+      CDM_CONNECTIONDETAILS_EXTRA_SETTINGS: ${CDM_CONNECTIONDETAILS_EXTRA_SETTINGS}
+      CDM_DATABASE_SCHEMA: ${CDM_DATABASE_SCHEMA}
+      RESULTS_DATABASE_SCHEMA: ${RESULTS_DATABASE_SCHEMA}
+      VOCAB_DATABASE_SCHEMA: ${VOCAB_DATABASE_SCHEMA}
+      ARES_RUN_NETWORK: ${ARES_RUN_NETWORK}
+    volumes:
+      - jdbc-drivers-data:/jdbc
+      - cdm-postprocessing-data:/postprocessing
+      - ../postprocessing/init.R:/postprocessing/init.R
+      - ../ares/run_aresindexer.R:/postprocessing/ares/scripts/${CDM_DATABASE_SCHEMA}.R
+    entrypoint: ["Rscript", "/postprocessing/ares/scripts/${CDM_DATABASE_SCHEMA}.R" ]

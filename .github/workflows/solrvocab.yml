@@ -1,0 +1,44 @@
+name: solr-vocab-no-import profile (Linux)
+on: push
+jobs:
+  solrvocab:
+    strategy:
+      matrix:
+        os: [ubuntu-22.04]
+        httpType: [http, https]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Setup Docker on macOS
+        if: runner.os == 'macOS'
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Create certs folder
+        run: mkdir -p ./certs
+      - name: Replace HTTP_TYPE if https (Linux)
+        if: matrix.httpType == 'https' && runner.os == 'Linux'
+        run: sed -i 's/HTTP_TYPE=\"http\"/HTTP_TYPE=\"https\"/g' .env
+      - name: Replace HTTP_TYPE if https (Mac)
+        if: matrix.httpType == 'https' && runner.os == 'macOS'
+        run: sed -i '' 's/HTTP_TYPE=\"http\"/HTTP_TYPE=\"https\"/g' .env
+      - name: Create and trust self signed certs
+        if: matrix.httpType == 'https'
+        run: |
+          openssl req -x509 -out ./certs/broadsea.crt -keyout ./certs/broadsea.key \
+            -newkey rsa:2048 -nodes -sha256 \
+            -subj '/CN=127.0.0.1' -extensions EXT -config <( \
+            printf "[dn]\nCN=127.0.0.1\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:127.0.0.1\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+      - name: Build traefik container
+        run: docker compose --env-file .env up -d
+      - name: Build atlasdb profile
+        run: docker compose --env-file .env --profile atlasdb up -d
+      - name: Build empty SOLR instance
+        run: docker compose --env-file .env --profile solr-vocab-no-import up -d
+      - name: Build webapi profile with SOLR_VOCAB enabled
+        run: SOLR_VOCAB_ENDPOINT=http://broadsea-solr-vocab:8983/solr docker compose --env-file .env --profile webapi-from-image up -d
+      - name: Test WebAPI info endpoint
+        run: |
+          sleep 30
+          curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/WebAPI/info
+      - name: Test SOLR endpoint
+        run: curl -s -k --retry 10 --retry-connrefused ${{matrix.httpType}}://127.0.0.1/solr/

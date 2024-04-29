@@ -1,0 +1,27 @@
+######################################
+# HTTP Traefik (No SSL)
+######################################
+
+global:
+  sendAnonymousUsage: false
+
+api:
+  dashboard: true
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    watch: true
+    exposedByDefault: false
+
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
+
+log:
+  level: INFO
+  format: common
+
+entryPoints:
+  http:
+    address: ":80"
