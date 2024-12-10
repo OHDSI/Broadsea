@@ -1,3 +1,116 @@
+# ATLAS Setup Guide
+
+## 1. Virtual Machine Setup
+
+### Request VM from CBIIT
+- Request a virtual machine with a specified hostname
+- Configure network security:
+  - Enable HTTPS ingress
+  - Disable HTTP ingress
+  - Enable SSH ingress and set up firewall rules to only allow IPv4 ranges within NIH VPN
+  - Add RSA public keys from connecting computers (obtain using `cat ~/.ssh/id_rsa.pub`)
+
+### Certificate Setup
+If you don't have a signed certificate from CBIIT, you'll need to generate a self-signed certificate locally. This requires two files:
+- A `.crt` file (certificate)
+- A `.key` file (private key)
+
+For guidance on generating these files, refer to: [Server Fault - CRT and KEY Files Guide](https://serverfault.com/questions/224122/what-is-crt-and-key-files-and-how-to-generate-them)
+
+## 2. Google OAuth Configuration
+
+1. Create an OAuth client ID in Google Cloud Console
+2. Add the following authorized redirect URIs:
+   ```
+   http://<VM hostname>/Atlas
+   http://<VM hostname>/WebAPI/user/oauth/callback?client_name=Google2Client
+   ```
+
+## 3. VM Access and Docker Setup
+
+### SSH to VM on local machine
+```bash
+gcloud compute ssh --project=<PROJECT_ID> --zone=<VM ZONE> <VM NAME>
+```
+
+### Install Docker and Docker Compose on VM
+```bash
+# Update package list
+sudo apt-get update
+
+# Install Docker
+sudo apt-get install docker.io
+
+# Set up Docker group
+sudo groupadd docker
+sudo usermod -aG docker ${USER}
+
+# Install Docker Compose
+sudo curl -SL https://github.com/docker/compose/releases/download/v2.30.3/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
+**Important**: After completing these steps, stop and restart the VM.
+
+## 4. Broadsea Configuration on VM
+
+### Initial Setup
+1. Pull the NCI CCC Broadsea fork from Github
+- This image has an edited ATALS config-local.js that allows for Google OAuth functionality
+2. Copy certificate files to the VM:
+   ```bash
+   # Copy to /certs folder within Broadsea
+   # Rename files to:
+   broadsea.crt
+   broadsea.key
+   
+   # Set appropriate permissions
+   sudo chmod 400 broadsea.crt broadsea.key
+   ```
+
+### Environment Configuration
+Update the `.env` file with the following variables:
+
+```properties
+BROADSEA_HOST=<hostname of the virtual machine running Atlas>
+HTTP_TYPE=https
+WEBAPI_SECURITY_PROVIDER=AtlasRegularSecurity
+SECURITY_OAUTH_CALLBACK_UI=http://<BROADSEA_HOST value>/Atlas/#/welcome
+SECURITY_OAUTH_CALLBACK_API=http://<BROADSEA_HOST value>/WebAPI/user/oauth/callback?client_name=Google2Client
+SECURITY_AUTH_GOOGLE_ENABLED=true
+SECURITY_OAUTH_GOOGLE_APIKEY=<OAuth client ID value>
+```
+
+Add the OAuth client secret to:
+```bash
+secrets/webapi/SECURITY_OAUTH_GOOGLE_APISECRET
+```
+(Include the value in quotes)
+
+## 5. Launch ATLAS
+
+### Start the Containers
+```bash
+docker-compose --env-file .env --profile atlas-from-image --profile webapi-from-image --profile atlasdb up -d
+```
+
+### Access the Application
+Open a web browser and navigate to:
+```
+https://<BROADSEA_HOST>/Atlas/#/home
+```
+
+## Troubleshooting
+
+Common issues to watch for:
+- Ensure all certificate files have correct permissions
+- Verify OAuth redirect URIs match exactly
+- Check Docker logs if containers fail to start
+- Verify all environment variables are set correctly
+- Ensure VM firewall rules are properly configured
+
+For additional support, consult the ATLAS documentation or contact your system administrator.
+
 # OHDSI Broadsea 3.5
 
 [![default profile](https://github.com/OHDSI/Broadsea/actions/workflows/default.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/default.yml) [![perseus profile](https://github.com/OHDSI/Broadsea/actions/workflows/perseus.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/perseus.yml) [![openldap profile](https://github.com/OHDSI/Broadsea/actions/workflows/openldap.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/openldap.yml) [![solr-vocab Profile](https://github.com/OHDSI/Broadsea/actions/workflows/solr-vocab.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/solr-vocab.yml) [![achilles Profile](https://github.com/OHDSI/Broadsea/actions/workflows/achilles.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/achilles.yml)
