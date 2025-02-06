@@ -9,6 +9,7 @@
   - [Broadsea Dependencies](#broadsea-dependencies)
   - [Mac Silicon](#mac-silicon)
 - [Broadsea - Quick start](#broadsea---quick-start)
+- [Broadsea - Community Contributions](#community-contributions)
 - [Broadsea - Advanced Usage](#broadsea---advanced-usage)
   - [.env file](#env-file)
   - [Docker Secrets (New for 3.5)](#docker-secrets-new-for-35)
@@ -104,6 +105,22 @@ docker compose --profile default up -d
 - Click on the Atlas link to open Atlas in a new browser window
 - Click on the Hades link to open HADES (RStudio) in a new browser window.
   - The default RStudio userid is 'ohdsi' and the default password is located in the `./secrets/hades/HADES_PASSWORD` file.
+
+## Community Contributions
+
+Community contributions are welcome! Here are the steps for making Community contributions to OHDSI Broadsea:
+
+- Create a new GitHub issue in the OHDSI/Broadsea repo with a short summary describing the proposed changes
+- After discussion of the issue is completed in the GitHub repo, and the issue is approved, create a GitHub Pull Request, linked to the GitHub issue. 
+- The OHDSI/Broadsea GitHub repository maintainer will review, request changes to the Pull Request if needed, and then merge the Pull Request
+
+Here are some guiding principles for making contributions - these items should be addressed in the issue & issue discussion.
+
+- If a new application is added it must be useful for a large section of the OHDSI community.
+- The changes should maintain backwards compatibility for existing Broadsea deployments. There are some valid exceptions like bug fixes, and new Broadsea releases may allow breaking changes. 
+- The changes must fit within the Broadsea framework. For example, each new application gets a subdirectory,  secrets files are added if needed, a new section added to the .env file etc.
+- The contributor agrees to support the changes and respond to any related issues in the OHDSI/Broadsea GitHub repository and the OHDSI forums.
+- OHDSI Broadsea is cross platform, so the contributor will test the changes on each targeted OS (Windows, Linux and Mac), before submitting a Pull Request. 
 
 ## Broadsea - Advanced Usage
 
