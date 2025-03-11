@@ -7,13 +7,16 @@ services:
     platform: ${DOCKER_ARCH}
     restart: unless-stopped
     ipc: none
-    read_only: true
+    read_only: false
     tmpfs:
       - /tmp
-    privileged: false
+    privileged: true
     volumes:
       - ${WEBAPI_CACERTS_FILE}:/tmp/cacerts
       - ${WEBAPI_ADDITIONAL_JDBC_FILE_PATH}:/var/lib/ohdsi/webapi/lib/additional/broadsea_mounted.jar
+      - ${WEBAPI_ADDITIONAL_JDBC_FILE_PATH}:/var/lib/ohdsi/webapi/WEB-INF/lib/broadsea_mounted.jar
+      #- certificateSQLaas.pem:/gar/certificateSQLaaS.pem
+      #- SSLConfig.properties:/gar/SSLConfig.properties
       - ../webapi/docker-entrypoint.sh:/entrypoint.sh
     entrypoint: ["/bin/sh","/entrypoint.sh"]
     secrets:
@@ -28,6 +31,7 @@ services:
       - SECURITY_SAML_KEYMANAGER_PASSWORDS_ARACHNENETWORK
       - WEBAPI_CDM_SNOWFLAKE_PRIVATE_KEY
     environment:
+      JAVA_OPTS: "-Dcom.intersystems.SSLConfigFile=/tmp/SSLConfig.properties"
       CLASSPATH: ":/var/lib/ohdsi/webapi/lib/additional/broadsea_mounted.jar"
       DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
       DATASOURCE_URL: ${WEBAPI_DATASOURCE_URL}
