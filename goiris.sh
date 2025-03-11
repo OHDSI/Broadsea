@@ -1,14 +1,3 @@
-# Manual Steps
-# exec into webapi and create
-# /tmp/SSLProperties.config
-
-#cat << EOFE > /tmp/SSLConfig.properties
-#trustStore=/tmp/keystore.jks
-#trustStorePassword=changeit
-#EOFE
-
-# and
-# /tmp/certificateSQLaaS.pem
 
 wget https://repo1.maven.org/maven2/com/intersystems/intersystems-jdbc/3.10.2/intersystems-jdbc-3.10.2.jar
 cp intersystems-jdbc-3.10.2.jar jdbc/none.jar
@@ -70,3 +59,17 @@ wget http://127.0.0.1/WebAPI/source/refresh/
 #wget https://repo1.maven.org/maven2/com/intersystems/intersystems-jdbc/3.10.2/intersystems-jdbc-3.10.2.jar
 docker cp intersystems-jdbc-3.10.2.jar broadsea-hades:/opt/hades/jdbc_drivers/
 #cp intersystems-jdbc-3.10.2.jar jdbc/none.jar
+
+#### MANUALLY ADD THOSE FILES
+docker exec --user root -it ohdsi-webapi bash
+# Manual Steps
+# exec into webapi and create
+# /tmp/SSLProperties.config
+
+#cat << EOFE > /tmp/SSLConfig.properties
+#trustStore=/tmp/keystore.jks
+#trustStorePassword=changeit
+#EOFE
+
+# and
+# /tmp/certificateSQLaaS.pem
