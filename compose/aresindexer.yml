@@ -3,12 +3,14 @@ version: '3.9'
 services:
 
   broadsea-run-aresindexer:
-    build: ../ares
+    build: 
+      context: ../ares
+      secrets:
+        - GITHUB_PAT
     platform: "linux/amd64"
     container_name: broadsea-run-aresindexer
     secrets:
       - CDM_CONNECTIONDETAILS_PASSWORD
-      - GITHUB_PAT
     environment:
       CDM_CONNECTIONDETAILS_DBMS: ${CDM_CONNECTIONDETAILS_DBMS}
       CDM_CONNECTIONDETAILS_USER: ${CDM_CONNECTIONDETAILS_USER}
