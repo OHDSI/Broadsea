@@ -308,11 +308,11 @@ The credentials for the RStudio user can be established in Section 8 of the .env
 
 ##### Sharing/Saving files between RStudio and Docker host machine
 
-To permanently retain the "rstudio" user files in the "rstudio" user home directory, and make local R packages available to RStudio in the Broadsea Methods container the following steps are required:
+To permanently retain the "rstudio" user files in the "rstudio" user home directory, and make local R packages available to RStudio in the Broadsea Hades container the following steps are required:
 
 - In the same directory where the docker-compose.yml is stored create a sub-directory tree called "home/rstudio" and a sub-directory called "site-library"
 - **Set the file permissions for the "home/rstudio" sub-directory tree and the "site-library" sub-directory to public read, write and execute.**
-- Add the below volume mapping statements to the end of the broadsea-methods-library section of the docker-compose.yml file.
+- Add the below volume mapping statements to the end of the broadsea-hades section of the docker-compose.yml file.
 
 ```yaml
 volumes:
@@ -322,7 +322,7 @@ volumes:
 
 Any files added to the home/rstudio or site-library sub-directories on the Docker host can be accessed by RStudio in the container.
 
-The Broadsea Methods container RStudio /usr/lib/R/site-library originally contains the "littler" and "rgl" R packages. Volume mapping masks the original files in the directory so you will need to add those 2 packages to your Docker host site-library sub-directory if you need them.
+The Broadsea Hades container RStudio /usr/lib/R/site-library originally contains the "littler" and "rgl" R packages. Volume mapping masks the original files in the directory so you will need to add those 2 packages to your Docker host site-library sub-directory if you need them.
 
 #### Jupyter Data Science Notebook (Experimental)
 
