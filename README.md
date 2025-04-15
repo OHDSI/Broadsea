@@ -101,6 +101,12 @@ git clone https://github.com/OHDSI/Broadsea.git
 docker compose --profile default up -d
 ```
 
+- If you want to always use the latest Docker container images, then use the below option
+  
+```shell
+docker-compose --profile default up --pull always -d
+```
+
 - In your web browser open the URL: `"http://127.0.0.1"`
 - Click on the Atlas link to open Atlas in a new browser window
 - Click on the Hades link to open HADES (RStudio) in a new browser window.
