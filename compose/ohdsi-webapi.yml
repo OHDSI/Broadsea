@@ -28,6 +28,7 @@ services:
       - SECURITY_SAML_KEYMANAGER_PASSWORDS_ARACHNENETWORK
       - WEBAPI_CDM_SNOWFLAKE_PRIVATE_KEY
     environment:
+      JAVA_OPTS: ${WEBAPI_JAVA_OPTS}
       CLASSPATH: ":/var/lib/ohdsi/webapi/lib/additional/broadsea_mounted.jar"
       DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
       DATASOURCE_URL: ${WEBAPI_DATASOURCE_URL}
