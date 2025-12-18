@@ -27,7 +27,7 @@ volumes:
 services:
   
   traefik:
-    image: docker.io/library/traefik:v2.11.2
+    image: docker.io/library/traefik:v2.11.33
     container_name: traefik
     restart: unless-stopped
     ipc: none
