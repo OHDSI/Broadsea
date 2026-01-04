@@ -67,7 +67,7 @@ services:
   broadsea-hades:
     profiles: [ "default", "hades" ]
     container_name: broadsea-hades
-    image: ohdsi/broadsea-hades:4.2.1
+    image: ohdsi/broadsea-hades:1.19.0
     platform: "linux/amd64"
     secrets:
       - HADES_PASSWORD
