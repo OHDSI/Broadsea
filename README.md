@@ -422,6 +422,16 @@ Logs per container are available using this syntax:
 docker logs containername
 ```
 
+### Error: atlasdb-postgres-data docker volume was created with an older version of PostgreSQL
+
+Remove the atlasdb-postgres-data volume and Broadsea will recreate it
+
+```shell
+docker compose down
+docker volume rm atlasdb-postgres-data
+docker compose up
+```
+
 ## Hardware/OS Requirements for Installing Docker
 
 ### Mac OS X
