@@ -118,7 +118,7 @@ services:
 
   broadsea-atlasdb:
     profiles: [ "default", "atlasdb" ]
-    image: ohdsi/broadsea-atlasdb:2.1.0-secret
+    image: ohdsi/broadsea-atlasdb:2.3.0
     container_name: broadsea-atlasdb
     platform: linux/amd64
     restart: unless-stopped
