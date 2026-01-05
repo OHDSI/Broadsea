@@ -29,6 +29,7 @@
 - [Troubleshooting](#troubleshooting)
   - [View the status of the running Docker containers](#view-the-status-of-the-running-docker-containers)
   - [Viewing Log Files](#viewing-log-files)
+  - [Atlasdb upgrade - Docker volume error](#Atlasdb-upgrade-docker-volume-error)
 - [Hardware/OS Requirements for Installing Docker](#hardwareos-requirements-for-installing-docker)
   - [Mac OS X](#mac-os-x)
   - [Windows](#windows)
@@ -422,9 +423,10 @@ Logs per container are available using this syntax:
 docker logs containername
 ```
 
-### Error: atlasdb-postgres-data docker volume was created with an older version of PostgreSQL
+### Atlasdb upgrade docker volume error
 
-Remove the atlasdb-postgres-data volume and Broadsea will recreate it
+Remove the atlasdb-postgres-data volume and Broadsea will recreate it.
+Any changes made previously to the atlasdb data will be lost.
 
 ```shell
 docker compose down
