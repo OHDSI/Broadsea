@@ -2,7 +2,8 @@ FROM docker.io/rocker/r-ver:4.2.3
 ARG ACHILLES_GITHUB_REF=main
 ARG ARESINDEXER_GITHUB_REF=dockerfile
 
-RUN echo 'GITHUB_PAT=' /run/secrets/GITHUB_PAT >> /root/.Renviron
+RUN --mount=type=secret,id=GITHUB_PAT \
+    echo GITHUB_PAT=$(cat /run/secrets/GITHUB_PAT) >> /root/.Renviron
 
 RUN <<EOF
 apt-get update
