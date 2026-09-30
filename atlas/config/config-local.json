@@ -1,0 +1,20 @@
+{
+  "api": { "url": "/WebAPI" },
+  "userAuthenticationEnabled": {{env "ATLAS_USER_AUTH_ENABLED"}},
+  "enableSkipLogin": {{env "ATLAS_ENABLE_SKIP_LOGIN"}},
+  "authProviders": [
+    {
+      "name": "{{env "ATLAS_SECURITY_PROVIDER_NAME"}}",
+      "url": "user/login/{{env "ATLAS_SECURITY_PROVIDER_TYPE"}}",
+      "ajax": {{env "ATLAS_SECURITY_USE_AJAX"}},
+      "icon": "{{env "ATLAS_SECURITY_ICON"}}",
+      "isUseCredentialsForm": {{env "ATLAS_SECURITY_USE_FORM"}}
+    }
+  ],
+  "enableTermsAndConditions": {{env "ATLAS_ENABLE_TERMS_AND_CONDITIONS"}},
+  "enablePersonCount": {{env "ATLAS_ENABLE_PERSON_COUNT"}},
+  "enableTaggingSection": {{env "ATLAS_ENABLE_TAGGING_SECTION"}},
+  "enablePythia": {{env "ATLAS_ENABLE_PYTHIA"}},
+  "defaultLocale": "{{env "ATLAS_DEFAULT_LOCALE"}}",
+  "pollInterval": {{env "ATLAS_POLL_INTERVAL"}}
+}

@@ -2,6 +2,8 @@
 
 [![default profile](https://github.com/OHDSI/Broadsea/actions/workflows/default.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/default.yml) [![perseus profile](https://github.com/OHDSI/Broadsea/actions/workflows/perseus.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/perseus.yml) [![openldap profile](https://github.com/OHDSI/Broadsea/actions/workflows/openldap.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/openldap.yml) [![solr-vocab Profile](https://github.com/OHDSI/Broadsea/actions/workflows/solr-vocab.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/solr-vocab.yml) [![achilles Profile](https://github.com/OHDSI/Broadsea/actions/workflows/achilles.yml/badge.svg?branch=develop)](https://github.com/OHDSI/Broadsea/actions/workflows/achilles.yml)
 
+> Trying Atlas 3 and WebAPI 3.0? See [ATLAS3_WEBAPI3.md](ATLAS3_WEBAPI3.md) for a quick start and what changed from WebAPI 2.x.
+
 ## Contents
 
 - [Introduction](#introduction)
@@ -51,10 +53,10 @@ This repository contains the Docker Compose file used to launch the OHDSI Broads
   - [OHDSI Broadsea R HADES GitHub repository](https://github.com/OHDSI/Broadsea-Hades/ "OHDSI Broadsea R HADES GitHub Repository")
   - [OHDSI Broadsea R HADES Docker Hub container image](https://hub.docker.com/r/ohdsi/broadsea-hades "OHDSI Broadsea HADES Docker Image Repository")
 - OHDSI Atlas - including WebAPI REST services
-  - [Atlas GitHub repository](https://github.com/OHDSI/Atlas "OHDSI Atlas GitHub Repository")
-  - [Atlas Docker Hub container image](https://hub.docker.com/r/ohdsi/atlas "OHDSI Atlas Docker Image Repository")
-  - [WebAPI GitHub repository](https://github.com/OHDSI/WebAPI "OHDSI WebAPI GitHub Repository")
-  - [WebAPI Docker Hub container image](https://hub.docker.com/r/ohdsi/webapi "OHDSI WebAPI Docker Image Repository")
+  - [Atlas 3 GitHub repository](https://github.com/OHDSI/Atlas3 "OHDSI Atlas 3 GitHub Repository")
+  - Atlas 3 container image: ghcr.io/ohdsi/atlas3:dev
+  - [WebAPI GitHub repository](https://github.com/OHDSI/WebAPI/tree/webapi-3.0 "OHDSI WebAPI GitHub Repository") (branch webapi-3.0)
+  - WebAPI 3.0 container image: ghcr.io/ohdsi/webapi:3.0-dev (pinned by digest in the .env file; Broadsea adds the trexsql plugin on top)
   - [Atlas application PostgreSQL database GitHub repository](https://github.com/OHDSI/Broadsea-Atlasdb "OHDSI Broadsea Atlas application PostgreSQL database GitHub Repository")
   - [Atlas application PostgreSQL databbase Docker Hub container image](https://hub.docker.com/repository/docker/ohdsi/broadsea-atlasdb "OHDSI Broadsea Atlas application PostgreSQL database Docker Image Repository")
   - SOLR based OMOP Vocab search
@@ -162,10 +164,10 @@ docker compose --env-file .env --profile profile1 --profile profile2 ... up -d
 | Profile              | Description |
 |----------------------|-------------|
 | default              | <ul><li>Atlas ("/atlas")</li><li>WebAPI ("/WebAPI")</li><li>AtlasDB (a Postgres instance for Atlas/WebAPI)</li><li>HADES ("/hades")</li><li>A splash page for Broadsea ("/")</li></ul> |
-| atlas-from-image     | <ul><li>Pulls the standard Atlas image from Docker Hub</li></ul> |
-| atlas-from-git       | <ul><li>Builds Atlas from a Git repo</li><li>Useful for testing new versions of Atlas that aren't in Docker Hub</li></ul> |
-| webapi-from-image    | <ul><li>Pulls the standard WebAPI image from Docker Hub</li><li>Mac Silicon users, see "Mac Silicon" section above</li></ul> |
-| webapi-from-git      | <ul><li>Builds WebAPI from a Git repo</li><li>Useful for testing new versions of WebAPI that aren't in Docker Hub</li><li>Mac Silicon users, see "Mac Silicon" section above</li></ul> |
+| atlas-from-image     | <ul><li>Pulls the published Atlas 3 image</li></ul> |
+| atlas-from-git       | <ul><li>Builds Atlas 3 from a Git repo</li><li>Useful for testing versions of Atlas 3 that aren't published as an image</li></ul> |
+| webapi-from-image    | <ul><li>Builds a small image on top of the published WebAPI 3.0 image (adds the trexsql plugin release set in the .env file)</li><li>Mac Silicon users, see "Mac Silicon" section above</li></ul> |
+| webapi-from-git      | <ul><li>Builds WebAPI from a Git repo (default: the webapi-3.0 branch)</li><li>Useful for testing versions of WebAPI that aren't published as an image</li><li>Mac Silicon users, see "Mac Silicon" section above</li></ul> |
 | atlasdb              | <ul><li>Pulls the standard Atlas DB image, a Postgres instance for Atlas/WebAPI</li><li>Useful if you do not have an existing Postgres instance for Atlas/WebAPI</li></ul> |
 | solr-vocab-no-import | <ul><li>Pulls the standard SOLR image from Docker Hub</li><li>Initializes a core for the OMOP Vocabulary specified in the .env file</li><li>No data is imported into the core, left to you to run through the SOLR Admin GUI at "/solr"</li></ul> |
 | solr-vocab-with-import | <ul><li>Pulls the standard SOLR image from Docker Hub</li><li>Initializes a core for the OMOP Vocabulary specified in the .env file</li><li>Runs the data import for that core</li><li>Once complete, the solr-run-import container will finish with an exit status; you can remove this container</li></ul> |
@@ -229,7 +231,7 @@ The Broadsea atlasdb Postgres instance is listed by default, but you can use an 
 
 #### Build SOLR Vocab for Atlas
 
->Note: with WebAPI 2.14, you will need to use the webapi-from-git profile and set WEBAPI_MAVEN_PROFILE to webapi-docker,webapi-solr
+>Note: WebAPI 3.0 always includes SOLR vocabulary search support; no special build is needed.
 
 To enable the use of SOLR for fast OMOP Vocab search in Atlas, review and fill out Section 7 of the .env file. You can either point to an existing SOLR instance, or have Broadsea build one. The JDBC jar file is needed in the Broadsea root folder in order for Solr to perform the dataimport step.
 
@@ -241,25 +243,18 @@ To enable a security provider for authentication and identity management in Atla
 
 ##### Broadsea-AtlasDB Security  
 
-Atlas database based security is pre-configured by the [Broadsea-AtlasDB](https://github.com/OHDSI/Broadsea-atlasdb) project and can be used as a demo. To enable this security:
+WebAPI 3.0 has no "security disabled" mode: users who are not logged in only get the anonymous role, which cannot see any data source. Broadsea therefore enables Atlas database login by default (`SECURITY_AUTH_JDBC_ENABLED="true"` and the `ATLAS_SECURITY_*` settings in Sections 4 and 5 of the .env file). The `broadsea-atlasdb-init` container seeds these demo users into `webapi.auth_user` and grants the admin role its permissions:
 
-1. Update these environment variables in Sections 2, 4, and 5 in the .env file:
-    - section 2:
-        - ATLAS_USER_AUTH_ENABLED="true"
-    - section 4:
-        - ATLAS_SECURITY_PROVIDER_TYPE="db"
-        - ATLAS_SECURITY_PROVIDER_NAME="DB Security"
-        - ATLAS_SECURITY_USE_FORM="true"
-        - ATLAS_SECURITY_USE_AJAX="true
-    - section 5:
-        - WEBAPI_SECURITY_PROVIDER="AtlasRegularSecurity"
-        - SECURITY_AUTH_JDBC_ENABLED="true"
-2. Start the Broadsea docker containers
-3. Login to ATLAS with a demo user defined
-    | Role      | Username  | Password  |
-    |-----------|-----------|-----------|
-    | Admin     | admin     | admin     |
-    | Atlas user| ohdsi     | ohdsi     |
+| Role      | Username  | Password  |
+|-----------|-----------|-----------|
+| Admin     | admin     | admin     |
+| Atlas user| ohdsi     | ohdsi     |
+
+Change these passwords (or switch to another security provider) for anything beyond a local demo. Also put a long random string into the file named by `SECURITY_JWT_SECRET_FILE`; it signs login tokens. When it is empty, WebAPI uses a random key per start, so users are logged out whenever the container restarts.
+
+##### Upgrading from Atlas 2 / WebAPI 2.x
+
+An existing Broadsea database upgrades in place: WebAPI 3.0 continues from the migration history WebAPI 2.x recorded and applies only the 3.0 migrations, keeping cohort definitions, concept sets and other content. WebAPI 3.0 reads database logins from `<schema>.auth_user` instead of the old `webapi_security.security` table, so users you added to the old table need to be added again.
 
 #### Bring Your Own JDBC driver
 
@@ -279,7 +274,7 @@ OpenLDAP is provided for testing purposes, and is not recommended for any produc
 
 #### Atlas/WebAPI from Git repo
 
-To build either Atlas or WebAPI from a git repo instead of from Docker Hub, use Section 6 to specify the Git repo paths. Branches and commits can be in the URL after a "\#".
+To build either Atlas or WebAPI from a git repo instead of from the published images, use Section 6 to specify the Git repo paths (defaults: the Atlas3 develop branch and the WebAPI webapi-3.0 branch). Branches and commits can be in the URL after a "\#".
 
 #### Phoebe Integration for Atlas
 

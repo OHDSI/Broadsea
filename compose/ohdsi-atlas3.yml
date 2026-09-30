@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+
+  # Atlas 3 (https://github.com/OHDSI/Atlas3): a Caddy container serving the
+  # built Vue app from /srv/atlas. Broadsea swaps in its own Caddyfile (plain
+  # HTTP on 8080 behind traefik) and a config-local.json template filled from
+  # the ATLAS_* variables below.
+  ohdsi-atlas3:
+    container_name: ohdsi-atlas
+    platform: ${DOCKER_ARCH}
+    restart: unless-stopped
+    ipc: none
+    privileged: false
+    environment:
+      ATLAS_USER_AUTH_ENABLED: ${ATLAS_USER_AUTH_ENABLED}
+      ATLAS_ENABLE_SKIP_LOGIN: ${ATLAS_ENABLE_SKIP_LOGIN}
+      ATLAS_SECURITY_PROVIDER_NAME: ${ATLAS_SECURITY_PROVIDER_NAME}
+      ATLAS_SECURITY_PROVIDER_TYPE: ${ATLAS_SECURITY_PROVIDER_TYPE}
+      ATLAS_SECURITY_USE_AJAX: ${ATLAS_SECURITY_USE_AJAX}
+      ATLAS_SECURITY_ICON: ${ATLAS_SECURITY_ICON}
+      ATLAS_SECURITY_USE_FORM: ${ATLAS_SECURITY_USE_FORM}
+      ATLAS_ENABLE_TERMS_AND_CONDITIONS: ${ATLAS_ENABLE_TERMS_AND_CONDITIONS}
+      ATLAS_ENABLE_PERSON_COUNT: ${ATLAS_ENABLE_PERSON_COUNT}
+      ATLAS_ENABLE_TAGGING_SECTION: ${ATLAS_ENABLE_TAGGING_SECTION}
+      ATLAS_ENABLE_PYTHIA: ${ATLAS_ENABLE_PYTHIA}
+      ATLAS_DEFAULT_LOCALE: ${ATLAS_DEFAULT_LOCALE}
+      ATLAS_POLL_INTERVAL: ${ATLAS_POLL_INTERVAL}
+    volumes:
+      - ../atlas/config/config-local.json:/srv/atlas/config-local.json:ro
+      - ../atlas/config/Caddyfile:/etc/caddy/Caddyfile:ro
+    labels:
+      - "traefik.enable=true"

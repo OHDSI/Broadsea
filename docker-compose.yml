@@ -3,6 +3,8 @@ version: '3.9'
 volumes:
   atlasdb-postgres-data:
     name: atlasdb-postgres-data
+  webapi-data:
+    name: webapi-data
   rstudio-home-data:
     name: rstudio-home-data
   rstudio-tmp-data:
@@ -80,20 +82,25 @@ services:
     labels:
       - "traefik.enable=true"
 
-  # WebAPI and Atlas services based on the standard Docker Hub images -------------
+  # WebAPI and Atlas services based on the published images -------------
   ohdsi-webapi-from-image:
     profiles: [ "default", "webapi-from-image" ]
-    image: docker.io/ohdsi/webapi:latest
+    image: broadsea-webapi:3.0
+    build:
+      context: ./webapi
+      args:
+        WEBAPI_DIGEST: ${WEBAPI_IMAGE_DIGEST}
+        TREXSQL_VERSION: ${WEBAPI_TREXSQL_VERSION}
     extends: 
       file: "./compose/ohdsi-webapi.yml"
       service: ohdsi-webapi
 
   ohdsi-atlas-from-image:
     profiles: [ "default", "atlas-from-image" ]
-    image: docker.io/ohdsi/atlas:latest
+    image: ghcr.io/ohdsi/atlas3:dev
     extends: 
-      file: "./compose/ohdsi-atlas.yml"
-      service: ohdsi-atlas
+      file: "./compose/ohdsi-atlas3.yml"
+      service: ohdsi-atlas3
 
   # WebAPI and Atlas services based on git repo (for developers) -------------
   ohdsi-webapi-from-git:
@@ -102,7 +109,7 @@ services:
       context: ${WEBAPI_GITHUB_URL}
       args:
         MAVEN_PARAMS: -DskipTests=true -DskipUnitTests=true
-        MAVEN_PROFILE: ${WEBAPI_MAVEN_PROFILE}
+        TREXSQL_VERSION: ${WEBAPI_TREXSQL_VERSION}
     extends: 
       file: "./compose/ohdsi-webapi.yml"
       service: ohdsi-webapi
@@ -111,8 +118,27 @@ services:
     profiles: [ "atlas-from-git" ]
     build: ${ATLAS_GITHUB_URL}
     extends: 
-      file: "./compose/ohdsi-atlas.yml"
-      service: ohdsi-atlas
+      file: "./compose/ohdsi-atlas3.yml"
+      service: ohdsi-atlas3
+
+  # Seeds WebAPI 3.0 login users and role permissions once WebAPI is up
+  broadsea-atlasdb-init:
+    profiles: [ "default", "webapi-from-image", "webapi-from-git" ]
+    image: postgres:16-alpine
+    container_name: broadsea-atlasdb-init
+    restart: "no"
+    environment:
+      WEBAPI_DATASOURCE_URL: ${WEBAPI_DATASOURCE_URL}
+      WEBAPI_DATASOURCE_USERNAME: ${WEBAPI_DATASOURCE_USERNAME}
+      WEBAPI_DATASOURCE_OHDSI_SCHEMA: ${WEBAPI_DATASOURCE_OHDSI_SCHEMA}
+    secrets:
+      - WEBAPI_DATASOURCE_PASSWORD
+    volumes:
+      - ./atlasdb/webapi3:/scripts:ro
+      # WebAPI runs as uid 101; images built from the WebAPI repo do not
+      # prepare /data, so its fresh volume would otherwise be root-owned.
+      - webapi-data:/webapi-data
+    entrypoint: ["sh", "-c", "chown 101:101 /webapi-data && exec sh /scripts/run.sh"]
 
   # -----------------------------------------------------------------
 
@@ -675,6 +701,8 @@ secrets:
     file: ${CDM_CONNECTIONDETAILS_PASSWORD_FILE}
   WEBAPI_CDM_SNOWFLAKE_PRIVATE_KEY:
     file: ${WEBAPI_CDM_SNOWFLAKE_PRIVATE_KEY_FILE}
+  SECURITY_JWT_SECRET:
+    file: ${SECURITY_JWT_SECRET_FILE}
   PGADMIN_DEFAULT_PASSWORD:
     file: ${PGADMIN_DEFAULT_PASSWORD_FILE}
 
