@@ -83,14 +83,14 @@ services:
   # WebAPI and Atlas services based on the standard Docker Hub images -------------
   ohdsi-webapi-from-image:
     profiles: [ "default", "webapi-from-image" ]
-    image: docker.io/ohdsi/webapi:latest
+    image: docker.io/ohdsi/webapi:2.15.2
     extends: 
       file: "./compose/ohdsi-webapi.yml"
       service: ohdsi-webapi
 
   ohdsi-atlas-from-image:
     profiles: [ "default", "atlas-from-image" ]
-    image: docker.io/ohdsi/atlas:latest
+    image: docker.io/ohdsi/atlas:2.15.0
     extends: 
       file: "./compose/ohdsi-atlas.yml"
       service: ohdsi-atlas
